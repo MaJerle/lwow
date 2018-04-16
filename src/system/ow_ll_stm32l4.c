@@ -1,6 +1,6 @@
 /**
  * \file            ow_ll_stm32l4.c
- * \brief           USART implementation for STM32L4xx MCUs
+ * \brief           UART implementation for STM32L4xx MCUs
  */
  
 /*
@@ -30,85 +30,61 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#include "usart.h"
+#include "system/ow_ll.h"
 
-#define ONEWIRE_USART_USE_DMA                   1
+#include "stm32l4xx_ll_usart.h"
+#include "stm32l4xx_ll_bus.h"
+#include "stm32l4xx_ll_rcc.h"
+#include "stm32l4xx_ll_dma.h"
+#include "stm32l4xx_ll_gpio.h"
+#include "main.h"
 
 #define ONEWIRE_USART                           USART1
 #define ONEWIRE_USART_CLK_EN                    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
 #define ONEWIRE_USART_RCC_CLOCK                 PCLK2_Frequency
 
 #define ONEWIRE_TX_PORT                         GPIOA
-#define ONEWIRE_TX_PORT_CLK_EN                  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+#define ONEWIRE_TX_PORT_CLK_EN                  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOA)
 #define ONEWIRE_TX_PIN                          LL_GPIO_PIN_9
 #define ONEWIRE_TX_PIN_AF                       LL_GPIO_AF_7
 
 #define ONEWIRE_RX_PORT                         GPIOA
-#define ONEWIRE_RX_PORT_CLK_EN                  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+#define ONEWIRE_RX_PORT_CLK_EN                  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOA)
 #define ONEWIRE_RX_PIN                          LL_GPIO_PIN_10
 #define ONEWIRE_RX_PIN_AF                       LL_GPIO_AF_7
 
-#define ONEWIRE_USART_TX_DMA                    DMA2
-#define ONEWIRE_USART_TX_DMA_CLK_EN             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2)
-#define ONEWIRE_USART_TX_DMA_STREAM             LL_DMA_STREAM_7
+#define ONEWIRE_USART_TX_DMA                    DMA1
+#define ONEWIRE_USART_TX_DMA_CLK_EN             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1)
 #define ONEWIRE_USART_TX_DMA_CHANNEL            LL_DMA_CHANNEL_4
+#define ONEWIRE_USART_TX_DMA_REQUEST            LL_DMA_REQUEST_2
 #define ONEWIRE_USART_TX_DMA_CLEAR_FLAGS        do {    \
     LL_DMA_ClearFlag_TC7(ONEWIRE_USART_TX_DMA);         \
     LL_DMA_ClearFlag_HT7(ONEWIRE_USART_TX_DMA);         \
     LL_DMA_ClearFlag_TE7(ONEWIRE_USART_TX_DMA);         \
-    LL_DMA_ClearFlag_DME7(ONEWIRE_USART_TX_DMA);        \
-    LL_DMA_ClearFlag_FE7(ONEWIRE_USART_TX_DMA);         \
 } while (0)
 
 #define ONEWIRE_USART_RX_DMA                    DMA2
 #define ONEWIRE_USART_RX_DMA_CLK_EN             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2)
-#define ONEWIRE_USART_RX_DMA_STREAM             LL_DMA_STREAM_2
 #define ONEWIRE_USART_RX_DMA_CHANNEL            LL_DMA_CHANNEL_4
-#define ONEWIRE_USART_RX_DMA_IRQn               DMA2_Stream2_IRQn
-#define ONEWIRE_USART_RX_DMA_IRQ_HANDLER        DMA2_Stream2_IRQHandler
+#define ONEWIRE_USART_RX_DMA_REQUEST            LL_DMA_REQUEST_2
+#define ONEWIRE_USART_RX_DMA_IRQn               DMA1_Channel4_IRQn
+#define ONEWIRE_USART_RX_DMA_IRQ_HANDLER        DMA1_Channel4_IRQHandler
 #define ONEWIRE_USART_RX_DMA_CLEAR_FLAGS        do {    \
     LL_DMA_ClearFlag_TC2(ONEWIRE_USART_RX_DMA);         \
     LL_DMA_ClearFlag_HT2(ONEWIRE_USART_RX_DMA);         \
     LL_DMA_ClearFlag_TE2(ONEWIRE_USART_RX_DMA);         \
-    LL_DMA_ClearFlag_DME2(ONEWIRE_USART_RX_DMA);        \
-    LL_DMA_ClearFlag_FE2(ONEWIRE_USART_RX_DMA);         \
 } while (0)
 
 /**
- * \brief           RX completed callback
- * \note            Make it volatile to prevent compiler optimizations
+ * \brief           Initialize low-level communication
+ * \param[in]       arg: User argument
+ * \return          `1` on success, `0` otherwise
  */
-static volatile uint8_t
-rx_completed;
-
-/**
- * \brief           UART initialization for OneWire
- * \note            This function must take care of first UART initialization.
- *                  Later, it may be called multiple times to set baudrate
- * \param[in]       baud: Expected baudrate for UART
- */
-void
-ow_usart_set_baud(uint32_t baud) {
+uint8_t
+ow_ll_init(void* arg) {
     LL_USART_InitTypeDef USART_InitStruct;
     LL_GPIO_InitTypeDef GPIO_InitStruct;
     
-    /*
-     * First check if USART is currently enabled.
-     *
-     * If it is, we assume it was already initialized.
-     * In this case, we only need to change baudrate to desired value.
-     * We can simply exit from function once finished
-     */
-    if (LL_USART_IsEnabled(ONEWIRE_USART)) {
-        LL_RCC_ClocksTypeDef rcc_clocks;
-        
-        LL_RCC_GetSystemClocksFreq(&rcc_clocks);/* Read system frequencies */
-        LL_USART_Disable(ONEWIRE_USART);        /* First disable USART */
-        LL_USART_SetBaudRate(ONEWIRE_USART, rcc_clocks.ONEWIRE_USART_RCC_CLOCK, LL_USART_OVERSAMPLING_16, baud);
-        LL_USART_Enable(ONEWIRE_USART);         /* Enable USART back */
-        return;
-    }
-
     /* Peripheral clock enable */
     ONEWIRE_TX_PORT_CLK_EN;
     ONEWIRE_RX_PORT_CLK_EN;
@@ -134,35 +110,29 @@ ow_usart_set_baud(uint32_t baud) {
     GPIO_InitStruct.Pin = ONEWIRE_RX_PIN;
     LL_GPIO_Init(ONEWIRE_RX_PORT, &GPIO_InitStruct);
 
-#if ONEWIRE_USART_USE_DMA
     /* USART RX DMA Init */
-    LL_DMA_SetChannelSelection(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, ONEWIRE_USART_RX_DMA_CHANNEL);
-    LL_DMA_SetDataTransferDirection(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-    LL_DMA_SetStreamPriorityLevel(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, LL_DMA_PRIORITY_LOW);
-    LL_DMA_SetMode(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, LL_DMA_MODE_NORMAL);
-    LL_DMA_SetPeriphIncMode(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, LL_DMA_PERIPH_NOINCREMENT);
-    LL_DMA_SetMemoryIncMode(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, LL_DMA_MEMORY_INCREMENT);
-    LL_DMA_SetPeriphSize(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, LL_DMA_PDATAALIGN_BYTE);
-    LL_DMA_SetMemorySize(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, LL_DMA_MDATAALIGN_BYTE);
-    LL_DMA_DisableFifoMode(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM);
-    LL_DMA_SetPeriphAddress(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, (uint32_t)&ONEWIRE_USART->DR);
+    LL_DMA_SetPeriphRequest(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, ONEWIRE_USART_RX_DMA_REQUEST);
+    LL_DMA_SetDataTransferDirection(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+    LL_DMA_SetMode(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, LL_DMA_MODE_NORMAL);
+    LL_DMA_SetPeriphIncMode(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, LL_DMA_PERIPH_NOINCREMENT);
+    LL_DMA_SetMemoryIncMode(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, LL_DMA_MEMORY_INCREMENT);
+    LL_DMA_SetPeriphSize(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, LL_DMA_PDATAALIGN_BYTE);
+    LL_DMA_SetMemorySize(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, LL_DMA_MDATAALIGN_BYTE);
+    LL_DMA_SetPeriphAddress(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, (uint32_t)&ONEWIRE_USART->RDR);
 
     /* USART TX DMA Init */
-    LL_DMA_SetChannelSelection(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, ONEWIRE_USART_TX_DMA_CHANNEL);
-    LL_DMA_SetDataTransferDirection(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-    LL_DMA_SetStreamPriorityLevel(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, LL_DMA_PRIORITY_LOW);
-    LL_DMA_SetMode(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, LL_DMA_MODE_NORMAL);
-    LL_DMA_SetPeriphIncMode(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, LL_DMA_PERIPH_NOINCREMENT);
-    LL_DMA_SetMemoryIncMode(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, LL_DMA_MEMORY_INCREMENT);
-    LL_DMA_SetPeriphSize(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, LL_DMA_PDATAALIGN_BYTE);
-    LL_DMA_SetMemorySize(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, LL_DMA_MDATAALIGN_BYTE);
-    LL_DMA_DisableFifoMode(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM);
-    LL_DMA_SetPeriphAddress(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, (uint32_t)&ONEWIRE_USART->DR);
+    LL_DMA_SetPeriphRequest(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, ONEWIRE_USART_TX_DMA_REQUEST);
+    LL_DMA_SetDataTransferDirection(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+    LL_DMA_SetMode(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, LL_DMA_MODE_NORMAL);
+    LL_DMA_SetPeriphIncMode(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, LL_DMA_PERIPH_NOINCREMENT);
+    LL_DMA_SetMemoryIncMode(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, LL_DMA_MEMORY_INCREMENT);
+    LL_DMA_SetPeriphSize(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, LL_DMA_PDATAALIGN_BYTE);
+    LL_DMA_SetMemorySize(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, LL_DMA_MDATAALIGN_BYTE);
+    LL_DMA_SetPeriphAddress(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, (uint32_t)&ONEWIRE_USART->TDR);
     
     /* Enable DMA RX interrupt */
-    NVIC_SetPriority(ONEWIRE_USART_RX_DMA_IRQn, NVIC_EncodePriority(NVIC_PRIORITYGROUP_4, 1, 0));
+    NVIC_SetPriority(ONEWIRE_USART_RX_DMA_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 1, 0));
     NVIC_EnableIRQ(ONEWIRE_USART_RX_DMA_IRQn);
-#endif /* ONEWIRE_USART_USE_DMA */
 
     /* Configure UART peripherals */
     USART_InitStruct.BaudRate = 9600;
@@ -175,61 +145,81 @@ ow_usart_set_baud(uint32_t baud) {
     LL_USART_Init(ONEWIRE_USART, &USART_InitStruct);
     LL_USART_ConfigAsyncMode(ONEWIRE_USART);
     LL_USART_Enable(ONEWIRE_USART);
+    
+    return 1;
+}
+
+/**
+ * \brief           Deinit low-level
+ * \param[in]       arg: User argument
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+ow_ll_deinit(void* arg) {
+    return 1;
+}
+
+/**
+ * \brief           UART set baudrate function
+ * \param[in]       arg: User argument
+ * \param[in]       baud: Expected baudrate for UART
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+ow_ll_set_baudrate(void* arg, uint32_t baud) {
+    LL_RCC_ClocksTypeDef rcc_clocks;
+
+    LL_RCC_GetSystemClocksFreq(&rcc_clocks);/* Read system frequencies */
+    LL_USART_Disable(ONEWIRE_USART);        /* First disable USART */
+    LL_USART_SetBaudRate(ONEWIRE_USART, rcc_clocks.ONEWIRE_USART_RCC_CLOCK, LL_USART_OVERSAMPLING_16, baud);
+    LL_USART_Enable(ONEWIRE_USART);         /* Enable USART back */
+    
+    return 1;
 }
 
 /**
  * \brief           Transmit-Receive data over OneWire bus
+ * \param[in]       arg: User argument
  * \param[in]       tx: Array of data to send
  * \param[out]      rx: Array to save receive data 
  * \param[in]       len: Number of bytes to send
+ * \return          `1` on success, `0` otherwise
  */
-void
-ow_usart_tr(const void* tx, void* rx, size_t len) {
+uint8_t
+ow_ll_transmit_receive(void* arg, const void* tx, void* rx, size_t len) {
     /* Clear all DMA flags */
     ONEWIRE_USART_RX_DMA_CLEAR_FLAGS;
     ONEWIRE_USART_TX_DMA_CLEAR_FLAGS;
     
     /* Set data length */
-    LL_DMA_SetDataLength(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, len);
-    LL_DMA_SetDataLength(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, len);
+    LL_DMA_SetDataLength(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, len);
+    LL_DMA_SetDataLength(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, len);
     /* Set memory addresses */
-    LL_DMA_SetMemoryAddress(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM, (uint32_t)rx);
-    LL_DMA_SetMemoryAddress(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM, (uint32_t)tx);
-    
-    rx_completed = 0;                           /* Reset RX completed flag */
+    LL_DMA_SetMemoryAddress(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL, (uint32_t)rx);
+    LL_DMA_SetMemoryAddress(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL, (uint32_t)tx);
     
     /* Enable UART DMA requests and start stream */
     LL_USART_EnableDMAReq_RX(ONEWIRE_USART);
     LL_USART_EnableDMAReq_TX(ONEWIRE_USART);
     
-    /* Enable transfer complete interrupt */
-    LL_DMA_EnableIT_TC(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM);
+    /* Enable transfer complete interrupt for RX */
+    LL_DMA_EnableIT_TC(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL);
     
     /* Enable streams and start transfer */
-    LL_DMA_EnableStream(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_STREAM);
-    LL_DMA_EnableStream(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_STREAM);
+    LL_DMA_EnableChannel(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL);
+    LL_DMA_EnableChannel(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL);
     
     /*
      * Wait to receive all bytes over UART
      *
-     * In case of RTOS usage, use semaphore and put thread
-     * in blocked state. Once DMA finishes, use DMA interrupt to unlock thread
+     * We have to wait for RX DMA to complete and to transfer
+     * all bytes to memory before we can finish the transaction
      */
-    while (!rx_completed) {
-        __WFI();                                /* Option for little sleep? ;) */
-    }
+    while (LL_DMA_GetDataLength(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL));
     
     /* Disable requests */
     LL_USART_DisableDMAReq_RX(ONEWIRE_USART);
     LL_USART_DisableDMAReq_TX(ONEWIRE_USART);
-}
-
-/**
- * \brief           USART DMA RX interrupt handler
- * \note            Interrupt is called only when transfer is completed
- */
-void
-ONEWIRE_USART_RX_DMA_IRQ_HANDLER(void) {
-    rx_completed = 1;                           /* Set RX completed flag */
-    ONEWIRE_USART_RX_DMA_CLEAR_FLAGS;           /* Clear all flags */
+    
+    return 1;
 }

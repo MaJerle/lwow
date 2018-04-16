@@ -1,6 +1,6 @@
 /**
- * \file            ow_ll.h
- * \brief           OneWire USART application
+ * \file            ow_config_default.h
+ * \brief           OneWire default config
  */
  
 /*
@@ -30,24 +30,41 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __OW_LL_H
-#define __OW_LL_H
+#ifndef __ONEWIRE_CONFIG_DEFAULT_H
+#define __ONEWIRE_CONFIG_DEFAULT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#include "stdint.h"
-#include "stddef.h"
-#include "ow/ow.h"
+/**
+ * \ingroup         OW
+ * \defgroup        OW_CONFIG OneWire config
+ * \brief           Configuration for OneWire library
+ * \{
+ */
+ 
+/**
+ * \brief           OS configuration
+ */
+#ifndef OW_CFG_OS
+#define OW_CFG_OS                               1
+#endif
 
-uint8_t     ow_ll_init(void* arg);
-uint8_t     ow_ll_deinit(void* arg);
-uint8_t     ow_ll_set_baudrate(void* arg, uint32_t baudrate);
-uint8_t     ow_ll_transmit_receive(void* arg, const void* tx, void* rx, size_t len);
+/**
+ * \brief           Mutex handle type
+ * \note            This value must be set in case \ref OW_CFG_OS is set to 1
+ */
+#ifndef OW_CFG_OS_MUTEX_HANDLE
+#define OW_CFG_OS_MUTEX_HANDLE                  void *
+#endif
+ 
+/**
+ * \}
+ */
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __OW_LL_H */
+#endif /* __ONEWIRE_CONFIG_DEFAULT_H */

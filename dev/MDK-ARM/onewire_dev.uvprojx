@@ -7,23 +7,23 @@
 
   <Targets>
     <Target>
-      <TargetName>f4_usart_onewire</TargetName>
+      <TargetName>OneWire DEV</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F401RETx</Device>
+          <Device>STM32L496ZGTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.11.0</PackID>
+          <PackID>Keil.STM32L4xx_DFP.1.5.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IRAM(0x20000000-0x20017FFF) IROM(0x8000000-0x807FFFF) CLOCK(25000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
+          <Cpu>IRAM(0x20000000,0x00040000) IRAM2(0x10000000,0x00010000) IROM(0x08000000,0x00100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll></FlashDriverDll>
-          <DeviceId></DeviceId>
-          <RegisterFile></RegisterFile>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32L4xx_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32L496ZGTx$CMSIS\Flash\STM32L4xx_1024.FLM))</FlashDriverDll>
+          <DeviceId>0</DeviceId>
+          <RegisterFile>$$Device:STM32L496ZGTx$Drivers\CMSIS\Device\ST\STM32L4xx\Include\stm32l4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32F401RETx$CMSIS\SVD\STM32F401xE.svd</SFDFile>
+          <SFDFile>$$Device:STM32L496ZGTx$CMSIS\SVD\STM32L4x6_v1r1.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -110,11 +110,11 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>-REMAP -MPU</SimDllArguments>
+          <SimDllArguments> -REMAP -MPU</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments>-MPU</TargetDllArguments>
+          <TargetDllArguments> -MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
         </DllOption>
@@ -137,7 +137,7 @@
             <DriverSelection>4107</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
@@ -184,7 +184,7 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
-            <hadIRAM2>0</hadIRAM2>
+            <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>1</useUlib>
@@ -192,7 +192,7 @@
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>3</RwSelD>
+            <RwSelD>4</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -244,12 +244,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x18000</Size>
+                <Size>0x40000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x100000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -274,7 +274,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x100000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -299,12 +299,12 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x18000</Size>
+                <Size>0x40000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0x10000000</StartAddress>
+                <Size>0x10000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_FULL_LL_DRIVER,STM32F401xE</Define>
+              <Define>USE_FULL_LL_DRIVER,STM32L496xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>..\inc;..\..\src\include;..\..\libs\st_hal\STM32L4xx_HAL_Driver\Inc;..\..\libs\st_hal\CMSIS\Include;..\..\libs\st_hal\CMSIS\Device\ST\STM32L4xx\Include;..\..\libs\FreeRTOS\include;..\..\libs\FreeRTOS\CMSIS_RTOS;..\..\libs\FreeRTOS\portable\RVDS\ARM_CM4F</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -378,72 +378,152 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Application/MDK-ARM</GroupName>
+          <GroupName>MDK-ARM</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32f401xe.s</FileName>
+              <FileName>startup_stm32l496xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>startup_stm32f401xe.s</FilePath>
+              <FilePath>.\startup_stm32l496xx.s</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/STM32F4xx_HAL_Driver</GroupName>
+          <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>stm32f4xx_ll_exti.c</FileName>
+              <FileName>system_stm32l4xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_exti.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_ll_utils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_utils.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_ll_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_ll_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_ll_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_rcc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_ll_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c</FilePath>
+              <FilePath>..\src\system_stm32l4xx.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Application/User</GroupName>
+          <GroupName>STM32L4xx_HAL_Driver</GroupName>
           <Files>
             <File>
-              <FileName>stm32f4xx_it.c</FileName>
+              <FileName>stm32l4xx_ll_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Src/stm32f4xx_it.c</FilePath>
+              <FilePath>..\..\libs\st_hal\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_ll_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\st_hal\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_ll_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\st_hal\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_ll_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\st_hal\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_ll_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\st_hal\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_ll_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\st_hal\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_ll_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\st_hal\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_utils.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FreeRTOS</GroupName>
+          <Files>
+            <File>
+              <FileName>croutine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\croutine.c</FilePath>
+            </File>
+            <File>
+              <FileName>event_groups.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\event_groups.c</FilePath>
+            </File>
+            <File>
+              <FileName>list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\list.c</FilePath>
+            </File>
+            <File>
+              <FileName>queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>tasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\tasks.c</FilePath>
+            </File>
+            <File>
+              <FileName>timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\timers.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmsis_os.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\CMSIS_RTOS\cmsis_os.c</FilePath>
+            </File>
+            <File>
+              <FileName>cpu_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\CMSIS_RTOS\cpu_utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>port_cm4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\portable\RVDS\ARM_CM4F\port_cm4.c</FilePath>
+            </File>
+            <File>
+              <FileName>heap_4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\FreeRTOS\portable\MemMang\heap_4.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>OneWire</GroupName>
+          <Files>
+            <File>
+              <FileName>ow.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ow\ow.c</FilePath>
+            </File>
+            <File>
+              <FileName>ow_ll_stm32l4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\system\ow_ll_stm32l4.c</FilePath>
+            </File>
+            <File>
+              <FileName>ow_sys_cmsis_os.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\system\ow_sys_cmsis_os.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>User</GroupName>
+          <Files>
+            <File>
+              <FileName>stm32l4xx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\stm32l4xx_it.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers/CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>system_stm32f4xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..//Src/system_stm32f4xx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -457,10 +537,10 @@
   <RTE>
     <apis/>
     <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="4.3.0" condition="CMSIS Core">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="4.5.0"/>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.0.2" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.2.0"/>
         <targetInfos>
-          <targetInfo name="f4_usart_onewire"/>
+          <targetInfo name="OneWire DEV"/>
         </targetInfos>
       </component>
     </components>

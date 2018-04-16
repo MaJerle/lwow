@@ -31,9 +31,15 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
 #include "ow/ow.h"
-#include "ow/ow_ll.h"
+#include "system/ow_ll.h"
 #include "string.h"
+#if OW_CFG_OS
+#include "system/ow_sys.h"
+#endif /* OW_CFG_OS */
 
+#if !__DOXYGEN__
+
+/* Internal macros */
 #define OW_FIRST_DEV                    0xFF
 #define OW_LAST_DEV                     0x00
 
@@ -44,10 +50,12 @@
 
 #define ONEWIRE_BYTE_RESET              0xF0
 
+#endif /* !__DOXYGEN__ */
+
 /**
  * \brief           Send single bit to OneWire port
  * \param[in]       v: Value to send, either `1` or `0`
- * \return
+ * \return          Read byte on 1-wire port, either `1` or `0`
  */
 static uint8_t
 send_bit(ow_t* ow, uint8_t v) {
@@ -58,7 +66,7 @@ send_bit(ow_t* ow, uint8_t v) {
      * Sending logical 0 over 1-wire, send 0x00 over UART
      */
     v = v ? 0xFF : 0x00;                        /* Convert to 0 or 1 */
-    ow_ll_send_receive(&v, &b, 1);              /* Exchange data over USART */
+    ow_ll_transmit_receive(ow->arg, &v, &b, 1); /* Exchange data over USART */
     if (b == 0xFF) {                            /* To read bit 1, check of 0xFF sequence */
         return 1;
     }
@@ -70,24 +78,30 @@ send_bit(ow_t* ow, uint8_t v) {
  * \return          `1` on success, `0` otherwise
  */
 owr_t
-ow_init(ow_t* ow) {
-#if OW_USE_RTOS
-    osMutexDef(mutex);
-    ow->sem = osRecursiveMutexCreate(osMutex(mut));
-#endif /* OW_USE_RTOS */
+ow_init(ow_t* ow, void* arg) {
+    if (!ow_ll_init(arg)) {                     /* Init low-level directly */
+        return owERR;
+    }
+#if OW_CFG_OS
+    if (!ow_sys_mutex_create(&ow->mutex, arg)) {
+        ow_ll_deinit(arg);                      /* Deinit low-level */
+        return owERR;
+    }
+#endif /* OW_CFG_OS */
+    ow->arg = arg;
     return owOK;
 }
 
 /**
- * \brief           Lock 1-wire from concurrent access
+ * \brief           Protect 1-wire from concurrent access
  * \note            Used only for OS systems
  * \param[in,out]   ow: 1-Wire handle
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_lock(ow_t* ow) {
+ow_protect(ow_t* ow) {
 #if OW_USE_RTOS
-    if (osMutexWait(ow->mutex, osWaitForever) != osOK) {
+    if (!ow_sys_mutex_wait(&ow->mutex, arg)) {
         return owERR;
     }
 #endif /* OW_USE_RTOS */
@@ -95,15 +109,17 @@ ow_lock(ow_t* ow) {
 }
 
 /**
- * \brief           Unlock 1-wire from concurrent access
+ * \brief           Unprotect 1-wire from concurrent access
  * \note            Used only for OS systems
  * \param[in,out]   ow: 1-Wire handle
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_unlock(ow_t* ow) {
+ow_unprotect(ow_t* ow) {
 #if OW_USE_RTOS
-    osMutexRelease(ow->mutex, osWaitForever);
+    if (!ow_sys_mutex_release(&ow->mutex, arg)) {
+        return owERR;
+    }
 #endif /* OW_USE_RTOS */
     return owOK;
 }
@@ -153,11 +169,10 @@ ow_reset(ow_t* ow) {
      * 
      */
     
-    ow_usart_set_baud(9600);                    /* Set low baudrate */
     b = ONEWIRE_BYTE_RESET;                     /* Set reset sequence byte = 0xF0 */
-    ow_usart_tr(&b, &b, 1);                     /* Exchange data over onewire */
-    
-    ow_usart_set_baud(115200);                  /* Go back to high baudrate */
+    ow_ll_set_baudrate(ow->arg, 9600);          /* Set low baudrate */
+    ow_ll_transmit_receive(ow->arg, &b, &b, 1); /* Exchange data over onewire */
+    ow_ll_set_baudrate(ow->arg, 115200);        /* Go back to high baudrate */
     
     /*
      * Check if any device acknowledged our pulse
@@ -181,7 +196,7 @@ ow_write_byte(ow_t* ow, uint8_t b) {
     /*
      * Each BIT on 1-wire level represents 1-byte on UART level at 115200 bauds.
      *
-     * To transmit entire byte over 1-wire protocol, we have to send 8-byte over UART
+     * To transmit entire byte over 1-wire protocol, we have to send 8-bytes over UART
      *
      * Writing logical bit 1 over 1-Wire protocol starts by pulling line low for about 6us.
      * After that, we should release line for at least 64us. Entire sequence takes about 70us in total.
@@ -204,7 +219,7 @@ ow_write_byte(ow_t* ow, uint8_t b) {
      * Exchange data on UART level,
      * send single byte for each bit = 8 bytes
      */
-    ow_usart_tr(tr, tr, 8);                     /* Exchange data over UART */
+    ow_ll_transmit_receive(ow->arg, tr, tr, 8); /* Exchange data over UART */
     
     /*
      * Check received data. If we read 0xFF,
@@ -342,6 +357,6 @@ ow_search(ow_t* ow, uint8_t *rom_id) {
     }
 out:
     ow->disrepancy = next_disrepancy;           /* Save disrepancy value */
-    memcpy(rom_id, ow->rom, sizeof(ow->rom));
+    memcpy(rom_id, ow->rom, sizeof(ow->rom));   /* Copy ROM to user memory */
     return id_bit_number == 0 ? owOK : owERRNODEV;  /* Return search result status */
 }

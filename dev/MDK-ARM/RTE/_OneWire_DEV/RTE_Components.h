@@ -4,7 +4,7 @@
  *      *** Do not modify ! ***
  *
  * Project: 'onewire_dev' 
- * Target:  'f4_usart_onewire' 
+ * Target:  'OneWire DEV' 
  */
 
 #ifndef RTE_COMPONENTS_H
@@ -14,7 +14,7 @@
 /*
  * Define the Device Header File: 
  */
-#define CMSIS_device_header "stm32f4xx.h"
+#define CMSIS_device_header "stm32l4xx.h"
 
 
 #endif /* RTE_COMPONENTS_H */

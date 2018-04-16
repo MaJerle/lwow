@@ -1,6 +1,6 @@
 /**
- * \file            ow_ll.h
- * \brief           OneWire USART application
+ * \file            ow.h
+ * \brief           OneWire-UART main include file
  */
  
 /*
@@ -30,24 +30,17 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __OW_LL_H
-#define __OW_LL_H
+#ifndef __ONEWIRE_CONFIG_H
+#define __ONEWIRE_CONFIG_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#include "stdint.h"
-#include "stddef.h"
-#include "ow/ow.h"
-
-uint8_t     ow_ll_init(void* arg);
-uint8_t     ow_ll_deinit(void* arg);
-uint8_t     ow_ll_set_baudrate(void* arg, uint32_t baudrate);
-uint8_t     ow_ll_transmit_receive(void* arg, const void* tx, void* rx, size_t len);
+#include "ow/ow_config_default.h"
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __OW_LL_H */
+#endif /* __ONEWIRE_CONFIG_H */

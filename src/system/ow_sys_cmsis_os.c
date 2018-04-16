@@ -1,6 +1,6 @@
 /**
  * \file            ow_sys_cmsis_os.c
- * \brief           CMSIS-OS system file
+ * \brief           System functions for CMSIS-OS based operating system
  */
  
 /*
@@ -32,3 +32,28 @@
  */
 #include "system/ow_sys.h"
 
+#if OW_CFG_OS || __DOXYGEN__
+
+#include "cmsis_os.h"
+
+uint8_t
+ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    return 1;
+}
+
+uint8_t
+ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    return 1;
+}
+
+uint8_t
+ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    return 1;
+}
+
+uint8_t
+ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    return 1;
+}
+
+#endif /* OW_CFG_OS || __DOXYGEN__ */

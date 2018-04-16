@@ -41,7 +41,10 @@ extern "C" {
 #include "stddef.h"
 #include "ow/ow.h"
 
-
+uint8_t     ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+uint8_t     ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+uint8_t     ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+uint8_t     ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
 
 #ifdef __cplusplus
 }

@@ -40,6 +40,8 @@ extern "C" {
 #include "stdint.h"
 #include "stddef.h"
 
+#include "ow_config.h"
+
 /**
  * \brief			OneWire result enumeration
  */
@@ -54,8 +56,8 @@ typedef enum {
  * \brief           1-Wire structure
  */
 typedef struct {    
-#if OW_USE_RTOS || __DOXYGEN__
-    osMutexId mutex;                            /*!< Mutex handle */
+#if OW_CFG_OS || __DOXYGEN__
+    OW_CFG_OS_MUTEX_HANDLE mutex;               /*!< Mutex handle */
 #endif /* OW_USE_RTOS || __DOXYGEN__ */
     
     uint8_t rom[8];                             /*!< ROM address of last device found.
@@ -68,10 +70,10 @@ typedef struct {
 owr_t       ow_init(ow_t* ow, void* arg);
 
 owr_t       ow_protect(ow_t* ow);
-owr_t       ow_protect(ow_t* ow);
+owr_t       ow_unprotect(ow_t* ow);
 
 owr_t       ow_reset(ow_t* ow);
-uint8_t     ow_write_byte(ow_t* ow, uint8_t byte);
+uint8_t     ow_write_byte(ow_t* ow, uint8_t b);
 uint8_t     ow_read_byte(ow_t* ow);
 
 owr_t       ow_search_reset(ow_t* ow);

@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    stm32f4xx_it.h
-  * @brief   This file contains the headers of the interrupt handlers.
+  * @file    stm32l4xx_it.c
+  * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -30,42 +30,81 @@
   *
   ******************************************************************************
   */
-
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4xx_IT_H
-#define __STM32F4xx_IT_H
-
-#ifdef __cplusplus
- extern "C" {
-#endif 
-
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx.h"
-#include "stm32f4xx_ll_system.h"
-#include "stm32f4xx_ll_gpio.h"
-#include "stm32f4xx_ll_exti.h"
-#include "main.h"
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "stm32l4xx.h"
+#include "stm32l4xx_it.h"
 
-void NMI_Handler(void);
-void HardFault_Handler(void);
-void MemManage_Handler(void);
-void BusFault_Handler(void);
-void UsageFault_Handler(void);
-void SVC_Handler(void);
-void DebugMon_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-void DMA1_Stream5_IRQHandler(void);
-void DMA1_Stream6_IRQHandler(void);
+/* External variables --------------------------------------------------------*/
 
-#ifdef __cplusplus
+/******************************************************************************/
+/*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
+/******************************************************************************/
+
+/**
+ * \brief           This function handles Non maskable interrupt.
+ */
+void
+NMI_Handler(void) {
+    while (1) {
+    
+    }
 }
-#endif
 
-#endif /* __STM32F4xx_IT_H */
+/**
+ * \brief           This function handles Hard fault interrupt
+ */
+void
+HardFault_Handler(void) {
+    while (1) {
+      
+    }
+}
+
+/**
+ * \brief           This function handles Memory management fault.
+ */
+void
+MemManage_Handler(void) {
+    while (1) {
+      
+    }
+}
+
+/**
+ * \brief           This function handles Prefetch fault, memory access fault.
+ */
+void
+BusFault_Handler(void) {
+    while (1) {
+    
+    }
+}
+
+/**
+ * \brief           This function handles Undefined instruction or illegal state.
+ */
+void
+UsageFault_Handler(void) {
+    while (1) {
+    
+    }
+}
+
+/**
+ * \brief           This function handles Debug monitor.
+ */
+void
+DebugMon_Handler(void) {
+    while (1) {
+    
+    }
+}
+
+/******************************************************************************/
+/* STM32L4xx Peripheral Interrupt Handlers                                    */
+/* Add here the Interrupt Handlers for the used peripherals.                  */
+/* For the available peripheral interrupt handler names,                      */
+/* please refer to the startup file (startup_stm32l4xx.s).                    */
+/******************************************************************************/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
