@@ -40,7 +40,7 @@ main(void) {
     USART_Printf_Init();                        /* Init debug UART */
     printf("OneWire over UART example!\r\n");
     
-    ow_init(&ow, 0);                            /* Init OneWire */
+    ow_init(&ow, 0);                            /* Init OneWire and pass custom argument */
     
     c = 0;
     ow_protect(&ow);                            /* Lock 1-Wire from concurrent access, in case of RTOS usage */

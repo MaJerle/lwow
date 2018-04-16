@@ -1,6 +1,6 @@
 /**
- * \file            ow_sys_cmsis_os.c
- * \brief           System functions for CMSIS-OS based operating system
+ * \file            ow_ll_stm32l4.c
+ * \brief           UART implementation for STM32L4xx MCUs
  */
  
 /*
@@ -30,63 +30,56 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#include "system/ow_sys.h"
-
-#if OW_CFG_OS || __DOXYGEN__
-
-#include "cmsis_os.h"
+#include "system/ow_ll.h"
 
 /**
- * \brief           Create a new mutex and assign value to handle
- * \param[out]      mutex: Output variable to save mutex handle
+ * \brief           Initialize low-level communication
  * \param[in]       arg: User argument passed on \ref ow_init function
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    osMutexDef(m);
-    *mutex = osMutexCreate(osMutex(m));         /* Create new mutex */
+ow_ll_init(void* arg) {
+    /* Configure and enable UART at 115200 bauds */
+
     return 1;
 }
 
 /**
- * \brief           Delete existing mutex and invalidate mutex variable
- * \param[in]       mutex: Mutex handle to remove and invalidate
+ * \brief           Deinit low-level
  * \param[in]       arg: User argument passed on \ref ow_init function
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    osMutexDelete(*mutex);                      /* Delete mutex */
+ow_ll_deinit(void* arg) {
+    /* Disable UART peripheral */
+
     return 1;
 }
 
 /**
- * \brief           Wait for a mutex until ready (unlimited time)
- * \param[in]       mutex: Mutex handle to wait for
+ * \brief           UART set baudrate function
+ * \param[in]       baud: Expected baudrate for UART
  * \param[in]       arg: User argument passed on \ref ow_init function
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    if (osMutexWait(*mutex, osWaitForever) != osOK) {
-        return 0;
-    }
+ow_ll_set_baudrate(uint32_t baud, void* arg) {
+    /* Configure UART to selected baudrate */
+    
     return 1;
 }
 
 /**
- * \brief           Release already locked mutex
- * \param[in]       mutex: Mutex handle to release
+ * \brief           Transmit-Receive data over UART
+ * \param[in]       tx: Array of data to send
+ * \param[out]      rx: Array to save receive data 
+ * \param[in]       len: Number of bytes to send
  * \param[in]       arg: User argument passed on \ref ow_init function
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    if (osMutexRelease(*mutex) != osOK) {
-        return 0;
-    }
+ow_ll_transmit_receive(const void* tx, void* rx, size_t len, void* arg) {
+    /* Perform data exchange */
+    
     return 1;
 }
-
-#endif /* OW_CFG_OS || __DOXYGEN__ */

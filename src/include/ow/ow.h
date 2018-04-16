@@ -43,6 +43,12 @@ extern "C" {
 #include "ow_config.h"
 
 /**
+ * \defgroup        OW API functions
+ * \brief           OneWire API
+ * \{
+ */
+
+/**
  * \brief			OneWire result enumeration
  */
 typedef enum {
@@ -78,6 +84,10 @@ uint8_t     ow_read_byte(ow_t* ow);
 
 owr_t       ow_search_reset(ow_t* ow);
 owr_t       ow_search(ow_t* ow, uint8_t *id);
+
+/**
+ * \}
+ */
 
 #ifdef __cplusplus
 }

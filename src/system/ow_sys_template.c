@@ -1,6 +1,6 @@
 /**
- * \file            ow_sys_cmsis_os.c
- * \brief           System functions for CMSIS-OS based operating system
+ * \file            ow_sys_template.c
+ * \brief           System functions template file
  */
  
 /*
@@ -44,8 +44,6 @@
  */
 uint8_t
 ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    osMutexDef(m);
-    *mutex = osMutexCreate(osMutex(m));         /* Create new mutex */
     return 1;
 }
 
@@ -57,7 +55,6 @@ ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
  */
 uint8_t
 ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    osMutexDelete(*mutex);                      /* Delete mutex */
     return 1;
 }
 
@@ -69,9 +66,6 @@ ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
  */
 uint8_t
 ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    if (osMutexWait(*mutex, osWaitForever) != osOK) {
-        return 0;
-    }
     return 1;
 }
 
@@ -83,9 +77,6 @@ ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
  */
 uint8_t
 ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    if (osMutexRelease(*mutex) != osOK) {
-        return 0;
-    }
     return 1;
 }
 

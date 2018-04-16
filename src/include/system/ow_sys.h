@@ -41,10 +41,20 @@ extern "C" {
 #include "stddef.h"
 #include "ow/ow.h"
 
+/**
+ * \defgroup        OW_SYS System functions
+ * \brief           System functions if case of operating system
+ * \{
+ */
+
 uint8_t     ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
 uint8_t     ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
 uint8_t     ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
 uint8_t     ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+
+/**
+ * \}
+ */
 
 #ifdef __cplusplus
 }

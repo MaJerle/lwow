@@ -1,6 +1,6 @@
 /**
- * \file            ow.h
- * \brief           OneWire-UART main include file
+ * \file            ow_config_template.h
+ * \brief           OneWire configuration file
  */
  
 /*
@@ -30,41 +30,19 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __ONEWIRE_CONFIG_TEMPLATE_H
-#define __ONEWIRE_CONFIG_TEMPLATE_H
+#ifndef __ONEWIRE_CONFIG_H
+#define __ONEWIRE_CONFIG_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-/**
- * \ingroup         OW
- * \defgroup        OW_CONFIG OneWire config
- * \brief           Configuration for OneWire library
- * \{
- */
- 
-/**
- * \brief           OS configuration
- */
-#ifndef OW_CFG_OS
-#define OW_CFG_OS                               0
-#endif
-
-/**
- * \brief           Mutex handle type
- * \note            This value must be set in case \ref OW_CFG_OS is set to 1
- */
-#ifndef OW_CFG_OS_MUTEX_HANDLE
-#define OW_CFG_OS_MUTEX_HANDLE                  void *
-#endif
- 
-/**
- * \}
+/*
+ * Rename this file to "ow_config.h" for your application
  */
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+/*
+ * Open "include/ow/ow_config_default.h" and 
+ * copy & replace here settings you want to change values
+ */
 
-#endif /* __ONEWIRE_CONFIG_TEMPLATE_H */
+/* After user configuration, call default config to merge config together */
+#include "ow/ow_config_default.h"
+
+#endif /* __ONEWIRE_CONFIG_H */

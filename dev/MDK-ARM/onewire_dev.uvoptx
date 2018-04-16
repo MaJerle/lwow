@@ -460,8 +460,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\src\system\ow_ll_stm32l4.c</PathWithFileName>
-      <FilenameWithoutPath>ow_ll_stm32l4.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\src\system\ow_sys_cmsis_os.c</PathWithFileName>
+      <FilenameWithoutPath>ow_sys_cmsis_os.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -472,8 +472,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\src\system\ow_sys_cmsis_os.c</PathWithFileName>
-      <FilenameWithoutPath>ow_sys_cmsis_os.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\src\system\ow_ll_stm32l4xx.c</PathWithFileName>
+      <FilenameWithoutPath>ow_ll_stm32l4xx.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

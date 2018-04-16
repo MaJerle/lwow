@@ -66,7 +66,7 @@ send_bit(ow_t* ow, uint8_t v) {
      * Sending logical 0 over 1-wire, send 0x00 over UART
      */
     v = v ? 0xFF : 0x00;                        /* Convert to 0 or 1 */
-    ow_ll_transmit_receive(ow->arg, &v, &b, 1); /* Exchange data over USART */
+    ow_ll_transmit_receive(&v, &b, 1, ow->arg); /* Exchange data over USART */
     if (b == 0xFF) {                            /* To read bit 1, check of 0xFF sequence */
         return 1;
     }
@@ -170,9 +170,9 @@ ow_reset(ow_t* ow) {
      */
     
     b = ONEWIRE_BYTE_RESET;                     /* Set reset sequence byte = 0xF0 */
-    ow_ll_set_baudrate(ow->arg, 9600);          /* Set low baudrate */
-    ow_ll_transmit_receive(ow->arg, &b, &b, 1); /* Exchange data over onewire */
-    ow_ll_set_baudrate(ow->arg, 115200);        /* Go back to high baudrate */
+    ow_ll_set_baudrate(9600, ow->arg);          /* Set low baudrate */
+    ow_ll_transmit_receive(&b, &b, 1, ow->arg); /* Exchange data over onewire */
+    ow_ll_set_baudrate(115200, ow->arg);        /* Go back to high baudrate */
     
     /*
      * Check if any device acknowledged our pulse
@@ -219,7 +219,7 @@ ow_write_byte(ow_t* ow, uint8_t b) {
      * Exchange data on UART level,
      * send single byte for each bit = 8 bytes
      */
-    ow_ll_transmit_receive(ow->arg, tr, tr, 8); /* Exchange data over UART */
+    ow_ll_transmit_receive(tr, tr, 8, ow->arg); /* Exchange data over UART */
     
     /*
      * Check received data. If we read 0xFF,
@@ -262,8 +262,9 @@ ow_search_reset(ow_t* ow) {
 
 /**
  * \brief           Search for devices on 1-wire protocol
+ * \note            To reset search and to start over, use \ref ow_search_reset function
  * \param[in,out]   ow: 1-Wire handle
- * \param[out]      Output variable to save found ROM ID
+ * \param[out]      rom_id: Pointer to 8-byte long variable to save ROM
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t

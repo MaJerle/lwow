@@ -38,22 +38,26 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * \ingroup         OW
- * \defgroup        OW_CONFIG OneWire config
+ * \defgroup        OW_CONFIG Configuration
  * \brief           Configuration for OneWire library
  * \{
  */
  
 /**
- * \brief           OS configuration
+ * \brief           Enables (`1`) or disables (`0`) operating system support in the library
+ *
+ * \note            When `OW_CFG_OS` is enabled, user must implement functions in \ref OW_SYS group.
  */
 #ifndef OW_CFG_OS
-#define OW_CFG_OS                               1
+#define OW_CFG_OS                               0
 #endif
 
 /**
  * \brief           Mutex handle type
- * \note            This value must be set in case \ref OW_CFG_OS is set to 1
+ *
+ * \note            This value must be set in case \ref OW_CFG_OS is set to `1`.
+ *                  If data type is not known to compiler, include header file with
+ *                  definition before you define handle type
  */
 #ifndef OW_CFG_OS_MUTEX_HANDLE
 #define OW_CFG_OS_MUTEX_HANDLE                  void *

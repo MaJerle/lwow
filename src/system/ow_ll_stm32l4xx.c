@@ -166,7 +166,7 @@ ow_ll_deinit(void* arg) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ll_set_baudrate(void* arg, uint32_t baud) {
+ow_ll_set_baudrate(uint32_t baud, void* arg) {
     LL_RCC_ClocksTypeDef rcc_clocks;
 
     LL_RCC_GetSystemClocksFreq(&rcc_clocks);/* Read system frequencies */
@@ -179,14 +179,14 @@ ow_ll_set_baudrate(void* arg, uint32_t baud) {
 
 /**
  * \brief           Transmit-Receive data over OneWire bus
- * \param[in]       arg: User argument
  * \param[in]       tx: Array of data to send
  * \param[out]      rx: Array to save receive data 
  * \param[in]       len: Number of bytes to send
+ * \param[in]       arg: User argument
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ll_transmit_receive(void* arg, const void* tx, void* rx, size_t len) {
+ow_ll_transmit_receive(const void* tx, void* rx, size_t len, void* arg) {
     /* Clear all DMA flags */
     ONEWIRE_USART_RX_DMA_CLEAR_FLAGS;
     ONEWIRE_USART_TX_DMA_CLEAR_FLAGS;

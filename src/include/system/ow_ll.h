@@ -41,10 +41,20 @@ extern "C" {
 #include "stddef.h"
 #include "ow/ow.h"
 
+/**
+ * \defgroup        OW_LL Low-Level functions
+ * \brief           Low-level device dependant functions
+ * \{
+ */
+
 uint8_t     ow_ll_init(void* arg);
 uint8_t     ow_ll_deinit(void* arg);
-uint8_t     ow_ll_set_baudrate(void* arg, uint32_t baudrate);
-uint8_t     ow_ll_transmit_receive(void* arg, const void* tx, void* rx, size_t len);
+uint8_t     ow_ll_set_baudrate(uint32_t baudrate, void* arg);
+uint8_t     ow_ll_transmit_receive(const void* tx, void* rx, size_t len, void* arg);
+
+/**
+ * \}
+ */
 
 #ifdef __cplusplus
 }
