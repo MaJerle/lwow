@@ -187,7 +187,7 @@ ow_write_byte(ow_t* ow, uint8_t b) {
      */
     for (i = 0; i < 8; i++) {
         if (tr[i] == 0xFF) {
-            r |= 0x01;
+            r |= 0x01 << i;
         }
     }
     return r;
