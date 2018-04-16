@@ -7,4 +7,5 @@ https://www.maximintegrated.com/en/app-notes/index.mvp/id/214
 # Documentation and project page
 
 Project page:  http://majerle.eu/projects/one-wire-uart-communication
+
 Documentation: http://majerle.eu/documentation/ow/html/index.html
