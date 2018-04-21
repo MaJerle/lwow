@@ -361,3 +361,59 @@ out:
     memcpy(rom_id, ow->rom, sizeof(ow->rom));   /* Copy ROM to user memory */
     return id_bit_number == 0 ? owOK : owERRNODEV;  /* Return search result status */
 }
+
+/**
+ * \brief           Select device on 1-wire network with exact ROM number
+ * \param[in]       ow: 1-Wire handle
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+ow_match_rom(ow_t* ow, uint8_t* rom_id) {
+    uint8_t i;
+
+    ow_write_byte(ow, ONEWIRE_CMD_MATCH_ROM);   /* Write byte to match rom exactly */
+
+    /*
+     * Send 8 bytes representing ROM address
+     */
+    for (i = 0; i < 8; i++) {
+        ow_write_byte(ow, rom_id[i]);           /* Send ROM bytes */
+    }
+    return 1;
+}
+
+/**
+ * \brief           Skip ROM address and select all devices on the network
+ * \param[in]       ow: 1-Wire handle
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+ow_skip_rom(ow_t* ow) {
+    ow_write_byte(ow, ONEWIRE_CMD_SKIP_ROM);    /* Write byte to match rom exactly */
+    return 1;
+}
+
+/**
+ * \brief           Calculate CRC-8 of input data
+ * \param[in]       in: Input data
+ * \param[in]       len: Number of bytes
+ * \return          Calculated CRC
+ */
+uint8_t
+ow_crc(const void *in, size_t len) {
+    uint8_t crc = 0, inbyte, i, mix;
+    const uint8_t* d = in;
+
+    while (len--) {
+        inbyte = *d++;
+        for (i = 8; i; i--) {
+            mix = (crc ^ inbyte) & 0x01;
+            crc >>= 1;
+            if (mix) {
+                crc ^= 0x8C;
+            }
+            inbyte >>= 1;
+        }
+    }
+    return crc;
+}
