@@ -33,6 +33,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx.h"
 #include "stm32l4xx_it.h"
+#include "cmsis_os.h"
 
 /* External variables --------------------------------------------------------*/
 
@@ -98,6 +99,14 @@ DebugMon_Handler(void) {
     while (1) {
     
     }
+}
+
+/**
+ * \brief           This function handles Debug monitor.
+ */
+void
+SysTick_Handler(void) {
+    osSystickHandler();
 }
 
 /******************************************************************************/
