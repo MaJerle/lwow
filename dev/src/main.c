@@ -18,6 +18,7 @@
 #include "stddef.h"
 #include "stdio.h"
 #include "ow/ow.h"
+#include "ow/devices/ow_device_ds18x20.h"
 
 /* Function declarations */
 static void LL_Init(void);

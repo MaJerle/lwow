@@ -528,6 +528,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>OneWire Devices</GroupName>
+          <Files>
+            <File>
+              <FileName>ow_device_ds18x20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\devices\ow_device_ds18x20.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>

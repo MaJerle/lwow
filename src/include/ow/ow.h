@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of OneWire-UART.
+ * This file is part of OneWire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -73,6 +73,8 @@ typedef struct {
 	void* arg;                                  /*!< User custom argument */
 } ow_t;
 
+#define OW_UNUSED(x)            ((void)(x))
+
 owr_t       ow_init(ow_t* ow, void* arg);
 
 owr_t       ow_protect(ow_t* ow);
@@ -84,6 +86,10 @@ uint8_t     ow_read_byte(ow_t* ow);
 
 owr_t       ow_search_reset(ow_t* ow);
 owr_t       ow_search(ow_t* ow, uint8_t *id);
+
+uint8_t     ow_match_rom(ow_t* ow, uint8_t* rom_id);
+uint8_t     ow_skip_rom(ow_t* ow);
+uint8_t     ow_crc(const void *in, size_t len);
 
 /**
  * \}
