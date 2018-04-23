@@ -73,7 +73,17 @@ typedef struct {
 	void* arg;                                  /*!< User custom argument */
 } ow_t;
 
-#define OW_UNUSED(x)            ((void)(x))
+#define OW_UNUSED(x)                ((void)(x))
+    
+#define OW_CMD_RSCRATCHPAD          0xBE
+#define OW_CMD_WSCRATCHPAD          0x4E
+#define OW_CMD_CPYSCRATCHPAD        0x48
+#define OW_CMD_RECEEPROM            0xB8
+#define OW_CMD_RPWRSUPPLY           0xB4
+#define OW_CMD_SEARCHROM            0xF0
+#define OW_CMD_READROM              0x33
+#define OW_CMD_MATCHROM             0x55
+#define OW_CMD_SKIPROM              0xCC
 
 owr_t       ow_init(ow_t* ow, void* arg);
 
@@ -83,6 +93,7 @@ owr_t       ow_unprotect(ow_t* ow);
 owr_t       ow_reset(ow_t* ow);
 uint8_t     ow_write_byte(ow_t* ow, uint8_t b);
 uint8_t     ow_read_byte(ow_t* ow);
+uint8_t     ow_read_bit(ow_t* ow);
 
 owr_t       ow_search_reset(ow_t* ow);
 owr_t       ow_search(ow_t* ow, uint8_t *id);

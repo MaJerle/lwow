@@ -30,10 +30,11 @@ static void USART_Printf_Init(void);
  */
 int
 main(void) {
-    uint8_t c;
+    uint8_t c, i;
     uint8_t id[8][8];
     owr_t res;
     ow_t ow;
+    float t;
     
     LL_Init();                                  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     SystemClock_Config();                       /* Configure the system clock */
@@ -56,6 +57,13 @@ main(void) {
     }
     ow_unprotect(&ow);                          /* Unlock 1-Wire to allow concurrent access */
     printf("Search done!\r\n");
+    if (c > 0) {
+        ow_ds18x20_start(&ow, NULL);
+        for (i = 0; i < c; i++) {
+            while (!ow_ds18x20_read(&ow, id[i], &t));
+            printf("Temp %d: %f\r\n", (int)i, t);
+        }
+    }
     (void)res;
 
     /* Infinite loop */

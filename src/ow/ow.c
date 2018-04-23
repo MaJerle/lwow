@@ -43,11 +43,6 @@
 #define OW_FIRST_DEV                    0xFF
 #define OW_LAST_DEV                     0x00
 
-/* List of commands */
-#define ONEWIRE_CMD_MATCH_ROM           0x55
-#define ONEWIRE_CMD_SKIP_ROM            0xCC
-#define ONEWIRE_CMD_SEARCH_ROM          0xF0
-
 #define ONEWIRE_BYTE_RESET              0xF0
 
 #endif /* !__DOXYGEN__ */
@@ -250,6 +245,16 @@ ow_read_byte(ow_t* ow) {
 }
 
 /**
+ * \brief           Read single bit on 1-Wire network
+ * \param[in,out]   ow: 1-Wire handle
+ * \return          Bit value
+ */
+uint8_t
+ow_read_bit(ow_t* ow) {
+    return send_bit(ow, 1);                     /* Send bit as `1` and read the response */
+}
+
+/**
  * \brief           Reset search
  * \param[in,out]   ow: 1-Wire handle
  * \return          \ref owOK on success, member of \ref owr_t otherwise
@@ -292,7 +297,7 @@ ow_search(ow_t* ow, uint8_t *rom_id) {
     /*
      * Step 2: Send search rom command for all devices on 1-Wire
      */
-    ow_write_byte(ow, ONEWIRE_CMD_SEARCH_ROM);  /* Start with search ROM command */
+    ow_write_byte(ow, OW_CMD_SEARCHROM);        /* Start with search ROM command */
     next_disrepancy = OW_LAST_DEV;              /* This is currently last device */
 
     id_bit_number = 64;                         /* We have to read 8 bytes, each 8 bits */
@@ -365,13 +370,14 @@ out:
 /**
  * \brief           Select device on 1-wire network with exact ROM number
  * \param[in]       ow: 1-Wire handle
+ * \param[in]       rom_id: Device ROM address to select
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
 ow_match_rom(ow_t* ow, uint8_t* rom_id) {
     uint8_t i;
 
-    ow_write_byte(ow, ONEWIRE_CMD_MATCH_ROM);   /* Write byte to match rom exactly */
+    ow_write_byte(ow, OW_CMD_MATCHROM);         /* Write byte to match rom exactly */
 
     /*
      * Send 8 bytes representing ROM address
@@ -389,7 +395,7 @@ ow_match_rom(ow_t* ow, uint8_t* rom_id) {
  */
 uint8_t
 ow_skip_rom(ow_t* ow) {
-    ow_write_byte(ow, ONEWIRE_CMD_SKIP_ROM);    /* Write byte to match rom exactly */
+    ow_write_byte(ow, OW_CMD_SKIPROM);          /* Write byte to match rom exactly */
     return 1;
 }
 
@@ -412,7 +418,7 @@ ow_crc(const void *in, size_t len) {
             if (mix) {
                 crc ^= 0x8C;
             }
-            inbyte >>= 1;
+            inbyte >>= 0x01;
         }
     }
     return crc;
