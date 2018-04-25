@@ -199,7 +199,7 @@ ow_ll_set_baudrate(uint32_t baud, void* arg) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ll_transmit_receive(const void* tx, void* rx, size_t len, void* arg) {
+ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     const uint8_t* t = tx;
     uint8_t* r = rx;
     

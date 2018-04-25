@@ -57,8 +57,8 @@ ow_ll_deinit(void* arg) {
 }
 
 /**
- * \brief           UART set baudrate function
- * \param[in]       baud: Expected baudrate for UART
+ * \brief           Set baudrate for UART hardware
+ * \param[in]       baud: Expected baudrate for UART. Values can be either `9600` or `15200` bauds
  * \param[in]       arg: User argument passed on \ref ow_init function
  * \return          `1` on success, `0` otherwise
  */
@@ -78,7 +78,7 @@ ow_ll_set_baudrate(uint32_t baud, void* arg) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ll_transmit_receive(const void* tx, void* rx, size_t len, void* arg) {
+ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     /* Perform data exchange */
     
     return 1;

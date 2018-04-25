@@ -50,7 +50,7 @@ extern "C" {
 uint8_t     ow_ll_init(void* arg);
 uint8_t     ow_ll_deinit(void* arg);
 uint8_t     ow_ll_set_baudrate(uint32_t baudrate, void* arg);
-uint8_t     ow_ll_transmit_receive(const void* tx, void* rx, size_t len, void* arg);
+uint8_t     ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
 
 /**
  * \}
