@@ -73,17 +73,17 @@ typedef struct {
 	void* arg;                                  /*!< User custom argument */
 } ow_t;
 
-#define OW_UNUSED(x)                ((void)(x))
+#define OW_UNUSED(x)                ((void)(x)) /*!< Unused variable macro */
     
-#define OW_CMD_RSCRATCHPAD          0xBE
-#define OW_CMD_WSCRATCHPAD          0x4E
-#define OW_CMD_CPYSCRATCHPAD        0x48
+#define OW_CMD_RSCRATCHPAD          0xBE        /*!< Read scratchpad command for 1-Wire devices */
+#define OW_CMD_WSCRATCHPAD          0x4E        /*!< Write scratchpad command for 1-Wire devices */
+#define OW_CMD_CPYSCRATCHPAD        0x48        /*!< Copy scratchpad command for 1-Wire devices */
 #define OW_CMD_RECEEPROM            0xB8
 #define OW_CMD_RPWRSUPPLY           0xB4
-#define OW_CMD_SEARCHROM            0xF0
-#define OW_CMD_READROM              0x33
-#define OW_CMD_MATCHROM             0x55
-#define OW_CMD_SKIPROM              0xCC
+#define OW_CMD_SEARCHROM            0xF0        /*!< Search ROM command */
+#define OW_CMD_READROM              0x33        /*!< Read ROM command */
+#define OW_CMD_MATCHROM             0x55        /*!< Match ROM command. Select device with specific ROM */
+#define OW_CMD_SKIPROM              0xCC        /*!< Skip ROM, select all devices */
 
 owr_t       ow_init(ow_t* ow, void* arg);
 
