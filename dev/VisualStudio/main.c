@@ -19,7 +19,7 @@ main(void) {
     /*
      * Scan for 1-wire devices
      */
-    ow_protect(&ow);                            /* Protect from multiple-thread */
+    ow_protect(&ow);                            /* Protect against multiple-thread access */
     if (ow_search_reset(&ow) == owOK) {         /* Start search for devices */
         printf("Search for 1-Wire device started!\r\n");
         count = 0;
@@ -29,7 +29,12 @@ main(void) {
                 ri[0], ri[1], ri[2], ri[3], ri[4], ri[5], ri[6], ri[7]
             );
             if (ow_ds18x20_is_b(&ow, rom_addresses[count])) {
-                ow_ds18x20_set_resolution(&ow, rom_addresses[count], 9 + count % 4);
+                ow_ds18x20_set_resolution(&ow, rom_addresses[count], 9 + count % 4, 0);
+            }
+            if (count == 0) {
+                ow_ds18x20_set_alarm_temp(&ow, ri, 26, 28, 0);
+            } else {
+                ow_ds18x20_set_alarm_temp(&ow, ri, OW_DS18X20_ALARM_DISABLE, OW_DS18X20_ALARM_DISABLE, 0);
             }
             count++;
         }
@@ -45,17 +50,25 @@ main(void) {
     if (count > 0) {
         while (1) {
             printf("\r\n\r\nStart temperature conversion\r\n");
-            ow_ds18x20_start(&ow, NULL);        /* Start temperature conversion on all devices */
+            ow_ds18x20_start(&ow, NULL, 1);     /* Start temperature conversion on all devices */
             Sleep(1000);                        /* Sleep for some time */
             printf("\r\n");
             for (i = 0; i < count; i++) {       /* Read all connected sensors */
                 float temp;
                 if (ow_ds18x20_is_b(&ow, rom_addresses[i])) {
-                    uint8_t resolution = ow_ds18x20_get_resolution(&ow, rom_addresses[i]);
-                    if (ow_ds18x20_read(&ow, rom_addresses[i], &temp)) {
+                    uint8_t resolution = ow_ds18x20_get_resolution(&ow, rom_addresses[i], 1);
+                    if (ow_ds18x20_read(&ow, rom_addresses[i], &temp, 1)) {
                         printf("Sensor %u returned temperature %f degrees (%u bits resolution)\r\n", (unsigned)i, temp, (unsigned)resolution);
                     }
                 }
+            }
+
+            /* Search for devices with alarm flag */
+            ow_search_reset(&ow);               /* Reset search */
+            while (ow_ds18x20_search_alarm(&ow, ri) == owOK) {
+                printf("Device with alarm: %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X\r\n",
+                    ri[0], ri[1], ri[2], ri[3], ri[4], ri[5], ri[6], ri[7]
+                );
             }
         }
     } else {

@@ -55,17 +55,18 @@ main(void) {
         );
         c++;
     }
+    (void)res;
     ow_unprotect(&ow);                          /* Unlock 1-Wire to allow concurrent access */
     printf("Search done with %d devices\r\n", (int)c);
     if (c > 0) {
         while (1) {
             printf("\r\nTemperature conversion started!\r\n");
-            ow_ds18x20_start(&ow, NULL);        /* Start conversion on all devices */
+            ow_ds18x20_start(&ow, NULL, 1);     /* Start conversion on all devices */
             LL_mDelay(1000);
             
             /* Read all devices */
             for (i = 0; i < c; i++) {
-                ow_ds18x20_read(&ow, id[i], &t);
+                ow_ds18x20_read(&ow, id[i], &t, 1);
                 printf("Temp %d: %f\r\n", (int)i, t);
             }
         }
