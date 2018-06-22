@@ -266,14 +266,26 @@ ow_search_reset(ow_t* ow) {
 }
 
 /**
- * \brief           Search for devices on 1-wire protocol
+ * \brief           Search for devices on 1-wire bus
  * \note            To reset search and to start over, use \ref ow_search_reset function
  * \param[in,out]   ow: 1-Wire handle
  * \param[out]      rom_id: Pointer to 8-byte long variable to save ROM
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_search(ow_t* ow, uint8_t *rom_id) {
+ow_search(ow_t* ow, uint8_t* rom_id) {
+    return ow_search_with_command(ow, OW_CMD_SEARCHROM, rom_id);
+}
+
+/**
+ * \note            To reset search and to start over, use \ref ow_search_reset function
+ * \param[in,out]   ow: 1-Wire handle
+ * \param[in]       cmd: command to use for search operation
+ * \param[out]      rom_id: Pointer to 8-byte long variable to save ROM
+ * \return          \ref owOK on success, member of \ref owr_t otherwise
+ */
+owr_t
+ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id) {
     uint8_t id_bit_number, j, next_disrepancy;
     uint8_t b, b_cpl;
     owr_t res;
@@ -297,7 +309,7 @@ ow_search(ow_t* ow, uint8_t *rom_id) {
     /*
      * Step 2: Send search rom command for all devices on 1-Wire
      */
-    ow_write_byte(ow, OW_CMD_SEARCHROM);        /* Start with search ROM command */
+    ow_write_byte(ow, cmd);                     /* Start with search ROM command */
     next_disrepancy = OW_LAST_DEV;              /* This is currently last device */
 
     id_bit_number = 64;                         /* We have to read 8 bytes, each 8 bits */

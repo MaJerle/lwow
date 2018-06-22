@@ -96,7 +96,8 @@ uint8_t     ow_read_byte(ow_t* ow);
 uint8_t     ow_read_bit(ow_t* ow);
 
 owr_t       ow_search_reset(ow_t* ow);
-owr_t       ow_search(ow_t* ow, uint8_t *id);
+owr_t       ow_search(ow_t* ow, uint8_t* rom_id);
+owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id);
 
 uint8_t     ow_match_rom(ow_t* ow, uint8_t* rom_id);
 uint8_t     ow_skip_rom(ow_t* ow);
