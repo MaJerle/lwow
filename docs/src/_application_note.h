@@ -80,4 +80,37 @@
  *
  * \note 			If we send `0xF0` and we receive back `0xF0`, there were no slaves connected on bus,
  *					because nobody set bus to low and `TX` value is just reflected to `RX`.
+ *
+ * \section 		sect_byte_bit Byte, bit and timing relation
+ *
+ * Single byte is represented with 8-bits stream. By 1-Wire specs, sending 1-bit of data, specific sequence must be send over UART at `115200` bauds.
+ * 
+ *  - <b>Write logical high:</b> To send logical low bit, bus requires UART constant value `0xFF`.
+ *    				Start bit in UART sequence will take care of short pulse low, which indicates `start of frame` for 1-Wire bit transsfer.
+ *					The rest of the time bus must be high (`0xFF part`).
+ *
+ * 	- <b>Write logical low:</b> To send logical low bit, bus requires UART constant value `0x00` which forces bus to be low on full period, except STOP bit of UART.
+ *
+ *  - <b>Read bit</b>: Since master must initialize every transaction, reading bit value is the same as writing logical 1.
+ *  				It starts with short low period (start bit of UART frame) and follows with bus high. 
+ *					Slave is responsible to force bus low in case of logical low or keep it high in case of logical high.
+ *
+ * <a href="https://www.maximintegrated.com/en/app-notes/index.mvp/id/214" target="_new">
+ *						Detailed correlation between 1-Wire timing and UART can be found here.</a>
+ *
+ * It is worth to know, important timing starts when master initializes bus to read/write bit. 
+ * When read/write sequence of single byte finishes, master does not need to start new sequence
+ * for new bit immediately thus there is advantage for user, if host MCU or other device does not have DMA, becaue:
+ *
+ * 	- User sets UART output data and waits for transmission completed for `TX` and also for `RX`
+ *   	(user sends data on `TX`, but must read back on `RX` side)
+ *  - If interrupt happens (or task switch in RTOS mode), UART HW will take care of proper timing and set 
+ *		status flags indicating transmission of byte completed, etc.
+ *	- When original task start execution again (or interrupt finishes), user can read previous byte
+ *		and send new one for next bit
+ *	- Conclusion: No matter how complicated our system is (how many interrupts, task, etc), 
+ *		timings for every bit will be correct, but timing between `2` bits will vary and this is not an issue!
+ *		- Very important advantage comparing to software driven timings
+ *
+ * \image html 1w_bit_byte.svg To send `3` bits on 1-Wire level, user must send `3` bytes on UART level. Blue and Green parts show timing part which is not critical
  */
