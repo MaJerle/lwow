@@ -56,15 +56,22 @@ main(void) {
         c++;
     }
     ow_unprotect(&ow);                          /* Unlock 1-Wire to allow concurrent access */
-    printf("Search done!\r\n");
+    printf("Search done with %d devices\r\n", (int)c);
     if (c > 0) {
-        ow_ds18x20_start(&ow, NULL);
-        for (i = 0; i < c; i++) {
-            while (!ow_ds18x20_read(&ow, id[i], &t));
-            printf("Temp %d: %f\r\n", (int)i, t);
+        while (1) {
+            printf("\r\nTemperature conversion started!\r\n");
+            ow_ds18x20_start(&ow, NULL);        /* Start conversion on all devices */
+            LL_mDelay(1000);
+            
+            /* Read all devices */
+            for (i = 0; i < c; i++) {
+                ow_ds18x20_read(&ow, id[i], &t);
+                printf("Temp %d: %f\r\n", (int)i, t);
+            }
         }
+    } else {
+        printf("No devices on network!\r\n");
     }
-    (void)res;
 
     /* Infinite loop */
     while (1) {

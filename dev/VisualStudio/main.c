@@ -39,22 +39,28 @@ main(void) {
     }
     ow_unprotect(&ow);                          /* We can now unprotect again */
 
-    /* Check if we have any device on 1-Wire */
-    /* Manually start DS18x20 temperature conversion on all devices */
+    /*
+     * Periodically start conversions
+     */
     if (count > 0) {
-        ow_ds18x20_start(&ow, NULL);            /* Wait for some time */
-        Sleep(1000);
-        for (i = 0; i < count; i++) {
-            float temp;
-            if (ow_ds18x20_is_b(&ow, rom_addresses[i])) {
-                uint8_t resolution = ow_ds18x20_get_resolution(&ow, rom_addresses[i]);
-                if (ow_ds18x20_read(&ow, rom_addresses[i], &temp)) {
-                    printf("Sensor %u returned temperature %f degrees (%u bits)\r\n", (unsigned)i, temp, (unsigned)resolution);
+        while (1) {
+            printf("\r\n\r\nStart temperature conversion\r\n");
+            ow_ds18x20_start(&ow, NULL);        /* Start temperature conversion on all devices */
+            Sleep(1000);                        /* Sleep for some time */
+            printf("\r\n");
+            for (i = 0; i < count; i++) {       /* Read all connected sensors */
+                float temp;
+                if (ow_ds18x20_is_b(&ow, rom_addresses[i])) {
+                    uint8_t resolution = ow_ds18x20_get_resolution(&ow, rom_addresses[i]);
+                    if (ow_ds18x20_read(&ow, rom_addresses[i], &temp)) {
+                        printf("Sensor %u returned temperature %f degrees (%u bits resolution)\r\n", (unsigned)i, temp, (unsigned)resolution);
+                    }
                 }
             }
         }
+    } else {
+        printf("No devices found on 1-Wire network\r\n");
     }
-
     return 0;
 }
 
