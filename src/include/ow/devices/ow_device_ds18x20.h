@@ -41,8 +41,8 @@ extern "C" {
 
 /**
  * \ingroup         OW_DEVICES
- * \defgroup        OW_DEVICE_DS18x20 DS18x20
- * \brief           Device driver for DS18x20
+ * \defgroup        OW_DEVICE_DS18x20 DS18x20 temperature sensor
+ * \brief           Device driver for DS18x20 temperature sensor
  * \{
  */
 

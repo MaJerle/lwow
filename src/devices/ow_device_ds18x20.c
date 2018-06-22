@@ -123,7 +123,7 @@ ow_ds18x20_read(ow_t* ow, uint8_t* rom_id, float* t) {
 
 
 /**
- * \brief           Get resolution for DS18B20 device
+ * \brief           Get resolution for `DS18B20` device
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to get resolution from
  * \return          Resolution in units of bits (`9 - 12`) on success, `0` otherwise
@@ -213,7 +213,7 @@ ow_ds18x20_set_resolution(ow_t* ow, uint8_t* rom_id, uint8_t bits) {
 }
 
 /**
- * \brief           Check if ROM address matches DS18B20 device
+ * \brief           Check if ROM address matches `DS18B20` device
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to test for DS18B20
  * \return          `1` on success, `0` otherwise
@@ -225,7 +225,7 @@ ow_ds18x20_is_b(ow_t* ow, uint8_t* rom_id) {
 }
 
 /**
- * \brief           Check if ROM address matches DS18S20 device
+ * \brief           Check if ROM address matches `DS18S20` device
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to test for DS18S20
  * \return          `1` on success, `0` otherwise
