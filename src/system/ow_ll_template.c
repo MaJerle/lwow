@@ -1,6 +1,6 @@
 /**
- * \file            ow_ll_stm32l4.c
- * \brief           UART implementation for STM32L4xx MCUs
+ * \file            ow_ll_template.c
+ * \brief           Low-level UART communication
  */
  
 /*
