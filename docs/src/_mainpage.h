@@ -2,14 +2,23 @@
  * \mainpage
  * \tableofcontents
  * 
- * 
- *
  * \section         sect_features Features
  *
+ *  - 1-Wire protocol fits UART specifications at `9600` and `115200` bauds
+ *  - Hardware is responsible for timing characteristics
+ *  - Works with operating system due to HW time management
+ *  - Allows DMA on the high-performance microcontrollers
+ *  - Different device drivers included
+ *     - DS18x20 temperature sensor
+ *  - User friendly license
+ *  - Sources and releases available on Github
+ *  - Full documentation available
  *
  * \section         sect_resources Resources
  *
- *  - 
+ *  - Read \ref page_appnote before you start development
+ *  - <a href="https://github.com/MaJerle/onewire_uart">Official development repository on Github</a>
+ *  - <a href="https://www.maximintegrated.com/en/app-notes/index.mvp/id/214">Using a UART to Implement a 1-Wire Bus Master</a> from Maxim website
  *
  * \section         sect_license License
  *
