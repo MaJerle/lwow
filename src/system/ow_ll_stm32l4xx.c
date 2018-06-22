@@ -203,11 +203,14 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     const uint8_t* t = tx;
     uint8_t* r = rx;
     
-    if (len == 1) {
-        LL_USART_TransmitData8(ONEWIRE_USART, *t);
-        while (!LL_USART_IsActiveFlag_TXE(ONEWIRE_USART));
-        while (!LL_USART_IsActiveFlag_RXNE(ONEWIRE_USART));
-        *r = LL_USART_ReceiveData8(ONEWIRE_USART);
+    /* Send byte with polling */
+    if (len) {
+        while (len--) {
+            LL_USART_TransmitData8(ONEWIRE_USART, *t++);
+            while (!LL_USART_IsActiveFlag_TXE(ONEWIRE_USART));
+            while (!LL_USART_IsActiveFlag_RXNE(ONEWIRE_USART));
+            *r++ = LL_USART_ReceiveData8(ONEWIRE_USART);
+        }
         return 1;
     }
     
@@ -229,6 +232,7 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     LL_USART_EnableDMAReq_TX(ONEWIRE_USART);
     
     /* Enable UART DMA requests and start stream */
+    LL_USART_ReceiveData8(ONEWIRE_USART);
     LL_DMA_EnableChannel(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL);
     LL_DMA_EnableChannel(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL);
     
@@ -238,13 +242,17 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
      * We have to wait for RX DMA to complete and to transfer
      * all bytes to memory before we can finish the transaction
      */
-    while (LL_DMA_GetDataLength(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL));
+    while (LL_DMA_GetDataLength(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL) > 0);
     
     /* Disable requests */
     LL_DMA_DisableChannel(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL);
     LL_DMA_DisableChannel(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL);
     LL_USART_DisableDMAReq_RX(ONEWIRE_USART);
     LL_USART_DisableDMAReq_TX(ONEWIRE_USART);
+    
+    LL_USART_ClearFlag_TC(ONEWIRE_USART);
+    ONEWIRE_USART_RX_DMA_CLEAR_FLAGS;
+    ONEWIRE_USART_TX_DMA_CLEAR_FLAGS;
     
     return 1;
 }
