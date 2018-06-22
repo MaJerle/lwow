@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VisualStudio", "VisualStudio.vcxproj", "{21B0EEA6-96AD-4699-8C90-79FFD626E9B7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "onewire_uart", "onewire_uart.vcxproj", "{21B0EEA6-96AD-4699-8C90-79FFD626E9B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
