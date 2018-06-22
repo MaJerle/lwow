@@ -48,6 +48,10 @@ extern "C" {
 
 uint8_t     ow_ds18x20_start(ow_t* ow, uint8_t* rom_id);
 uint8_t     ow_ds18x20_read(ow_t* ow, uint8_t* rom_id, float* t);
+
+uint8_t     ow_ds18x20_set_resolution(ow_t* ow, uint8_t* rom_id, uint8_t bits);
+uint8_t     ow_ds18x20_get_resolution(ow_t* ow, uint8_t* rom_id);
+
 uint8_t     ow_ds18x20_is_b(ow_t* ow, uint8_t* rom_id);
 uint8_t     ow_ds18x20_is_s(ow_t* ow, uint8_t* rom_id);
 

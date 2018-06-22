@@ -75,6 +75,7 @@ ow_ds18x20_read(ow_t* ow, uint8_t* rom_id, float* t) {
     if (rom_id != NULL && !ow_ds18x20_is_b(ow, rom_id) && !ow_ds18x20_is_s(ow, rom_id)) {
         return 0;
     }
+
     ow_protect(ow);                             /* Protect 1-Wire */
     /*
      * First read bit and check if all devices completed with conversion.
@@ -94,7 +95,7 @@ ow_ds18x20_read(ow_t* ow, uint8_t* rom_id, float* t) {
         }
         crc = ow_crc(data, 0x09);               /* Calculate CRC */
         if (!crc) {                             /* Result must be 0 to match the CRC */
-            temp = data[1] << 0x08 | data[0];   /* Format data in integer format */
+            temp = (data[1] << 0x08) | data[0]; /* Format data in integer format */
             resolution = ((data[4] & 0x60) >> 0x05) + 0x09; /* Set resolution in units of bits */
             if (temp & 0x8000) {                /* Check for negative temperature */
                 temp = ~temp + 1;               /* Perform two's complement */
@@ -118,6 +119,97 @@ ow_ds18x20_read(ow_t* ow, uint8_t* rom_id, float* t) {
     }
     ow_unprotect(ow);                           /* Unprotect 1-Wire */
     return ret;
+}
+
+
+/**
+ * \brief           Get resolution for DS18B20 device
+ * \param[in]       ow: 1-Wire handle
+ * \param[in]       rom_id: 1-Wire device address to get resolution from
+ * \return          Resolution in units of bits (`9 - 12`) on success, `0` otherwise
+ */
+uint8_t
+ow_ds18x20_get_resolution(ow_t* ow, uint8_t* rom_id) {
+    uint8_t res = 0;
+
+    if (!ow_ds18x20_is_b(ow, rom_id)) {         /* Check if it is B version */
+        return 0;
+    }
+
+    ow_protect(ow);                             /* Protect 1-Wire */
+    if (ow_reset(ow) == owOK) {                 /* Reset bus */
+        ow_match_rom(ow, rom_id);               /* Select device */
+        ow_write_byte(ow, OW_CMD_RSCRATCHPAD);  /* Read scratchpad command */
+
+        ow_read_byte(ow);                       /* Read byte, ignore it */
+        ow_read_byte(ow);                       /* Read byte, ignore it */
+        ow_read_byte(ow);
+        ow_read_byte(ow);
+
+        res = ((ow_read_byte(ow) & 0x60) >> 0x05) + 9;  /* Read configuration byte and calculate bits */
+    }
+    ow_unprotect(ow);                           /* Unprotect 1-Wire */
+
+    return res;
+}
+
+/**
+ * \brief           Set resolution for `DS18B20` sensor
+ * \note            `DS18S20` has fixed `9-bit` resolution
+ * \param[in]       ow: 1-Wire handle
+ * \param[in]       rom_id: Address of device to set resolution
+ * \param[in]       bits: Number of resolution bits. Possible values are `9 - 12`
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+ow_ds18x20_set_resolution(ow_t* ow, uint8_t* rom_id, uint8_t bits) {
+    uint8_t th, tl, conf, res = 0;
+
+    if (bits < 9 || bits > 12 ||                /* Check bits range */
+        !ow_ds18x20_is_b(ow, rom_id)) {         /* Check if it is B version */
+        return 0;
+    }
+
+    ow_protect(ow);                             /* Protect 1-Wire */
+    if (ow_reset(ow) == owOK) {                 /* Reset bus */
+        ow_match_rom(ow, rom_id);               /* Select device */
+        ow_write_byte(ow, OW_CMD_RSCRATCHPAD);  /* Read scratchpad command */
+
+        ow_read_byte(ow);                       /* Read byte, ignore it */
+        ow_read_byte(ow);                       /* Read byte, ignore it */
+
+        th = ow_read_byte(ow);
+        tl = ow_read_byte(ow);
+        conf = ow_read_byte(ow) & ~(0x60);      /* Remove configuration bits for temperature resolution */
+
+        switch (bits) {                         /* Check bits configuration */
+            case 10: conf |= 0x20; break;       /* 10-bits configuration */
+            case 11: conf |= 0x40; break;       /* 11-bits configuration */
+            case 12: conf |= 0x60; break;       /* 12-bits configuration */
+            default: conf |= 0x00; break;       /* 9-bits configuration */
+        }
+
+        /* Write data back to device */
+        if (ow_reset(ow) == owOK) {
+            ow_match_rom(ow, rom_id);           /* Select device */
+            ow_write_byte(ow, OW_CMD_WSCRATCHPAD);  /* Write scratchpad command */
+
+            ow_write_byte(ow, th);
+            ow_write_byte(ow, tl);
+            ow_write_byte(ow, conf);
+
+            /* Copy scratchpad to non-volatile memory */
+            if (ow_reset(ow) == owOK) {         
+                ow_match_rom(ow, rom_id);       /* Select device */
+                ow_write_byte(ow, OW_CMD_CPYSCRATCHPAD);/* Copy scratchpad */
+
+                res = 1;
+            }
+        }
+    }
+    ow_unprotect(ow);                           /* Unprotect 1-Wire */
+
+    return res;
 }
 
 /**
