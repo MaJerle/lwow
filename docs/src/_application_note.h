@@ -78,7 +78,7 @@
  * Imagine reset sequence in 1-Wire protocol. UART must be set at `9600` bauds and byte value `0xF0` must be transmitted on TX line.
  * We expect bus to be low half of byte and high half of byte. By 1-Wire specs, slaves must respond by setting bus low when TX pin is high.
  *
- * \note 			If we send `0xF0` and we receive back `0xF0`, there were no slaves connected on bus,
+ * \note 			If we send `0xF0` and we receive back `0xF0`, there are no slaves connected on a bus,
  *					because nobody set bus to low and `TX` value is just reflected to `RX`.
  *
  * \section 		sect_byte_bit Byte, bit and timing relation
