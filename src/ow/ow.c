@@ -57,12 +57,12 @@ send_bit(ow_t* ow, uint8_t v) {
     uint8_t b;
 	
     /*
-     * Sending logical 1 over 1-wire, send 0xFF over UART
-     * Sending logical 0 over 1-wire, send 0x00 over UART
+     * To send logical 1 over 1-wire, send 0xFF over UART
+     * To send logical 0 over 1-wire, send 0x00 over UART
      */
     v = v ? 0xFF : 0x00;                        /* Convert to 0 or 1 */
     ow_ll_transmit_receive(&v, &b, 1, ow->arg); /* Exchange data over USART */
-    if (b == 0xFF) {                            /* To read bit 1, check of 0xFF sequence */
+    if (b == 0xFF) {                            /* To read bit 1, check for 0xFF sequence */
         return 1;
     }
     return 0;
@@ -120,7 +120,7 @@ ow_unprotect(ow_t* ow) {
 }
 
 /**
- * \brief           Send reset pulse
+ * \brief           Reset 1-Wire bus and set connected devices to idle state
  * \param[in,out]   ow: 1-Wire handle
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
