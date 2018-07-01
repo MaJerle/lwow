@@ -268,6 +268,8 @@ ow_search_reset(ow_t* ow) {
 /**
  * \brief           Search for devices on 1-wire bus
  * \note            To reset search and to start over, use \ref ow_search_reset function
+ *
+ * \include         ow_search.c
  * \param[in,out]   ow: 1-Wire handle
  * \param[out]      rom_id: Pointer to 8-byte long variable to save ROM
  * \return          \ref owOK on success, member of \ref owr_t otherwise
@@ -278,6 +280,7 @@ ow_search(ow_t* ow, uint8_t* rom_id) {
 }
 
 /**
+ * \brief           Search for devices on 1-wire bus with custom search command
  * \note            To reset search and to start over, use \ref ow_search_reset function
  * \param[in,out]   ow: 1-Wire handle
  * \param[in]       cmd: command to use for search operation
