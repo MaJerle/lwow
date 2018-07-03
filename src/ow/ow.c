@@ -322,7 +322,7 @@ ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id) {
             
             /*
              * Devices are expecting master will send bit value back.
-			 * All devices which do not have this bit value
+             * All devices which do not have this bit value
              * will go on blocked state and will wait for next reset sequence
              *
              * In case of "collision", we can decide here which devices we will 
@@ -357,9 +357,7 @@ ow_match_rom(ow_t* ow, uint8_t* rom_id) {
 
     ow_write_byte(ow, OW_CMD_MATCHROM);         /* Write byte to match rom exactly */
 
-    /*
-     * Send 8 bytes representing ROM address
-     */
+    /* Send 8 bytes representing ROM address */
     for (i = 0; i < 8; i++) {
         ow_write_byte(ow, rom_id[i]);           /* Send ROM bytes */
     }
