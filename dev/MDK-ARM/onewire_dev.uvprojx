@@ -435,6 +435,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\libs\st_hal\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_utils.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32l4xx_ll_lpuart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libs\st_hal\STM32L4xx_HAL_Driver\Src\stm32l4xx_ll_lpuart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -506,9 +511,9 @@
               <FilePath>..\..\src\system\ow_sys_cmsis_os.c</FilePath>
             </File>
             <File>
-              <FileName>ow_ll_stm32l4xx.c</FileName>
+              <FileName>ow_ll_stm32l496g_discovery.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\system\ow_ll_stm32l4xx.c</FilePath>
+              <FilePath>..\..\src\system\ow_ll_stm32l496g_discovery.c</FilePath>
             </File>
           </Files>
         </Group>

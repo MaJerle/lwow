@@ -34,7 +34,7 @@ main(void) {
     uint8_t id[8][8];
     owr_t res;
     ow_t ow;
-    float t;
+    float t, t_min, t_max;
     
     LL_Init();                                  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     SystemClock_Config();                       /* Configure the system clock */
@@ -66,9 +66,22 @@ main(void) {
             
             /* Read all devices */
             for (i = 0; i < c; i++) {
-                ow_ds18x20_read(&ow, id[i], &t, 1);
-                printf("Temp %d: %f\r\n", (int)i, t);
+                if (ow_ds18x20_read(&ow, id[i], &t, 1)) {
+                    if (i == 0) {
+                        t_min = t_max = t;
+                    } else {
+                        if (t < t_min) {
+                            t_min = t;
+                        } else if (t > t_max) {
+                            t_max = t;
+                        }
+                    }
+                    printf("Temp %d: %f\r\n", (int)i, t);
+                }
+                LL_mDelay(10);
             }
+            printf("Temp min: %f, max: %f\r\n", t_min, t_max);
+            printf("Temp difference: %f\r\n", t_max - t_min);
         }
     } else {
         printf("No devices on network!\r\n");
