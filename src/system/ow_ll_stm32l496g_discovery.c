@@ -42,6 +42,7 @@
  * STM32 RX:            GPIOG, GPIO_PIN_10; Note: VDDIO2 must be enabled in PWR register
  */
 #include "stm32l4xx_ll_usart.h"
+#include "stm32l4xx_ll_lpuart.h"
 #include "stm32l4xx_ll_bus.h"
 #include "stm32l4xx_ll_rcc.h"
 #include "stm32l4xx_ll_dma.h"
@@ -202,9 +203,10 @@ uint8_t
 ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     const uint8_t* t = tx;
     uint8_t* r = rx;
+    volatile uint32_t timeout;
     
     /* Send byte with polling */
-    if (len) {
+    if (len/* == 1 */) {
         while (len--) {
             LL_USART_TransmitData8(ONEWIRE_USART, *t++);
             while (!LL_USART_IsActiveFlag_TXE(ONEWIRE_USART));
@@ -232,7 +234,6 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     LL_USART_EnableDMAReq_TX(ONEWIRE_USART);
     
     /* Enable UART DMA requests and start stream */
-    LL_USART_ReceiveData8(ONEWIRE_USART);
     LL_DMA_EnableChannel(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL);
     LL_DMA_EnableChannel(ONEWIRE_USART_TX_DMA, ONEWIRE_USART_TX_DMA_CHANNEL);
     
@@ -242,7 +243,12 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
      * We have to wait for RX DMA to complete and to transfer
      * all bytes to memory before we can finish the transaction
      */
-    while (LL_DMA_GetDataLength(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL) > 0);
+    timeout = 0xFFFF;
+    while (LL_DMA_GetDataLength(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL) > 0) {
+        if (--timeout == 0) {
+            __NOP();
+        }
+    }
     
     /* Disable requests */
     LL_DMA_DisableChannel(ONEWIRE_USART_RX_DMA, ONEWIRE_USART_RX_DMA_CHANNEL);
