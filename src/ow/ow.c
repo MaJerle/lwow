@@ -128,50 +128,13 @@ owr_t
 ow_reset(ow_t* ow) {
     uint8_t b;
     
-    /*
-     * To send reset pulse, we have to set UART baudrate to "slow" mode, 9600 bauds.
-     * At 9600 bauds, every byte takes 10x bit time (start + 8-bits + stop).
-     *
-     * Bit time = 1/9600 = 0.000104s = 104 us
-     *
-     * Reset pulse must be low for at least 480us. If we take 5-bits, this is 520us.
-     * Since UART starts with start bits (high-to-low transition), our first bit can be used from START seuquence,
-     * which mean we need to send additional 4-bits as 0.
-     *
-     * UART is usually LSB first oriented which means that sending 0xF0 constant will give us expected result:
-     *
-     * IDLE  S 0 0 0 0 1 1 1 1 S IDLE
-     * ----- _ _ _ _ _ - - - - - -----
-     *
-     *      |         | <- Timing between matches 5 bits = 520us
-     *
-     * After the 5-bits low-period, master must deselect line and make it available for slave to pull it low as acknowledgment.
-     * Timing from master release to expected ack from slave we have to wait at least 70us which takes another bit (6-th bit) in the sequence
-     *
-     * IDLE  S 0 0 0 0 I 1 1 1 S IDLE
-     * ----- _ _ _ _ _ - - - - - -----
-     *
-     *                | | <- Idle bit
-     *
-     * For the last 3-data + stop bits we have just enough time to check for ack line low.
-     * By 1-wire specs, we need to give 410us to slave to reply with low state.
-     *
-     * Since we have remaining 3-data bits + stop bit available, we can use them to see the reply from slave.
-     *
-     * -----------------
-     *
-     * At the end, if we send 0xF0 over UART on TX line and if we receive 0xF0 back, we do not have any device connected as there was no acknowledgement.
-     * 
-     */
-    
+    /* First send reset pulse */
     b = ONEWIRE_BYTE_RESET;                     /* Set reset sequence byte = 0xF0 */
     ow_ll_set_baudrate(9600, ow->arg);          /* Set low baudrate */
     ow_ll_transmit_receive(&b, &b, 1, ow->arg); /* Exchange data over onewire */
-    ow_ll_set_baudrate(115200, ow->arg);        /* Go back to high baudrate */
+    ow_ll_set_baudrate(115200, ow->arg);        /* Set high baudrate */
     
-    /*
-     * Check if any device acknowledged our pulse
-     */
+    /* Check if there is reply from any device */
     if (b == 0x00 || b == ONEWIRE_BYTE_RESET) {
         return owERRPRESENCE;
     }
