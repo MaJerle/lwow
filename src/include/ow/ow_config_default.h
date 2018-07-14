@@ -44,7 +44,7 @@ extern "C" {
  */
  
 /**
- * \brief           Enables (`1`) or disables (`0`) operating system support in the library
+ * \brief           Enables `1` or disables `0` operating system support in the library
  *
  * \note            When `OW_CFG_OS` is enabled, user must implement functions in \ref OW_SYS group.
  */
