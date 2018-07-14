@@ -32,6 +32,8 @@
  */
 #include "system/ow_ll.h"
 
+#if !__DOXYGEN__
+
 /*
  * STM32L496G-Discovery comes with external STMOD+ board with CN4 ESP-01 connector
  *
@@ -262,3 +264,5 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     
     return 1;
 }
+
+#endif /* !__DOXYGEN__ */

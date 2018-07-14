@@ -32,16 +32,10 @@
  */
 #include "system/ow_sys.h"
 
-#if OW_CFG_OS || __DOXYGEN__
+#if OW_CFG_OS && !__DOXYGEN__
 
 #include "cmsis_os.h"
 
-/**
- * \brief           Create a new mutex and assign value to handle
- * \param[out]      mutex: Output variable to save mutex handle
- * \param[in]       arg: User argument passed on \ref ow_init function
- * \return          `1` on success, `0` otherwise
- */
 uint8_t
 ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     osMutexDef(m);
@@ -49,24 +43,12 @@ ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     return 1;
 }
 
-/**
- * \brief           Delete existing mutex and invalidate mutex variable
- * \param[in]       mutex: Mutex handle to remove and invalidate
- * \param[in]       arg: User argument passed on \ref ow_init function
- * \return          `1` on success, `0` otherwise
- */
 uint8_t
 ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     osMutexDelete(*mutex);                      /* Delete mutex */
     return 1;
 }
 
-/**
- * \brief           Wait for a mutex until ready (unlimited time)
- * \param[in]       mutex: Mutex handle to wait for
- * \param[in]       arg: User argument passed on \ref ow_init function
- * \return          `1` on success, `0` otherwise
- */
 uint8_t
 ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     if (osMutexWait(*mutex, osWaitForever) != osOK) {
@@ -75,12 +57,6 @@ ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     return 1;
 }
 
-/**
- * \brief           Release already locked mutex
- * \param[in]       mutex: Mutex handle to release
- * \param[in]       arg: User argument passed on \ref ow_init function
- * \return          `1` on success, `0` otherwise
- */
 uint8_t
 ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     if (osMutexRelease(*mutex) != osOK) {
@@ -89,4 +65,4 @@ ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     return 1;
 }
 
-#endif /* OW_CFG_OS || __DOXYGEN__ */
+#endif /* OW_CFG_OS && !__DOXYGEN__ */

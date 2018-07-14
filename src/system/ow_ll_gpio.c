@@ -33,6 +33,8 @@
  */
 #include "system/ow_ll.h"
 
+#if !__DOXYGEN__
+
 static uint32_t baud_curr;
 
 /**
@@ -100,3 +102,5 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     
     return 1;
 }
+
+#endif /* !__DOXYGEN__ */

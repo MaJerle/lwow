@@ -34,14 +34,11 @@
 #include "windows.h"
 #include "stdio.h"
 
+#if !__DOXYGEN__
+
 static HANDLE com_port;
 static DCB dcb = { 0 };
 
-/**
- * \brief           Initialize low-level communication
- * \param[in]       arg: User argument passed on \ref ow_init function
- * \return          `1` on success, `0` otherwise
- */
 uint8_t
 ow_ll_init(void* arg) {
     dcb.DCBlength = sizeof(dcb);
@@ -88,11 +85,6 @@ ow_ll_init(void* arg) {
     return 1;
 }
 
-/**
- * \brief           Deinit low-level
- * \param[in]       arg: User argument passed on \ref ow_init function
- * \return          `1` on success, `0` otherwise
- */
 uint8_t
 ow_ll_deinit(void* arg) {
     /* Disable UART peripheral */
@@ -100,12 +92,6 @@ ow_ll_deinit(void* arg) {
     return 1;
 }
 
-/**
- * \brief           Set baudrate for UART hardware
- * \param[in]       baud: Expected baudrate for UART. Values can be either `9600` or `15200` bauds
- * \param[in]       arg: User argument passed on \ref ow_init function
- * \return          `1` on success, `0` otherwise
- */
 uint8_t
 ow_ll_set_baudrate(uint32_t baud, void* arg) {
     /* Configure UART to selected baudrate */
@@ -120,14 +106,6 @@ ow_ll_set_baudrate(uint32_t baud, void* arg) {
     return 1;
 }
 
-/**
- * \brief           Transmit-Receive data over UART
- * \param[in]       tx: Array of data to send
- * \param[out]      rx: Array to save receive data 
- * \param[in]       len: Number of bytes to send
- * \param[in]       arg: User argument passed on \ref ow_init function
- * \return          `1` on success, `0` otherwise
- */
 uint8_t
 ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     /* Perform data exchange */
@@ -148,3 +126,5 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
 
     return 1;
 }
+
+#endif /* !__DOXYGEN__ */
