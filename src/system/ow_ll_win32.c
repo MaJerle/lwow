@@ -1,5 +1,5 @@
 /**
- * \file            ow_ll_stm32l4.c
+ * \file            ow_ll_win32.c
  * \brief           UART implementation for STM32L4xx MCUs
  */
  
