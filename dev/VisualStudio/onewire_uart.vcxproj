@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\..\src\include;..\inc;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\snippets\include;..\..\src\include;..\inc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -143,6 +143,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\snippets\scan_devices.c" />
     <ClCompile Include="..\..\src\devices\ow_device_ds18x20.c" />
     <ClCompile Include="..\..\src\ow\ow.c" />
     <ClCompile Include="..\..\src\system\ow_ll_win32.c" />

@@ -3,77 +3,50 @@
 
 #include "ow/ow.h"
 #include "ow/devices/ow_device_ds18x20.h"
+#include "scan_devices.h"
 
+/* Create new 1-Wire instance */
 ow_t ow;
+uint8_t rom_ids[20][8];
+size_t rom_found;
 
 /**
  * \brief           Application entry point
  */
 int
 main(void) {
-    uint8_t ri[8], rom_addresses[20][8];
-    size_t count, i;
+    size_t i;
 
-    ow_init(&ow, NULL);                         /* Initialize 1-Wire module */
+    ow_init(&ow, NULL);                         /* Initialize 1-Wire library and set user argument to 1 */
 
-    /*
-     * Scan for 1-wire devices
-     */
-    ow_protect(&ow);                            /* Protect against multiple-thread access */
-    if (ow_search_reset(&ow) == owOK) {         /* Start search for devices */
-        printf("Search for 1-Wire device started!\r\n");
-        count = 0;
-        while (ow_search(&ow, ri) == owOK) {    /* Scan device by device */
-            memcpy(rom_addresses[count], ri, sizeof(ri));
-            printf("Device found: %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X\r\n",
-                ri[0], ri[1], ri[2], ri[3], ri[4], ri[5], ri[6], ri[7]
-            );
-            if (ow_ds18x20_is_b(&ow, rom_addresses[count])) {
-                ow_ds18x20_set_resolution(&ow, rom_addresses[count], 9 + count % 4, 0);
-            }
-            if (count == 0) {
-                ow_ds18x20_set_alarm_temp(&ow, ri, 26, 28, 0);
-            } else {
-                ow_ds18x20_set_alarm_temp(&ow, ri, OW_DS18X20_ALARM_DISABLE, OW_DS18X20_ALARM_DISABLE, 0);
-            }
-            count++;
-        }
-        printf("Search finished with %u devices on 1-Wire bus\r\n", (unsigned)count);
+    /* Get onewire devices connected on 1-wire port */
+    if (scan_onewire_devices(&ow, rom_ids, sizeof(rom_ids) / sizeof(rom_ids[0]), &rom_found, 1) == owOK) {
+        printf("Devices scanned, found %d devices!\r\n", (int)rom_found);
     } else {
-        printf("Search reset was unsuccessful!\r\n");
+    	printf("Device scan error\r\n");
     }
-    ow_unprotect(&ow);                          /* We can now unprotect again */
 
-    /*
-     * Periodically start conversions
-     */
-    if (count > 0) {
+    if (rom_found) {
+        /* Infinite loop */
         while (1) {
-            printf("\r\n\r\nStart temperature conversion\r\n");
-            ow_ds18x20_start(&ow, NULL, 1);     /* Start temperature conversion on all devices */
-            Sleep(1000);                        /* Sleep for some time */
-            printf("\r\n");
-            for (i = 0; i < count; i++) {       /* Read all connected sensors */
-                float temp;
-                if (ow_ds18x20_is_b(&ow, rom_addresses[i])) {
-                    uint8_t resolution = ow_ds18x20_get_resolution(&ow, rom_addresses[i], 1);
-                    if (ow_ds18x20_read(&ow, rom_addresses[i], &temp, 1)) {
-                        printf("Sensor %u returned temperature %f degrees (%u bits resolution)\r\n", (unsigned)i, temp, (unsigned)resolution);
+            printf("Start temperature conversion\r\n");
+            ow_ds18x20_start(&ow, NULL, 1);     /* Start conversion on all devices */
+            Sleep(1000);                        /* Release thread for 1 second */
+
+            /* Read temperature on all devices */
+            for (i = 0; i < rom_found; i++) {
+                if (ow_ds18x20_is_b(&ow, rom_ids[i])) {
+                    float temp;
+                    uint8_t resolution = ow_ds18x20_get_resolution(&ow, rom_ids[i], 1);
+                    if (ow_ds18x20_read(&ow, rom_ids[i], &temp, 1)) {
+                        printf("Sensor %u temperature is %d.%d degrees (%u bits resolution)\r\n",
+                            (unsigned)i, (int)temp, (int)((temp * 1000.0f) - (((int)temp) * 1000)), (unsigned)resolution);
                     }
                 }
             }
-
-            /* Search for devices with alarm flag */
-            ow_search_reset(&ow);               /* Reset search */
-            while (ow_ds18x20_search_alarm(&ow, ri) == owOK) {
-                printf("Device with alarm: %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X\r\n",
-                    ri[0], ri[1], ri[2], ri[3], ri[4], ri[5], ri[6], ri[7]
-                );
-            }
         }
-    } else {
-        printf("No devices found on 1-Wire network\r\n");
     }
+    printf("Terminating application thread\r\n");
     return 0;
 }
 

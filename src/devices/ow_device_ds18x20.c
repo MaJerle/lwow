@@ -38,24 +38,24 @@
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: ROM id of device to start measurement.
  *                  Set to `NULL` to start measurement on all devices at the same time
- * \param[in]       prot: Set to `1` to protect code against multi-thread environment, or `0` if already protected
+ * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_start(ow_t* ow, uint8_t* rom_id, uint8_t prot) {
+ow_ds18x20_start(ow_t* ow, const uint8_t* rom_id, const uint8_t protect) {
     uint8_t ret = 0;
 
-    prot ? ow_protect(ow) : 0;                  /* Protect 1-Wire */
-    if (ow_reset(ow) == owOK) {                 /* Try to reset devices */
+    ow_protect(ow, protect);                    /* Protect core */
+    if (ow_reset(ow, 0) == owOK) {              /* Try to reset devices */
         if (rom_id == NULL) {                   /* Check for ROM id */
-            ow_skip_rom(ow);                    /* Skip ROM, send to all devices */
+            ow_skip_rom(ow, 0);                 /* Skip ROM, send to all devices */
         } else {
-            ow_match_rom(ow, rom_id);           /* Select exact device by ROM address */
+            ow_match_rom(ow, rom_id, 0);        /* Select exact device by ROM address */
         }
-        ow_write_byte(ow, 0x44);                /* Start temperature conversion */
+        ow_write_byte(ow, 0x44, 0);             /* Start temperature conversion */
         ret = 1;
     }
-    prot ? ow_unprotect(ow) : 0;                /* Unprotect 1-Wire */
+    ow_unprotect(ow, protect);                  /* Unprotect core */
 
     return ret;
 }
@@ -65,11 +65,11 @@ ow_ds18x20_start(ow_t* ow, uint8_t* rom_id, uint8_t prot) {
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to read data from
  * \param[out]      t: Pointer to output float variable to save temperature
- * \param[in]       prot: Set to `1` to protect code against multi-thread environment, or `0` if already protected
+ * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_read(ow_t* ow, uint8_t* rom_id, float* t, uint8_t prot) {
+ow_ds18x20_read(ow_t* ow, const uint8_t* rom_id, float* t, const uint8_t protect) {
     uint8_t ret = 0, data[9], i, crc, resolution, m = 0;
     int8_t digit;
     float dec;
@@ -80,22 +80,23 @@ ow_ds18x20_read(ow_t* ow, uint8_t* rom_id, float* t, uint8_t prot) {
         return 0;
     }
 
-    prot ? ow_protect(ow) : 0;                  /* Protect 1-Wire */
+    ow_protect(ow, protect);                    /* Protect core */
+
     /*
      * First read bit and check if all devices completed with conversion.
      * If everything ready, try to reset the network and continue
      */
-    if (ow_read_bit(ow) && ow_reset(ow) == owOK) {
+    if (ow_read_bit(ow, 0) && ow_reset(ow, 0) == owOK) {
         if (rom_id == NULL) {                   /* Check for ROM id */
-            ow_skip_rom(ow);                    /* Skip ROM, send to all devices */
+            ow_skip_rom(ow, 0);                 /* Skip ROM, send to all devices */
         } else {
-            ow_match_rom(ow, rom_id);           /* Select exact device by ROM address */
+            ow_match_rom(ow, rom_id, 0);        /* Select exact device by ROM address */
         }
-        ow_write_byte(ow, OW_CMD_RSCRATCHPAD);  /* Send command to read scratchpad */
+        ow_write_byte(ow, OW_CMD_RSCRATCHPAD, 0);   /* Send command to read scratchpad */
         
         /* Read plain data from device */
         for (i = 0; i < 9; i++) {
-            data[i] = ow_read_byte(ow);         /* Read byte */
+            data[i] = ow_read_byte(ow, 0);      /* Read byte */
         }
         crc = ow_crc(data, 0x09);               /* Calculate CRC */
         if (!crc) {                             /* Result must be 0 to match the CRC */
@@ -121,7 +122,7 @@ ow_ds18x20_read(ow_t* ow, uint8_t* rom_id, float* t, uint8_t prot) {
             ret = 1;
         }
     }
-    prot ? ow_unprotect(ow) : 0;                /* Unprotect 1-Wire */
+    ow_unprotect(ow, protect);                  /* Unprotect core */
 
     return ret;
 }
@@ -131,30 +132,30 @@ ow_ds18x20_read(ow_t* ow, uint8_t* rom_id, float* t, uint8_t prot) {
  * \brief           Get resolution for `DS18B20` device
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to get resolution from
- * \param[in]       prot: Set to `1` to protect code against multi-thread environment, or `0` if already protected
+ * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          Resolution in units of bits (`9 - 12`) on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_get_resolution(ow_t* ow, uint8_t* rom_id, uint8_t prot) {
+ow_ds18x20_get_resolution(ow_t* ow, const uint8_t* rom_id, const uint8_t protect) {
     uint8_t res = 0;
 
     if (!ow_ds18x20_is_b(ow, rom_id)) {         /* Check if it is B version */
         return 0;
     }
 
-    prot ? ow_protect(ow) : 0;                  /* Protect 1-Wire */
-    if (ow_reset(ow) == owOK) {                 /* Reset bus */
-        ow_match_rom(ow, rom_id);               /* Select device */
-        ow_write_byte(ow, OW_CMD_RSCRATCHPAD);  /* Read scratchpad command */
+    ow_protect(ow, protect);                    /* Protect core */
+    if (ow_reset(ow, 0) == owOK) {              /* Reset bus */
+        ow_match_rom(ow, rom_id, 0);            /* Select device */
+        ow_write_byte(ow, OW_CMD_RSCRATCHPAD, 0);   /* Read scratchpad command */
 
-        ow_read_byte(ow);                       /* Read byte, ignore it */
-        ow_read_byte(ow);                       /* Read byte, ignore it */
-        ow_read_byte(ow);
-        ow_read_byte(ow);
+        ow_read_byte(ow, 0);                    /* Read byte, ignore it */
+        ow_read_byte(ow, 0);                    /* Read byte, ignore it */
+        ow_read_byte(ow, 0);
+        ow_read_byte(ow, 0);
 
-        res = ((ow_read_byte(ow) & 0x60) >> 0x05) + 9;  /* Read configuration byte and calculate bits */
+        res = ((ow_read_byte(ow, 0) & 0x60) >> 0x05) + 9;   /* Read configuration byte and calculate bits */
     }
-    prot ? ow_unprotect(ow) : 0;                /* Unprotect 1-Wire */
+    ow_unprotect(ow, protect);                  /* Unprotect core */
 
     return res;
 }
@@ -165,11 +166,11 @@ ow_ds18x20_get_resolution(ow_t* ow, uint8_t* rom_id, uint8_t prot) {
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: Address of device to set resolution
  * \param[in]       bits: Number of resolution bits. Possible values are `9 - 12`
- * \param[in]       prot: Set to `1` to protect code against multi-thread environment, or `0` if already protected
+ * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_set_resolution(ow_t* ow, uint8_t* rom_id, uint8_t bits, uint8_t prot) {
+ow_ds18x20_set_resolution(ow_t* ow, const uint8_t* rom_id, uint8_t bits, const uint8_t protect) {
     uint8_t th, tl, conf, res = 0;
 
     if (bits < 9 || bits > 12 ||                /* Check bits range */
@@ -177,17 +178,17 @@ ow_ds18x20_set_resolution(ow_t* ow, uint8_t* rom_id, uint8_t bits, uint8_t prot)
         return 0;
     }
 
-    prot ? ow_protect(ow) : 0;                  /* Protect 1-Wire */
-    if (ow_reset(ow) == owOK) {                 /* Reset bus */
-        ow_match_rom(ow, rom_id);               /* Select device */
-        ow_write_byte(ow, OW_CMD_RSCRATCHPAD);  /* Read scratchpad */
+    ow_protect(ow, protect);                    /* Protect core */
+    if (ow_reset(ow, 0) == owOK) {              /* Reset bus */
+        ow_match_rom(ow, rom_id, 0);            /* Select device */
+        ow_write_byte(ow, OW_CMD_RSCRATCHPAD, 0);   /* Read scratchpad */
 
-        ow_read_byte(ow);                       /* Read byte, ignore it */
-        ow_read_byte(ow);                       /* Read byte, ignore it */
+        ow_read_byte(ow, 0);                    /* Read byte, ignore it */
+        ow_read_byte(ow, 0);                    /* Read byte, ignore it */
 
-        th = ow_read_byte(ow);
-        tl = ow_read_byte(ow);
-        conf = ow_read_byte(ow) & ~(0x60);      /* Remove configuration bits for temperature resolution */
+        th = ow_read_byte(ow, 0);
+        tl = ow_read_byte(ow, 0);
+        conf = ow_read_byte(ow, 0) & ~(0x60);   /* Remove configuration bits for temperature resolution */
 
         switch (bits) {                         /* Check bits configuration */
             case 10: conf |= 0x20; break;       /* 10-bits configuration */
@@ -197,24 +198,23 @@ ow_ds18x20_set_resolution(ow_t* ow, uint8_t* rom_id, uint8_t bits, uint8_t prot)
         }
 
         /* Write data back to device */
-        if (ow_reset(ow) == owOK) {
-            ow_match_rom(ow, rom_id);           /* Select device */
-            ow_write_byte(ow, OW_CMD_WSCRATCHPAD);  /* Write scratchpad */
+        if (ow_reset(ow, 0) == owOK) {
+            ow_match_rom(ow, rom_id, 0);        /* Select device */
+            ow_write_byte(ow, OW_CMD_WSCRATCHPAD, 0);   /* Write scratchpad */
 
-            ow_write_byte(ow, th);
-            ow_write_byte(ow, tl);
-            ow_write_byte(ow, conf);
+            ow_write_byte(ow, th, 0);
+            ow_write_byte(ow, tl, 0);
+            ow_write_byte(ow, conf, 0);
 
             /* Copy scratchpad to non-volatile memory */
-            if (ow_reset(ow) == owOK) {         
-                ow_match_rom(ow, rom_id);       /* Select device */
-                ow_write_byte(ow, OW_CMD_CPYSCRATCHPAD);/* Copy scratchpad */
-
+            if (ow_reset(ow, 0) == owOK) {
+                ow_match_rom(ow, rom_id, 0);    /* Select device */
+                ow_write_byte(ow, OW_CMD_CPYSCRATCHPAD, 0); /* Copy scratchpad */
                 res = 1;
             }
         }
     }
-    prot ? ow_unprotect(ow) : 0;                /* Unprotect 1-Wire */
+    ow_unprotect(ow, protect);                  /* Unprotect core */
 
     return res;
 }
@@ -243,11 +243,11 @@ ow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
  * \param[in]       rom_id: 1-Wire device address to test for `DS18B20`
  * \param[in]       temp_l: Alarm low temperature
  * \param[in]       temp_h: Alarm high temperature
- * \param[in]       prot: Set to `1` to protect code against multi-thread environment, or `0` if already protected
+ * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_set_alarm_temp(ow_t* ow, uint8_t* rom_id, int8_t temp_l, int8_t temp_h, uint8_t prot) {
+ow_ds18x20_set_alarm_temp(ow_t* ow, const uint8_t* rom_id, int8_t temp_l, int8_t temp_h, const uint8_t protect) {
     uint8_t res = 0, conf, th, tl;
 
     if (!ow_ds18x20_is_b(ow, rom_id)) {         /* Check device */
@@ -275,42 +275,42 @@ ow_ds18x20_set_alarm_temp(ow_t* ow, uint8_t* rom_id, int8_t temp_l, int8_t temp_
         }
     }
 
-    prot ? ow_protect(ow) : 0;                  /* Protect 1-Wire */
-    if (ow_reset(ow) == owOK) {
-        ow_match_rom(ow, rom_id);               /* Select device */
-        ow_write_byte(ow, OW_CMD_RSCRATCHPAD);  /* Read scratchpad */
+    ow_protect(ow, protect);                    /* Protect core */
+    if (ow_reset(ow, 0) == owOK) {
+        ow_match_rom(ow, rom_id, 0);            /* Select device */
+        ow_write_byte(ow, OW_CMD_RSCRATCHPAD, 0);   /* Read scratchpad */
 
-        ow_read_byte(ow);                       /* Read byte, ignore it */
-        ow_read_byte(ow);                       /* Read byte, ignore it */
+        ow_read_byte(ow, 0);                    /* Read byte, ignore it */
+        ow_read_byte(ow, 0);                    /* Read byte, ignore it */
 
-        th = ow_read_byte(ow);
-        tl = ow_read_byte(ow);
-        conf = ow_read_byte(ow);
+        th = ow_read_byte(ow, 0);
+        tl = ow_read_byte(ow, 0);
+        conf = ow_read_byte(ow, 0);
 
         /* Fill new values */
         th = temp_h == OW_DS18X20_ALARM_NOCHANGE ? (uint8_t)th : (uint8_t)temp_h;
         tl = temp_l == OW_DS18X20_ALARM_NOCHANGE ? (uint8_t)tl : (uint8_t)temp_l;
 
         /* Write scratchpad */
-        if (ow_reset(ow) == owOK) {
-            ow_match_rom(ow, rom_id);           /* Select device */
-            ow_write_byte(ow, OW_CMD_WSCRATCHPAD);  /* Write scratchpad */
+        if (ow_reset(ow, 0) == owOK) {
+            ow_match_rom(ow, rom_id, 0);        /* Select device */
+            ow_write_byte(ow, OW_CMD_WSCRATCHPAD, 0);   /* Write scratchpad */
 
             /* Write configuration register */
-            ow_write_byte(ow, th);
-            ow_write_byte(ow, tl);
-            ow_write_byte(ow, conf);
+            ow_write_byte(ow, th, 0);
+            ow_write_byte(ow, tl, 0);
+            ow_write_byte(ow, conf, 0);
 
             /* Copy scratchpad */
-            if (ow_reset(ow) == owOK) {
-                ow_match_rom(ow, rom_id);       /* Select device */
-                ow_write_byte(ow, OW_CMD_CPYSCRATCHPAD);/* Copy scratchpad */
+            if (ow_reset(ow, 0) == owOK) {
+                ow_match_rom(ow, rom_id, 0);    /* Select device */
+                ow_write_byte(ow, OW_CMD_CPYSCRATCHPAD, 0); /* Copy scratchpad */
 
                 res = 1;
             }
         }
     }
-    prot ? ow_unprotect(ow) : 0;                /* Unprotect 1-Wire */
+    ow_unprotect(ow, protect);                  /* Unprotect core */
     return res;
 }
 
@@ -319,11 +319,12 @@ ow_ds18x20_set_alarm_temp(ow_t* ow, uint8_t* rom_id, int8_t temp_l, int8_t temp_
  * \note            To reset search, use \ref ow_search_reset function
  * \param[in]       ow: 1-Wire handle
  * \param[out]      rom_id: Pointer to 8-byte long variable to save ROM
+ * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_ds18x20_search_alarm(ow_t* ow, uint8_t* rom_id) {
-    return ow_search_with_command(ow, 0xEC, rom_id);
+ow_ds18x20_search_alarm(ow_t* ow, uint8_t* rom_id, const uint8_t protect) {
+    return ow_search_with_command(ow, 0xEC, rom_id, protect);
 }
 
 /**
@@ -333,7 +334,7 @@ ow_ds18x20_search_alarm(ow_t* ow, uint8_t* rom_id) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_is_b(ow_t* ow, uint8_t* rom_id) {
+ow_ds18x20_is_b(ow_t* ow, const uint8_t* rom_id) {
     OW_UNUSED(ow);                              /* Unused variable */
     return rom_id != NULL && *rom_id == 0x28;   /* Check for correct ROM family code */
 }
@@ -345,7 +346,7 @@ ow_ds18x20_is_b(ow_t* ow, uint8_t* rom_id) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_is_s(ow_t* ow, uint8_t* rom_id) {
+ow_ds18x20_is_s(ow_t* ow, const uint8_t* rom_id) {
     OW_UNUSED(ow);                              /* Unused variable */
     return rom_id != NULL && *rom_id == 0x10;   /* Check for correct ROM family code */
 }

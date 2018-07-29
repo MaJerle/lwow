@@ -14,8 +14,9 @@
  *  - Sources and releases available on Github
  *  - Full documentation available
  *
- * \section         sect_resources Resources
+ * \section         sect_resources Download & Resources
  *
+ *  - <a class="download_url" href="https://github.com/MaJerle/onewire_uart/releases">Download library from Github releases</a>
  *  - Read \ref page_appnote before you start development
  *  - <a href="https://github.com/MaJerle/onewire_uart">Official development repository on Github</a>
  *  - <a href="https://www.maximintegrated.com/en/app-notes/index.mvp/id/214">Using a UART to Implement a 1-Wire Bus Master</a> from Maxim website
