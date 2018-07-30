@@ -46,6 +46,9 @@ extern "C" {
  * \defgroup        OW API functions
  * \brief           OneWire API
  * \{
+ *
+ * \note            Functions with `_raw` suffix do no implement
+ *                  locking mechanism when using with operating system.
  */
 
 /**
@@ -90,17 +93,36 @@ owr_t       ow_init(ow_t* ow, void* arg);
 owr_t       ow_protect(ow_t* ow, const uint8_t protect);
 owr_t       ow_unprotect(ow_t* ow, const uint8_t protect);
 
-owr_t       ow_reset(ow_t* ow, const uint8_t protect);
-uint8_t     ow_write_byte(ow_t* ow, uint8_t b, const uint8_t protect);
-uint8_t     ow_read_byte(ow_t* ow, const uint8_t protect);
-uint8_t     ow_read_bit(ow_t* ow, const uint8_t protect);
 
-owr_t       ow_search_reset(ow_t* ow, const uint8_t protect);
-owr_t       ow_search(ow_t* ow, uint8_t* rom_id, const uint8_t protect);
-owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id, const uint8_t protect);
+owr_t       ow_reset_raw(ow_t* ow);
+owr_t       ow_reset(ow_t* ow);
 
-uint8_t     ow_match_rom(ow_t* ow, const uint8_t* rom_id, const uint8_t protect);
-uint8_t     ow_skip_rom(ow_t* ow, const uint8_t protect);
+uint8_t     ow_write_byte_raw(ow_t* ow, uint8_t b);
+uint8_t     ow_write_byte(ow_t* ow, uint8_t b);
+
+uint8_t     ow_read_byte_raw(ow_t* ow);
+uint8_t     ow_read_byte(ow_t* ow);
+
+uint8_t     ow_read_bit_raw(ow_t* ow);
+uint8_t     ow_read_bit(ow_t* ow);
+
+
+owr_t       ow_search_reset_raw(ow_t* ow);
+owr_t       ow_search_reset(ow_t* ow);
+
+owr_t       ow_search_raw(ow_t* ow, uint8_t* rom_id);
+owr_t       ow_search(ow_t* ow, uint8_t* rom_id);
+
+owr_t       ow_search_with_command_raw(ow_t* ow, uint8_t cmd, uint8_t* rom_id);
+owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id);
+
+uint8_t     ow_match_rom_raw(ow_t* ow, const uint8_t* rom_id);
+uint8_t     ow_match_rom(ow_t* ow, const uint8_t* rom_id);
+
+uint8_t     ow_skip_rom_raw(ow_t* ow);
+uint8_t     ow_skip_rom(ow_t* ow);
+
+uint8_t     ow_crc_raw(const void *in, size_t len);
 uint8_t     ow_crc(const void *in, size_t len);
 
 /**

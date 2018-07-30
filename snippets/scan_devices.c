@@ -10,20 +10,21 @@
  * \param[out]      rf: Number of roms found after scan
  */
 owr_t
-scan_onewire_devices(ow_t* ow, uint8_t rom_ids[][8], size_t rtf, size_t* rf, const uint8_t protect) {
+scan_onewire_devices(ow_t* ow, uint8_t rom_ids[][8], size_t rtf, size_t* rf) {
     owr_t res;
     size_t i, len = 0;
 
-    ow_protect(ow, protect);                    /* Protect access */
-    res = ow_search_reset(ow, 0);
-    while (res == owOK && (res = ow_search(ow, rom_ids[len], 0)) == owOK) {
+    ow_protect(ow, 1);
+    res = ow_search_reset_raw(ow);
+    while (res == owOK && (res = ow_search_raw(ow, rom_ids[len])) == owOK) {
         len++;
         if (len == rtf) {                       /* Did we reach end of array? */
         	printf("ROM array is full! Stop scanning for more devices\r\n");
         	break;
         }
     }
-    ow_unprotect(ow, protect);                  /* Unprotect access */
+    ow_unprotect(ow, 1);
+
     if (len > 0) {
         /* Print all devices */
         for (i = 0; i < len; i++) {

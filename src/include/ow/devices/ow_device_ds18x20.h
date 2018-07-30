@@ -44,6 +44,9 @@ extern "C" {
  * \defgroup        OW_DEVICE_DS18x20 DS18x20 temperature sensor
  * \brief           Device driver for DS18x20 temperature sensor
  * \{
+ *
+ * \note            Functions with `_raw` suffix do no implement
+ *                  locking mechanism when using with operating system.
  */
 
 #define OW_DS18X20_ALARM_DISABLE                ((int8_t)-128)  /*!< Disable alarm temperature */
@@ -51,16 +54,27 @@ extern "C" {
 #define OW_DS18X20_TEMP_MIN                     ((int8_t)-55)   /*!< Minimum temperature */
 #define OW_DS18X20_TEMP_MAX                     ((int8_t)125)   /*!< Maximal temperature */
 
-uint8_t     ow_ds18x20_start(ow_t* ow, const uint8_t* rom_id, const uint8_t protect);
-uint8_t     ow_ds18x20_read(ow_t* ow, const uint8_t* rom_id, float* t, const uint8_t protect);
+uint8_t     ow_ds18x20_start_raw(ow_t* ow, const uint8_t* rom_id);
+uint8_t     ow_ds18x20_start(ow_t* ow, const uint8_t* rom_id);
 
-uint8_t     ow_ds18x20_set_resolution(ow_t* ow, const uint8_t* rom_id, uint8_t bits, const uint8_t protect);
-uint8_t     ow_ds18x20_get_resolution(ow_t* ow, const uint8_t* rom_id, const uint8_t protect);
+uint8_t     ow_ds18x20_read_raw(ow_t* ow, const uint8_t* rom_id, float* t);
+uint8_t     ow_ds18x20_read(ow_t* ow, const uint8_t* rom_id, float* t);
 
-uint8_t     ow_ds18x20_set_alarm_temp(ow_t* ow, const uint8_t* rom_id, int8_t temp_l, int8_t temp_h, const uint8_t protect);
-owr_t       ow_ds18x20_search_alarm(ow_t* ow, uint8_t* rom_id, const uint8_t protect);
+uint8_t     ow_ds18x20_set_resolution_raw(ow_t* ow, const uint8_t* rom_id, uint8_t bits);
+uint8_t     ow_ds18x20_set_resolution(ow_t* ow, const uint8_t* rom_id, uint8_t bits);
 
+uint8_t     ow_ds18x20_get_resolution_raw(ow_t* ow, const uint8_t* rom_id);
+uint8_t     ow_ds18x20_get_resolution(ow_t* ow, const uint8_t* rom_id);
+
+uint8_t     ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const uint8_t* rom_id, int8_t temp_l, int8_t temp_h);
+uint8_t     ow_ds18x20_set_alarm_temp(ow_t* ow, const uint8_t* rom_id, int8_t temp_l, int8_t temp_h);
+
+owr_t       ow_ds18x20_search_alarm_raw(ow_t* ow, uint8_t* rom_id);
+owr_t       ow_ds18x20_search_alarm(ow_t* ow, uint8_t* rom_id);
+
+uint8_t     ow_ds18x20_is_b_raw(ow_t* ow, const uint8_t* rom_id);
 uint8_t     ow_ds18x20_is_b(ow_t* ow, const uint8_t* rom_id);
+uint8_t     ow_ds18x20_is_s_raw(ow_t* ow, const uint8_t* rom_id);
 uint8_t     ow_ds18x20_is_s(ow_t* ow, const uint8_t* rom_id);
 
 /**

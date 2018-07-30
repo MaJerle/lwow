@@ -130,20 +130,17 @@ ow_unprotect(ow_t* ow, const uint8_t protect) {
 /**
  * \brief           Reset 1-Wire bus and set connected devices to idle state
  * \param[in,out]   ow: 1-Wire handle
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_reset(ow_t* ow, const uint8_t protect) {
+ow_reset_raw(ow_t* ow) {
     uint8_t b;
     
     /* First send reset pulse */
     b = ONEWIRE_BYTE_RESET;                     /* Set reset sequence byte = 0xF0 */
-    ow_protect(ow, protect);                    /* Protect core */
     ow_ll_set_baudrate(9600, ow->arg);          /* Set low baudrate */
     ow_ll_transmit_receive(&b, &b, 1, ow->arg); /* Exchange data over onewire */
     ow_ll_set_baudrate(115200, ow->arg);        /* Set high baudrate */
-    ow_unprotect(ow, protect);                  /* Unprotect core */
     
     /* Check if there is reply from any device */
     if (b == 0x00 || b == ONEWIRE_BYTE_RESET) {
@@ -153,14 +150,26 @@ ow_reset(ow_t* ow, const uint8_t protect) {
 }
 
 /**
+ * \copydoc         ow_reset_raw
+ * \note            This function is thread-safe
+ */
+owr_t
+ow_reset(ow_t* ow) {
+    owr_t res;
+    ow_protect(ow, 1);
+    res = ow_reset_raw(ow);
+    ow_unprotect(ow, 1);
+    return res;
+}
+
+/**
  * \brief           Write byte over 1-wire protocol
  * \param[in,out]   ow: 1-Wire handle
  * \param[in]       b: Byte to write
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          Received byte over 1-wire protocol
  */
 uint8_t
-ow_write_byte(ow_t* ow, uint8_t b, const uint8_t protect) {
+ow_write_byte_raw(ow_t* ow, uint8_t b) {
     uint8_t i, r = 0, tr[8];
     
     /*
@@ -190,9 +199,7 @@ ow_write_byte(ow_t* ow, uint8_t b, const uint8_t protect) {
      * Exchange data on UART level,
      * send single byte for each bit = 8 bytes
      */
-    ow_protect(ow, protect);                    /* Protect core */
     ow_ll_transmit_receive(tr, tr, 8, ow->arg); /* Exchange data over UART */
-    ow_unprotect(ow, protect);                  /* Unprotect core */
     
     /*
      * Check received data. If we read 0xFF,
@@ -208,52 +215,92 @@ ow_write_byte(ow_t* ow, uint8_t b, const uint8_t protect) {
 }
 
 /**
+ * \copydoc         ow_write_byte_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+ow_write_byte(ow_t* ow, uint8_t b) {
+    uint8_t res;
+    ow_protect(ow, 1);
+    res = ow_write_byte_raw(ow, b);
+    ow_unprotect(ow, 1);
+    return res;
+}
+
+/**
  * \brief           Read next byte on 1-Wire
  * \param[in,out]   ow: 1-Wire handle
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          Byte read over 1-Wire
  */
 uint8_t
-ow_read_byte(ow_t* ow, const uint8_t protect) {
+ow_read_byte_raw(ow_t* ow) {
     /*
      * When we want to read byte over 1-Wire,
      * we have to send all bits as 1 and check if slave pulls line down.
      *
      * According to slave reactions, we can later construct received bytes
      */
-    return ow_write_byte(ow, 0xFF, protect);
+    return ow_write_byte_raw(ow, 0xFF);
+}
+
+/**
+ * \copydoc         ow_read_byte_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+ow_read_byte(ow_t* ow) {
+    uint8_t res;
+    ow_protect(ow, 1);
+    res = ow_read_byte_raw(ow);
+    ow_unprotect(ow, 1);
+    return res;
 }
 
 /**
  * \brief           Read single bit on 1-Wire network
  * \param[in,out]   ow: 1-Wire handle
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          Bit value
  */
 uint8_t
-ow_read_bit(ow_t* ow, const uint8_t protect) {
+ow_read_bit_raw(ow_t* ow) {
+    return send_bit(ow, 1);                     /* Send bit as `1` and read the response */
+}
+
+/**
+ * \copydoc         ow_read_bit_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+ow_read_bit(ow_t* ow) {
     uint8_t res;
-
-    ow_protect(ow, protect);                    /* Protect core */
-    res = send_bit(ow, 1);                      /* Send bit as `1` and read the response */
-    ow_unprotect(ow, protect);                  /* Unprotect core */
-
+    ow_protect(ow, 1);
+    res = ow_read_bit_raw(ow);
+    ow_unprotect(ow, 1);
     return res;
 }
 
 /**
  * \brief           Reset search
  * \param[in,out]   ow: 1-Wire handle
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_search_reset(ow_t* ow, const uint8_t protect) {
-    ow_protect(ow, protect);                    /* Protect core */
+ow_search_reset_raw(ow_t* ow) {
     ow->disrepancy = OW_FIRST_DEV;              /* Reset disrepancy to default value */
-    ow_unprotect(ow, protect);                  /* Unprotect core */
-
     return owOK;
+}
+
+/**
+ * \copydoc         ow_search_reset_raw
+ * \note            This function is thread-safe
+ */
+owr_t
+ow_search_reset(ow_t* ow) {
+    uint8_t res;
+    ow_protect(ow, 1);
+    res = ow_search_reset_raw(ow);
+    ow_unprotect(ow, 1);
+    return res;
 }
 
 /**
@@ -263,17 +310,23 @@ ow_search_reset(ow_t* ow, const uint8_t protect) {
  * \include         ow_search.c
  * \param[in,out]   ow: 1-Wire handle
  * \param[out]      rom_id: Pointer to 8-byte long variable to save ROM
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_search(ow_t* ow, uint8_t* rom_id, const uint8_t protect) {
-    owr_t res;
+ow_search_raw(ow_t* ow, uint8_t* rom_id) {
+    return ow_search_with_command_raw(ow, OW_CMD_SEARCHROM, rom_id);
+}
 
-    ow_protect(ow, protect);                    /* Protect core */
-    res = ow_search_with_command(ow, OW_CMD_SEARCHROM, rom_id, protect);
-    ow_unprotect(ow, protect);                  /* Unrotect core */
-
+/**
+ * \copydoc         ow_search_raw
+ * \note            This function is thread-safe
+ */
+owr_t
+ow_search(ow_t* ow, uint8_t* rom_id) {
+    uint8_t res;
+    ow_protect(ow, 1);
+    res = ow_search_raw(ow, rom_id);
+    ow_unprotect(ow, 1);
     return res;
 }
 
@@ -283,33 +336,28 @@ ow_search(ow_t* ow, uint8_t* rom_id, const uint8_t protect) {
  * \param[in,out]   ow: 1-Wire handle
  * \param[in]       cmd: command to use for search operation
  * \param[out]      rom_id: Pointer to 8-byte long variable to save ROM
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id, const uint8_t protect) {
+ow_search_with_command_raw(ow_t* ow, uint8_t cmd, uint8_t* rom_id) {
     uint8_t id_bit_number, j, next_disrepancy;
     uint8_t b, b_cpl;
     owr_t res;
     uint8_t* id = ow->rom;
-    
-    ow_protect(ow, protect);                    /* Protect core */
 
     /* Check for last device */
     if (ow->disrepancy == 0) {
-        ow_search_reset(ow, 0);                 /* Reset search for next search */
-        ow_unprotect(ow, protect);              /* Unprotect core */
+        ow_search_reset_raw(ow);                /* Reset search for next search */
         return owERRNODEV;                      /* No devices anymore */
     }
 
     /* Step 1: Reset all devices on 1-Wire line to be able to listen for new command */
-    if ((res = ow_reset(ow, 0)) != owOK) {
-        ow_unprotect(ow, protect);              /* Unprotect core */
+    if ((res = ow_reset_raw(ow)) != owOK) {
         return res;
     }
     
     /* Step 2: Send search rom command for all devices on 1-Wire */
-    ow_write_byte(ow, cmd, 0);                  /* Start with search ROM command */
+    ow_write_byte_raw(ow, cmd);                 /* Start with search ROM command */
     next_disrepancy = OW_LAST_DEV;              /* This is currently last device */
 
     id_bit_number = 64;                         /* We have to read 8 bytes, each 8 bits */
@@ -376,43 +424,75 @@ ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id, const uint8_t pro
 out:
     ow->disrepancy = next_disrepancy;           /* Save disrepancy value */
     memcpy(rom_id, ow->rom, sizeof(ow->rom));   /* Copy ROM to user memory */
-    ow_unprotect(ow, protect);                  /* Unprotect core */
     return id_bit_number == 0 ? owOK : owERRNODEV;  /* Return search result status */
+}
+
+/**
+ * \copydoc         ow_search_with_command_raw
+ * \note            This function is thread-safe
+ */
+owr_t
+ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id) {
+    owr_t res;
+    ow_protect(ow, 1);
+    res = ow_search_with_command_raw(ow, cmd, rom_id);
+    ow_unprotect(ow, 1);
+    return res;
 }
 
 /**
  * \brief           Select device on 1-wire network with exact ROM number
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: Device ROM address to select
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_match_rom(ow_t* ow, const uint8_t* rom_id, const uint8_t protect) {
+ow_match_rom_raw(ow_t* ow, const uint8_t* rom_id) {
     uint8_t i;
 
-    ow_protect(ow, protect);                    /* Protect core */
-    ow_write_byte(ow, OW_CMD_MATCHROM, 0);      /* Write byte to match rom exactly */
+    ow_write_byte_raw(ow, OW_CMD_MATCHROM);     /* Write byte to match rom exactly */
     for (i = 0; i < 8; i++) {                   /* Send 8 bytes representing ROM address */
-        ow_write_byte(ow, rom_id[i], 0);        /* Send ROM bytes */
+        ow_write_byte_raw(ow, rom_id[i]);       /* Send ROM bytes */
     }
-    ow_unprotect(ow, protect);                  /* Unprotect core */
 
     return 1;
 }
 
 /**
+ * \copydoc         ow_match_rom_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+ow_match_rom(ow_t* ow, const uint8_t* rom_id) {
+    uint8_t res;
+    ow_protect(ow, 1);
+    res = ow_match_rom_raw(ow, rom_id);
+    ow_unprotect(ow, 1);
+    return res;
+}
+
+/**
  * \brief           Skip ROM address and select all devices on the network
  * \param[in]       ow: 1-Wire handle
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_skip_rom(ow_t* ow, const uint8_t protect) {
-    ow_protect(ow, protect);                    /* Protect core */
-    ow_write_byte(ow, OW_CMD_SKIPROM, 0);       /* Write byte to match rom exactly */
-    ow_unprotect(ow, protect);                  /* Unprotect core */
+ow_skip_rom_raw(ow_t* ow) {
+    ow_write_byte_raw(ow, OW_CMD_SKIPROM);      /* Write byte to match rom exactly */
     return 1;
+}
+
+/**
+ * \copydoc         ow_skip_rom_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+ow_skip_rom(ow_t* ow) {
+    uint8_t res;
+    ow_protect(ow, 1);
+    res = ow_skip_rom_raw(ow);
+    ow_unprotect(ow, 1);
+    return res;
 }
 
 /**
@@ -422,7 +502,7 @@ ow_skip_rom(ow_t* ow, const uint8_t protect) {
  * \return          Calculated CRC
  */
 uint8_t
-ow_crc(const void *in, size_t len) {
+ow_crc_raw(const void *in, size_t len) {
     uint8_t crc = 0, inbyte, i, mix;
     const uint8_t* d = in;
 
@@ -438,4 +518,15 @@ ow_crc(const void *in, size_t len) {
         }
     }
     return crc;
+}
+
+/**
+ * \copydoc         ow_crc_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+ow_crc(const void *in, size_t len) {
+    uint8_t res;
+    res = ow_crc_raw(in, len);
+    return res;
 }
