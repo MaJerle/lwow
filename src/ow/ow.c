@@ -530,3 +530,62 @@ ow_crc(const void *in, size_t len) {
     res = ow_crc_raw(in, len);
     return res;
 }
+
+/**
+ * \brief           Search devices on 1-wire network by using callback function and custom search command
+ *
+ *                  When new device is detected, callback function `func` is called to notify user
+ * \param[in]       ow: 1-Wire handle
+ * \param[in]       cmd: 1-Wire search command
+ * \param[out]      found: Output variable to save number of found devices
+ * \param[in]       func: Callback function to call for each device
+ * \param[in]       arg: Custom user argument, used in callback function
+ * \return          \ref owOK on success, member of \ref owr_t otherwise
+ * \note            This function is thread-safe
+ */
+owr_t
+ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found, ow_search_cb_fn func, void* arg) {
+    owr_t res;
+    uint8_t rom_id[8];
+    size_t i = 0;
+
+    if (func == NULL) {
+        return owERR;
+    }
+
+    ow_protect(ow, 1);
+    res = ow_reset_raw(ow);                     /* Reset search */
+    /* Search device-by-device until all found */
+    while (res == owOK && (res = ow_search_with_command_raw(ow, cmd, rom_id)) == owOK) {
+        if ((res = func(ow, rom_id, i, arg)) != owOK) {
+            break;
+        }
+        i++;
+    }
+    func(ow, NULL, i, arg);                     /* Call with NULL rom_id parameter */
+    ow_unprotect(ow, 1);
+
+    if (found != NULL) {
+        *found = i;
+    }
+    if (res == owERRNODEV) {                    /* `No device` might not be an error, but simply no devices on bus */
+        res = owOK;
+    }
+    return res;
+}
+
+/**
+ * \brief           Search devices on 1-wire network by using callback function and `SEARCH_ROM` 1-Wire command
+ *
+ *                  When new device is detected, callback function `func` is called to notify user
+ * \param[in]       ow: 1-Wire handle
+ * \param[out]      found: Output variable to save number of found devices
+ * \param[in]       func: Callback function to call for each device
+ * \param[in]       arg: Custom user argument, used in callback function
+ * \return          \ref owOK on success, member of \ref owr_t otherwise
+ * \note            This function is thread-safe
+ */
+owr_t
+ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg) {
+    return ow_search_with_command_callback(ow, OW_CMD_SEARCHROM, found, func, arg);
+}

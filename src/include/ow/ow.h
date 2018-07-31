@@ -52,7 +52,7 @@ extern "C" {
  */
 
 /**
- * \brief			OneWire result enumeration
+ * \brief           OneWire result enumeration
  */
 typedef enum {
     owOK = 0x00,                                /*!< Device returned OK */
@@ -75,6 +75,18 @@ typedef struct {
     uint8_t disrepancy;                         /*!< Disrepancy value on last search */
 	void* arg;                                  /*!< User custom argument */
 } ow_t;
+
+/**
+ * \brief           Search callback function implementation
+ * \param[in]       ow: 1-Wire handle
+ * \param[in]       rom_id: Rom address when new device detected.
+ *                     Set to `NULL` when search finished
+ * \param[in]       index: Current device index
+ *                     When `rom_id = NULL`, value indicates number of total devices found
+ * \param[in]       arg: Custom user argument
+ * \return          \ref owOK on success, member of \ref owr_t otherwise
+ */
+typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const uint8_t* rom_id, size_t index, void* arg);
 
 #define OW_UNUSED(x)                ((void)(x)) /*!< Unused variable macro */
     
@@ -115,6 +127,9 @@ owr_t       ow_search(ow_t* ow, uint8_t* rom_id);
 
 owr_t       ow_search_with_command_raw(ow_t* ow, uint8_t cmd, uint8_t* rom_id);
 owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id);
+
+owr_t		ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found, ow_search_cb_fn func, void* arg);
+owr_t		ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg);
 
 uint8_t     ow_match_rom_raw(ow_t* ow, const uint8_t* rom_id);
 uint8_t     ow_match_rom(ow_t* ow, const uint8_t* rom_id);
