@@ -296,7 +296,7 @@ ow_search_reset_raw(ow_t* ow) {
  */
 owr_t
 ow_search_reset(ow_t* ow) {
-    uint8_t res;
+    owr_t res;
     ow_protect(ow, 1);
     res = ow_search_reset_raw(ow);
     ow_unprotect(ow, 1);
@@ -323,7 +323,7 @@ ow_search_raw(ow_t* ow, uint8_t* rom_id) {
  */
 owr_t
 ow_search(ow_t* ow, uint8_t* rom_id) {
-    uint8_t res;
+    owr_t res;
     ow_protect(ow, 1);
     res = ow_search_raw(ow, rom_id);
     ow_unprotect(ow, 1);
@@ -554,7 +554,7 @@ ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found, ow_search_
     }
 
     ow_protect(ow, 1);
-    res = ow_reset_raw(ow);                     /* Reset search */
+    res = ow_search_reset_raw(ow);              /* Reset search */
     /* Search device-by-device until all found */
     while (res == owOK && (res = ow_search_with_command_raw(ow, cmd, rom_id)) == owOK) {
         if ((res = func(ow, rom_id, i, arg)) != owOK) {
