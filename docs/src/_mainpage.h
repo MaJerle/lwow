@@ -6,13 +6,11 @@
  *
  *  - 1-Wire protocol fits UART specifications at `9600` and `115200` bauds
  *  - Hardware is responsible for timing characteristics
- *  - Works with operating system due to HW time management
+ *  - Works with operating system due to hardware timing management
  *  - Allows DMA on the high-performance microcontrollers
  *  - Different device drivers included
- *     - DS18x20 temperature sensor
+ *     - \ref OW_DEVICE_DS18x20
  *  - User friendly license
- *  - Sources and releases available on Github
- *  - Full documentation available
  *
  * \section         sect_resources Download & Resources
  *
