@@ -19,6 +19,11 @@
  *  - <a href="https://github.com/MaJerle/onewire_uart">Official development repository on Github</a>
  *  - <a href="https://www.maximintegrated.com/en/app-notes/index.mvp/id/214">Using a UART to Implement a 1-Wire Bus Master</a> from Maxim website
  *
+ * \section         sect_contribute How to contribute
+ * 
+ *  - Official development repository is hosted on Github
+ *  - <a href="https://github.com/MaJerle/c_code_style">Respect C style and coding rules</a>
+ *
  * \section         sect_license License
  *
  * \verbatim        
