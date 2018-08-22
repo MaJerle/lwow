@@ -1,6 +1,6 @@
 /**
- * \file            ow_sys_template.c
- * \brief           System functions template file
+ * \file            ow_sys_win32.c
+ * \brief           System functions for WIN32
  */
  
 /*
