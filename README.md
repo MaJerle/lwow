@@ -4,12 +4,26 @@ More about 1-Wire over UART can be found on link below.
 
 https://www.maximintegrated.com/en/app-notes/index.mvp/id/214
 
-## Resource
+## Features
 
-Resources and examples are available as separate repository: https://github.com/MaJerle/onewire_uart_res
+- 1-Wire protocol fits UART specifications at `9600` and `115200` bauds
+- Hardware is responsible for timing characteristics
+- Works with operating system due to hardware timing management
+- Allows DMA on the high-performance microcontrollers
+- Different device drivers included
+	- `DS18x20` temperature sensor
+- User friendly MIT license
 
-## Documentation and project page
+## Examples and resources
 
-Project page:  http://majerle.eu/projects/one-wire-uart-communication
+For examples, please check second repository, available at https://github.com/MaJerle/onewire_uart_res
 
-Documentation: http://majerle.eu/documentation/ow/html/index.html
+## Documentation
+
+Full API documentation with description and examples is available and is regulary updated with the source changes
+
+http://majerle.eu/documentation/ow/html/index.html
+
+## Contribution
+
+I invite you to give feature request or report a bug. Please use issues tracker.
