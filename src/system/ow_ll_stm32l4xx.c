@@ -50,6 +50,7 @@
 #include "stm32l4xx_ll_gpio.h"
 #include "main.h"
 
+#ifndef ONEWIRE_USART
 #define ONEWIRE_USART                           USART1
 #define ONEWIRE_USART_CLK_EN                    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
 #define ONEWIRE_USART_RCC_CLOCK                 PCLK2_Frequency
@@ -59,9 +60,7 @@
 #define ONEWIRE_TX_PIN                          LL_GPIO_PIN_6
 #define ONEWIRE_TX_PIN_AF                       LL_GPIO_AF_7
 
-/*
- * Since GPIOG.10 is on VDDIO2, we have to enable VDDIO2 in power management
- */
+/* Since GPIOG.10 is on VDDIO2, we have to enable VDDIO2 in power management */
 #define ONEWIRE_RX_PORT                         GPIOG
 #define ONEWIRE_RX_PORT_CLK_EN                  do { LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOG); LL_PWR_EnableVddIO2(); } while (0)
 #define ONEWIRE_RX_PIN                          LL_GPIO_PIN_10
@@ -88,6 +87,7 @@
     LL_DMA_ClearFlag_HT5(ONEWIRE_USART_RX_DMA);         \
     LL_DMA_ClearFlag_TE5(ONEWIRE_USART_RX_DMA);         \
 } while (0)
+#endif /* ONEWIRE_USART */
 
 /**
  * \brief           Initialize low-level communication
