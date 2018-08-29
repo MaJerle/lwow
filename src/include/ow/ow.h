@@ -62,6 +62,13 @@ typedef enum {
 } owr_t;
 
 /**
+ * \brief           ROM structure
+ */
+typedef struct {
+    uint8_t rom[8];                             /*!< 8-bytes ROM address */
+} ow_rom_t;
+
+/**
  * \brief           1-Wire structure
  */
 typedef struct {    
@@ -86,7 +93,7 @@ typedef struct {
  * \param[in]       arg: Custom user argument
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
-typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const uint8_t* rom_id, size_t index, void* arg);
+typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index, void* arg);
 
 #define OW_UNUSED(x)                ((void)(x)) /*!< Unused variable macro */
     
@@ -122,23 +129,29 @@ uint8_t     ow_read_bit(ow_t* ow);
 owr_t       ow_search_reset_raw(ow_t* ow);
 owr_t       ow_search_reset(ow_t* ow);
 
-owr_t       ow_search_raw(ow_t* ow, uint8_t* rom_id);
-owr_t       ow_search(ow_t* ow, uint8_t* rom_id);
+owr_t       ow_search_raw(ow_t* ow, ow_rom_t* rom_id);
+owr_t       ow_search(ow_t* ow, ow_rom_t* rom_id);
 
-owr_t       ow_search_with_command_raw(ow_t* ow, uint8_t cmd, uint8_t* rom_id);
-owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id);
+owr_t       ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
+owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
 
 owr_t		ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found, ow_search_cb_fn func, void* arg);
 owr_t		ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg);
 
-uint8_t     ow_match_rom_raw(ow_t* ow, const uint8_t* rom_id);
-uint8_t     ow_match_rom(ow_t* ow, const uint8_t* rom_id);
+owr_t       ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_arr, size_t rom_len, size_t* found);
+owr_t       ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_arr, size_t rom_len, size_t* found);
+
+owr_t       ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_arr, size_t rom_len, size_t* found);
+owr_t       ow_search_devices(ow_t* ow, ow_rom_t* rom_arr, size_t rom_len, size_t* found);
+
+uint8_t     ow_match_rom_raw(ow_t* ow, const ow_rom_t* rom_id);
+uint8_t     ow_match_rom(ow_t* ow, const ow_rom_t* rom_id);
 
 uint8_t     ow_skip_rom_raw(ow_t* ow);
 uint8_t     ow_skip_rom(ow_t* ow);
 
-uint8_t     ow_crc_raw(const void *in, size_t len);
-uint8_t     ow_crc(const void *in, size_t len);
+uint8_t     ow_crc_raw(const void* in, size_t len);
+uint8_t     ow_crc(const void* in, size_t len);
 
 /**
  * \}
