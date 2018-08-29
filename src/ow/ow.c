@@ -342,7 +342,7 @@ owr_t
 ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
     owr_t res;
     uint8_t id_bit_number, next_disrepancy;
-    uint8_t* id = ow->rom;
+    uint8_t* id = ow->rom.rom;
 
     /* Check for last device */
     if (ow->disrepancy == 0) {
@@ -422,7 +422,7 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
     }
 out:
     ow->disrepancy = next_disrepancy;           /* Save disrepancy value */
-    memcpy(rom_id, ow->rom, sizeof(ow->rom));   /* Copy ROM to user memory */
+    memcpy(rom_id->rom, ow->rom.rom, sizeof(ow->rom.rom));  /* Copy ROM to user memory */
     return id_bit_number == 0 ? owOK : owERRNODEV;  /* Return search result status */
 }
 

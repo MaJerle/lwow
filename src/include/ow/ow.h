@@ -76,7 +76,7 @@ typedef struct {
     OW_CFG_OS_MUTEX_HANDLE mutex;               /*!< Mutex handle */
 #endif /* OW_USE_RTOS || __DOXYGEN__ */
     
-    uint8_t rom[8];                             /*!< ROM address of last device found.
+    ow_rom_t rom;                               /*!< ROM address of last device found.
                                                      When searching for new devices, we always need last found address,
                                                      to be able to decide which way to go next time during scan. */
     uint8_t disrepancy;                         /*!< Disrepancy value on last search */
