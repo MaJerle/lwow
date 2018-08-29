@@ -170,7 +170,7 @@ ow_reset(ow_t* ow) {
  */
 uint8_t
 ow_write_byte_raw(ow_t* ow, uint8_t b) {
-    uint8_t i, r = 0, tr[8];
+    uint8_t r = 0, tr[8];
     
     /*
      * Each BIT on 1-wire level represents 1-byte on UART level at 115200 bauds.
@@ -187,7 +187,7 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
      */
     
     /* Create output data */
-    for (i = 0; i < 8; i++) {
+    for (uint8_t i = 0; i < 8; i++) {
         /*
          * If we have to send high bit, set byte as 0xFF,
          * otherwise set it as low bit, 0x00
@@ -205,7 +205,7 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
      * Check received data. If we read 0xFF,
      * our logical write 1 was successful, otherwise it was 0.
      */
-    for (i = 0; i < 8; i++) {
+    for (uint8_t i = 0; i < 8; i++) {
         if (tr[i] == 0xFF) {
             r |= 0x01 << i;
         }
@@ -448,10 +448,8 @@ ow_search_with_command(ow_t* ow, uint8_t cmd, uint8_t* rom_id) {
  */
 uint8_t
 ow_match_rom_raw(ow_t* ow, const uint8_t* rom_id) {
-    uint8_t i;
-
     ow_write_byte_raw(ow, OW_CMD_MATCHROM);     /* Write byte to match rom exactly */
-    for (i = 0; i < 8; i++) {                   /* Send 8 bytes representing ROM address */
+    for (uint8_t i = 0; i < 8; i++) {           /* Send 8 bytes representing ROM address */
         ow_write_byte_raw(ow, rom_id[i]);       /* Send ROM bytes */
     }
 
@@ -503,12 +501,12 @@ ow_skip_rom(ow_t* ow) {
  */
 uint8_t
 ow_crc_raw(const void *in, size_t len) {
-    uint8_t crc = 0, inbyte, i, mix;
+    uint8_t crc = 0, inbyte, mix;
     const uint8_t* d = in;
 
     while (len--) {
         inbyte = *d++;
-        for (i = 8; i; i--) {
+        for (uint8_t i = 8; i; i--) {
             mix = (crc ^ inbyte) & 0x01;
             crc >>= 1;
             if (mix) {
