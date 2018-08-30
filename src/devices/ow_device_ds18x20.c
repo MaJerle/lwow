@@ -36,8 +36,8 @@
 /**
  * \brief           Start temperature conversion on specific (or all) devices
  * \param[in]       ow: 1-Wire handle
- * \param[in]       rom_id: ROM id of device to start measurement.
- *                  Set to `NULL` to start measurement on all devices at the same time
+ * \param[in]       rom_id: 1-Wire device address to start measurement for.
+ *                      Set to `NULL` to start measurement on all devices at the same time
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
@@ -193,7 +193,7 @@ ow_ds18x20_get_resolution(ow_t* ow, const ow_rom_t* rom_id) {
  * \brief           Set resolution for `DS18B20` sensor
  * \note            `DS18S20` has fixed `9-bit` resolution
  * \param[in]       ow: 1-Wire handle
- * \param[in]       rom_id: Address of device to set resolution
+ * \param[in]       rom_id: 1-Wire device address to set resolution
  * \param[in]       bits: Number of resolution bits. Possible values are `9 - 12`
  * \return          `1` on success, `0` otherwise
  */
@@ -280,7 +280,7 @@ ow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
  *
  *
  * \param[in]       ow: 1-Wire handle
- * \param[in]       rom_id: 1-Wire device address to test for `DS18B20`
+ * \param[in]       rom_id: 1-Wire device address
  * \param[in]       temp_l: Alarm low temperature
  * \param[in]       temp_h: Alarm high temperature
  * \return          `1` on success, `0` otherwise

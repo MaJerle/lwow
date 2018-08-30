@@ -309,7 +309,7 @@ ow_search_reset(ow_t* ow) {
  *
  * \include         ow_search.c
  * \param[in,out]   ow: 1-Wire handle
- * \param[out]      rom_id: Pointer to 8-byte long variable to save ROM
+ * \param[out]      rom_id: Pointer to ROM structure to save ROM
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
@@ -335,7 +335,7 @@ ow_search(ow_t* ow, ow_rom_t* rom_id) {
  * \note            To reset search and to start over, use \ref ow_search_reset function
  * \param[in,out]   ow: 1-Wire handle
  * \param[in]       cmd: command to use for search operation
- * \param[out]      rom_id: Pointer to 8-byte long variable to save ROM
+ * \param[out]      rom_id: Pointer to ROM structure to store address
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
@@ -442,7 +442,7 @@ ow_search_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
 /**
  * \brief           Select device on 1-wire network with exact ROM number
  * \param[in]       ow: 1-Wire handle
- * \param[in]       rom_id: Device ROM address to select
+ * \param[in]       rom_id: 1-Wire device address to match device
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
