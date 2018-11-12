@@ -43,7 +43,7 @@ extern "C" {
 
 /**
  * \defgroup        OW_SYS System functions
- * \brief           System functions if case of operating system
+ * \brief           System functions when used with operating system
  * \{
  */
 

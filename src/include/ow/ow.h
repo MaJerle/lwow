@@ -48,11 +48,11 @@ extern "C" {
  * \{
  *
  * \note            Functions with `_raw` suffix do no implement
- *                  locking mechanism when using with operating system.
+ *                  locking mechanism when used with operating system.
  */
 
 /**
- * \brief           OneWire result enumeration
+ * \brief           1-Wire result enumeration
  */
 typedef enum {
     owOK = 0x00,                                /*!< Device returned OK */

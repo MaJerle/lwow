@@ -186,7 +186,7 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
      * To write logical bit 0, we have to send constant 0x00 over UART.
      */
     
-    /* Create output data */
+    /* Prepare output data */
     for (uint8_t i = 0; i < 8; i++) {
         /*
          * If we have to send high bit, set byte as 0xFF,
@@ -541,7 +541,8 @@ ow_crc(const void* in, size_t len) {
  * \note            This function is thread-safe
  */
 owr_t
-ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found, ow_search_cb_fn func, void* arg) {
+ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
+                                ow_search_cb_fn func, void* arg) {
     owr_t res;
     ow_rom_t rom_id;
     size_t i = 0;
@@ -597,7 +598,8 @@ ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_arr, size_t rom_len, size_t* found) {
+ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_arr,
+                                    size_t rom_len, size_t* found) {
     owr_t res;
 
     /* Check input parameters */
@@ -622,7 +624,8 @@ ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_arr, siz
  * \note            This function is thread-safe
  */
 owr_t
-ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_arr, size_t rom_len, size_t* found) {
+ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_arr,
+                                size_t rom_len, size_t* found) {
     owr_t res;
     ow_protect(ow, 1);
     res = ow_search_devices_with_command_raw(ow, cmd, rom_arr, rom_len, found);
