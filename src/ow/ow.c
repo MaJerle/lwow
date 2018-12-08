@@ -43,7 +43,7 @@
 #define OW_FIRST_DEV                    0xFF
 #define OW_LAST_DEV                     0x00
 
-#define ONEWIRE_BYTE_RESET              0xF0
+#define OW_RESET_BYTE                   0xF0
 
 #endif /* !__DOXYGEN__ */
 
@@ -137,13 +137,13 @@ ow_reset_raw(ow_t* ow) {
     uint8_t b;
     
     /* First send reset pulse */
-    b = ONEWIRE_BYTE_RESET;                     /* Set reset sequence byte = 0xF0 */
+    b = OW_RESET_BYTE;                          /* Set reset sequence byte = 0xF0 */
     ow_ll_set_baudrate(9600, ow->arg);          /* Set low baudrate */
     ow_ll_transmit_receive(&b, &b, 1, ow->arg); /* Exchange data over onewire */
     ow_ll_set_baudrate(115200, ow->arg);        /* Set high baudrate */
     
     /* Check if there is reply from any device */
-    if (b == 0x00 || b == ONEWIRE_BYTE_RESET) {
+    if (b == 0x00 || b == OW_RESET_BYTE) {
         return owERRPRESENCE;
     }
     return owOK;
