@@ -96,6 +96,14 @@ typedef struct {
 typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index, void* arg);
 
 #define OW_UNUSED(x)                ((void)(x)) /*!< Unused variable macro */
+
+/**
+ * \brief           Get size of statically declared array
+ * \param[in]       x: Input array
+ * \return          Number of array elements
+ * \hideinitializer
+ */
+#define OW_ARRAYSIZE(x)             (sizeof(x) / sizeof((x)[0]))
     
 #define OW_CMD_RSCRATCHPAD          0xBE        /*!< Read scratchpad command for 1-Wire devices */
 #define OW_CMD_WSCRATCHPAD          0x4E        /*!< Write scratchpad command for 1-Wire devices */
