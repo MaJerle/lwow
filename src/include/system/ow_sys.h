@@ -26,7 +26,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of OneWire library.
+ * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
@@ -43,7 +43,7 @@ extern "C" {
 
 /**
  * \defgroup        OW_SYS System functions
- * \brief           System functions if case of operating system
+ * \brief           System functions when used with operating system
  * \{
  */
 
