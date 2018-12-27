@@ -1,6 +1,6 @@
 /**
- * \file            ow_ll_stm32l496g_discovery.c
- * \brief           UART implementation for STM32L496G-Discovery
+ * \file            ow_ll_stm32f429zi_nucleo.c
+ * \brief           UART implementation for STm32F429ZI-Nucleo
  */
  
 /*
@@ -32,39 +32,35 @@
  */
 
 /*
- * STM32L496G-Discovery comes with external STMOD+ board with CN4 ESP-01 connector
- *
- * UART configuration is:
+ * Default UART configuration is:
  *
  * UART:                USART1
- * STM32 TX:            GPIOB, GPIO_PIN_6
- * STM32 RX:            GPIOG, GPIO_PIN_10; Note: VDDIO2 must be enabled in PWR register
+ * STM32 TX:            GPIOA, GPIO_PIN_9
+ * STM32 RX:            GPIOA, GPIO_PIN_10
  */
 
 #if !__DOXYGEN__
 
-#include "stm32l4xx_ll_usart.h"
-#include "stm32l4xx_ll_lpuart.h"
-#include "stm32l4xx_ll_bus.h"
-#include "stm32l4xx_ll_rcc.h"
-#include "stm32l4xx_ll_dma.h"
-#include "stm32l4xx_ll_gpio.h"
-#include "stm32l4xx_ll_pwr.h"
+#include "stm32f4xx_ll_usart.h"
+#include "stm32f4xx_ll_bus.h"
+#include "stm32f4xx_ll_rcc.h"
+#include "stm32f4xx_ll_dma.h"
+#include "stm32f4xx_ll_gpio.h"
+#include "stm32f4xx_ll_pwr.h"
 
 /* USART */
 #define ONEWIRE_USART                           USART1
 #define ONEWIRE_USART_CLK_EN                    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
 
 /* USART TX PIN */
-#define ONEWIRE_TX_PORT                         GPIOB
-#define ONEWIRE_TX_PORT_CLK_EN                  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB)
-#define ONEWIRE_TX_PIN                          LL_GPIO_PIN_6
+#define ONEWIRE_TX_PORT                         GPIOA
+#define ONEWIRE_TX_PORT_CLK_EN                  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB)
+#define ONEWIRE_TX_PIN                          LL_GPIO_PIN_9
 #define ONEWIRE_TX_PIN_AF                       LL_GPIO_AF_7
 
 /* USART RX PIN */
-/* Since GPIOG.10 is on VDDIO2, we have to enable VDDIO2 in power management */
-#define ONEWIRE_RX_PORT                         GPIOG
-#define ONEWIRE_RX_PORT_CLK_EN                  do { LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOG); LL_PWR_EnableVddIO2(); } while (0)
+#define ONEWIRE_RX_PORT                         GPIOA
+#define ONEWIRE_RX_PORT_CLK_EN                  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
 #define ONEWIRE_RX_PIN                          LL_GPIO_PIN_10
 #define ONEWIRE_RX_PIN_AF                       LL_GPIO_AF_7
 
