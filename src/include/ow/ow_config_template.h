@@ -33,9 +33,7 @@
 #ifndef __ONEWIRE_CONFIG_H
 #define __ONEWIRE_CONFIG_H
 
-/*
- * Rename this file to "ow_config.h" for your application
- */
+/* Rename this file to "ow_config.h" for your application */
 
 /*
  * Open "include/ow/ow_config_default.h" and
