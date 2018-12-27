@@ -2,27 +2,27 @@
  * \file            ow.c
  * \brief           OneWire protocol implementation
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -82,7 +82,7 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
     int8_t digit;
     float dec;
     uint16_t temp;
-    
+
     /* Check ROM device */
     if (rom_id != NULL && !ow_ds18x20_is_b_raw(ow, rom_id) && !ow_ds18x20_is_s_raw(ow, rom_id)) {
         return 0;
@@ -99,7 +99,7 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
             ow_match_rom_raw(ow, rom_id);       /* Select exact device by ROM address */
         }
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);  /* Send command to read scratchpad */
-        
+
         /* Read plain data from device */
         for (uint8_t i = 0; i < 9; i++) {
             data[i] = ow_read_byte_raw(ow);     /* Read byte */
@@ -265,7 +265,7 @@ ow_ds18x20_set_resolution(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
  *                      - `-55 % 125`, valid temperature range
  *                      - \ref OW_DS18X20_ALARM_DISABLE to disable temperature alarm (either high or low)
  *                      - \ref OW_DS18X20_ALARM_NOCHANGE to keep current alarm temperature (either high or low)
- * 
+ *
  * Example usage would look something similar to:
  * \code{c}
 //Set alarm temperature; low = 10°C, high = 30°C

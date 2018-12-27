@@ -2,27 +2,27 @@
  * \file            ow_ll_stm32.c
  * \brief           Generic UART implementation for STM32 MCUs
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -54,7 +54,7 @@ usart_init;
 uint8_t
 ow_ll_init(void* arg) {
     LL_GPIO_InitTypeDef gpio_init;
-    
+
     /* Peripheral clock enable */
     ONEWIRE_USART_CLK_EN;
     ONEWIRE_TX_PORT_CLK_EN;
@@ -66,7 +66,7 @@ ow_ll_init(void* arg) {
     gpio_init.Speed = LL_GPIO_SPEED_FREQ_HIGH;
     gpio_init.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
     gpio_init.Pull = LL_GPIO_PULL_UP;
-    
+
     /* TX pin */
     gpio_init.Alternate = ONEWIRE_TX_PIN_AF;
     gpio_init.Pin = ONEWIRE_TX_PIN;
@@ -90,7 +90,7 @@ ow_ll_init(void* arg) {
     LL_USART_Init(ONEWIRE_USART, &usart_init);
     LL_USART_ConfigAsyncMode(ONEWIRE_USART);
     LL_USART_Enable(ONEWIRE_USART);
-    
+
     return 1;
 }
 
@@ -117,14 +117,14 @@ ow_ll_set_baudrate(uint32_t baud, void* arg) {
     usart_init.BaudRate = baud;
     LL_USART_Init(ONEWIRE_USART, &usart_init);
     LL_USART_Enable(ONEWIRE_USART);         /* Enable USART back */
-    
+
     return 1;
 }
 
 /**
  * \brief           Transmit-Receive data over OneWire bus
  * \param[in]       tx: Array of data to send
- * \param[out]      rx: Array to save receive data 
+ * \param[out]      rx: Array to save receive data
  * \param[in]       len: Number of bytes to send
  * \param[in]       arg: User argument
  * \return          `1` on success, `0` otherwise
@@ -133,7 +133,7 @@ uint8_t
 ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     const uint8_t* t = tx;
     uint8_t* r = rx;
-    
+
     /* Send byte with polling */
     while (len--) {
         LL_USART_TransmitData8(ONEWIRE_USART, *t++);

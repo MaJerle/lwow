@@ -2,27 +2,27 @@
  * \file            ow.h
  * \brief           OneWire-UART library
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -71,11 +71,11 @@ typedef struct {
 /**
  * \brief           1-Wire structure
  */
-typedef struct {    
+typedef struct {
 #if OW_CFG_OS || __DOXYGEN__
     OW_CFG_OS_MUTEX_HANDLE mutex;               /*!< Mutex handle */
 #endif /* OW_USE_RTOS || __DOXYGEN__ */
-    
+
     ow_rom_t rom;                               /*!< ROM address of last device found.
                                                      When searching for new devices, we always need last found address,
                                                      to be able to decide which way to go next time during scan. */
@@ -104,7 +104,7 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index
  * \hideinitializer
  */
 #define OW_ARRAYSIZE(x)             (sizeof(x) / sizeof((x)[0]))
-    
+
 #define OW_CMD_RSCRATCHPAD          0xBE        /*!< Read scratchpad command for 1-Wire devices */
 #define OW_CMD_WSCRATCHPAD          0x4E        /*!< Write scratchpad command for 1-Wire devices */
 #define OW_CMD_CPYSCRATCHPAD        0x48        /*!< Copy scratchpad command for 1-Wire devices */

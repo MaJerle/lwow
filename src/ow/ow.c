@@ -2,27 +2,27 @@
  * \file            ow.c
  * \brief           OneWire protocol implementation
  */
- 
+
 /*
  * Copyright (c) 2018 Tilen Majerle
- *  
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
@@ -135,13 +135,13 @@ ow_unprotect(ow_t* ow, const uint8_t protect) {
 owr_t
 ow_reset_raw(ow_t* ow) {
     uint8_t b;
-    
+
     /* First send reset pulse */
     b = OW_RESET_BYTE;                          /* Set reset sequence byte = 0xF0 */
     ow_ll_set_baudrate(9600, ow->arg);          /* Set low baudrate */
     ow_ll_transmit_receive(&b, &b, 1, ow->arg); /* Exchange data over onewire */
     ow_ll_set_baudrate(115200, ow->arg);        /* Set high baudrate */
-    
+
     /* Check if there is reply from any device */
     if (b == 0x00 || b == OW_RESET_BYTE) {
         return owERRPRESENCE;
@@ -171,7 +171,7 @@ ow_reset(ow_t* ow) {
 uint8_t
 ow_write_byte_raw(ow_t* ow, uint8_t b) {
     uint8_t r = 0, tr[8];
-    
+
     /*
      * Each BIT on 1-wire level represents 1-byte on UART level at 115200 bauds.
      *
@@ -185,7 +185,7 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
      * Writing logical bit 0 over 1-Wire protocol is similar to bit 1, but here we only pull line low for 60us and then release it with STOP bit.
      * To write logical bit 0, we have to send constant 0x00 over UART.
      */
-    
+
     /* Prepare output data */
     for (uint8_t i = 0; i < 8; i++) {
         /*
@@ -200,7 +200,7 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
      * send single byte for each bit = 8 bytes
      */
     ow_ll_transmit_receive(tr, tr, 8, ow->arg); /* Exchange data over UART */
-    
+
     /*
      * Check received data. If we read 0xFF,
      * our logical write 1 was successful, otherwise it was 0.
@@ -354,7 +354,7 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
     if ((res = ow_reset_raw(ow)) != owOK) {
         return res;
     }
-    
+
     /* Step 2: Send search rom command for all devices on 1-Wire */
     ow_write_byte_raw(ow, cmd);                 /* Start with search ROM command */
     next_disrepancy = OW_LAST_DEV;              /* This is currently last device */
@@ -365,7 +365,7 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
         while (j--) {
             b       = send_bit(ow, 1);          /* Read first bit = next address bit */
             b_cpl   = send_bit(ow, 1);          /* Read second bit = complementary bit of next address bit */
-            
+
             /*
              * If we have connected many devices on 1-Wire port b and b_cpl are ANDed between all devices.
              *
@@ -400,17 +400,17 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
                     next_disrepancy = id_bit_number;
                 }
             }
-            
+
             /*
              * Devices are expecting master will send bit value back.
              * All devices which do not have this bit value
              * will go on blocked state and will wait for next reset sequence
              *
-             * In case of "collision", we can decide here which devices we will 
+             * In case of "collision", we can decide here which devices we will
              * continue to scan (binary tree)
              */
             send_bit(ow, b);                    /* Send bit you want to continue with */
-            
+
             /*
              * Because we shift down *id each iteration, we have to position bit value to the MSB position
              * and it will be automatically positioned correct way.
