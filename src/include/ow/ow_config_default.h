@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __ONEWIRE_CONFIG_DEFAULT_H
-#define __ONEWIRE_CONFIG_DEFAULT_H
+#ifndef OW_HDR_CONFIG_DEFAULT_H
+#define OW_HDR_CONFIG_DEFAULT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,4 +71,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* __ONEWIRE_CONFIG_DEFAULT_H */
+#endif /* OW_HDR_CONFIG_DEFAULT_H */

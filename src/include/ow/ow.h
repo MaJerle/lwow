@@ -30,8 +30,8 @@
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  */
-#ifndef __ONEWIRE_H
-#define __ONEWIRE_H
+#ifndef OW_HDR_H
+#define OW_HDR_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -169,4 +169,4 @@ uint8_t     ow_crc(const void* in, size_t len);
 }
 #endif /* __cplusplus */
 
-#endif /* __ONEWIRE_H__ */
+#endif /* OW_HDR_H */
