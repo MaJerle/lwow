@@ -40,17 +40,20 @@ uint8_t
 ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     osMutexDef(m);
     *mutex = osMutexCreate(osMutex(m));         /* Create new mutex */
+    OW_UNUSED(arg);
     return 1;
 }
 
 uint8_t
 ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     osMutexDelete(*mutex);                      /* Delete mutex */
+    OW_UNUSED(arg);
     return 1;
 }
 
 uint8_t
 ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    OW_UNUSED(arg);
     if (osMutexWait(*mutex, osWaitForever) != osOK) {
         return 0;
     }
@@ -59,6 +62,7 @@ ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
 
 uint8_t
 ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    OW_UNUSED(arg);
     if (osMutexRelease(*mutex) != osOK) {
         return 0;
     }
