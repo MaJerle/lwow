@@ -62,7 +62,7 @@
 #define ONEWIRE_TX_PIN_AF                       LL_GPIO_AF_7
 
 /* USART RX PIN */
-/* Since GPIOG.10 is on VDDIO2, we have to enable VDDIO2 in power management */
+/* Since GPIOG.10 is on VDDIO2, VDDIO2 domain must be enabled aswell */
 #define ONEWIRE_RX_PORT                         GPIOG
 #define ONEWIRE_RX_PORT_CLK_EN                  do { LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOG); LL_PWR_EnableVddIO2(); } while (0)
 #define ONEWIRE_RX_PIN                          LL_GPIO_PIN_10

@@ -54,7 +54,7 @@
 
 /* USART TX PIN */
 #define ONEWIRE_TX_PORT                         GPIOA
-#define ONEWIRE_TX_PORT_CLK_EN                  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB)
+#define ONEWIRE_TX_PORT_CLK_EN                  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
 #define ONEWIRE_TX_PIN                          LL_GPIO_PIN_9
 #define ONEWIRE_TX_PIN_AF                       LL_GPIO_AF_7
 
