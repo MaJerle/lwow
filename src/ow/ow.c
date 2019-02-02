@@ -210,7 +210,6 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
             r |= 0x01 << i;
         }
     }
-
     return r;
 }
 
