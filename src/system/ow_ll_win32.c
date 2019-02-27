@@ -114,7 +114,8 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
 
     if (com_port != NULL) {
         /* Write file and send data */
-        WriteFile(com_port, tx, len, NULL, NULL);
+        WriteFile(com_port, tx, len, &br, NULL);
+        FlushFileBuffers(com_port);
 
         /* We need to wait data back in loop-back mode */
         do {
