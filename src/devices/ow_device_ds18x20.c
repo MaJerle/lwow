@@ -44,6 +44,8 @@ uint8_t
 ow_ds18x20_start_raw(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t ret = 0;
 
+    OW_ASSERT0("ow != NULL", ow != NULL);
+
     if (ow_reset_raw(ow) == owOK) {
         if (rom_id == NULL) {                   /* Check for ROM id */
             ow_skip_rom_raw(ow);                /* Skip ROM, send to all devices */
@@ -63,6 +65,9 @@ ow_ds18x20_start_raw(ow_t* ow, const ow_rom_t* rom_id) {
 uint8_t
 ow_ds18x20_start(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+
     ow_protect(ow, 1);
     res = ow_ds18x20_start_raw(ow, rom_id);
     ow_unprotect(ow, 1);
@@ -83,8 +88,12 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
     float dec;
     uint16_t temp;
 
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
+    OW_ASSERT0("t != NULL", t != NULL);
+
     /* Check ROM device */
-    if (rom_id != NULL && !ow_ds18x20_is_b_raw(ow, rom_id) && !ow_ds18x20_is_s_raw(ow, rom_id)) {
+    if (!ow_ds18x20_is_b_raw(ow, rom_id) && !ow_ds18x20_is_s_raw(ow, rom_id)) {
         return 0;
     }
 
@@ -139,6 +148,9 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
 uint8_t
 ow_ds18x20_read(ow_t* ow, const ow_rom_t* rom_id, float* t) {
     uint8_t res;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+
     ow_protect(ow, 1);
     res = ow_ds18x20_read_raw(ow, rom_id, t);
     ow_unprotect(ow, 1);
@@ -154,6 +166,9 @@ ow_ds18x20_read(ow_t* ow, const ow_rom_t* rom_id, float* t) {
 uint8_t
 ow_ds18x20_get_resolution_raw(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res = 0;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     /* Check if it is B version */
     if (!ow_ds18x20_is_b_raw(ow, rom_id)) {
@@ -183,6 +198,9 @@ ow_ds18x20_get_resolution_raw(ow_t* ow, const ow_rom_t* rom_id) {
 uint8_t
 ow_ds18x20_get_resolution(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+
     ow_protect(ow, 1);
     res = ow_ds18x20_get_resolution_raw(ow, rom_id);
     ow_unprotect(ow, 1);
@@ -200,6 +218,9 @@ ow_ds18x20_get_resolution(ow_t* ow, const ow_rom_t* rom_id) {
 uint8_t
 ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
     uint8_t th, tl, conf, res = 0;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     if (bits < 9 || bits > 12 ||                /* Check bits range */
         !ow_ds18x20_is_b_raw(ow, rom_id)) {     /* Check if it is B version */
@@ -253,6 +274,9 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
 uint8_t
 ow_ds18x20_set_resolution(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
     uint8_t res;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+
     ow_protect(ow, 1);
     res = ow_ds18x20_set_resolution_raw(ow, rom_id, bits);
     ow_unprotect(ow, 1);
@@ -288,6 +312,9 @@ ow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
 uint8_t
 ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h) {
     uint8_t res = 0, conf, th, tl;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     if (!ow_ds18x20_is_b_raw(ow, rom_id)) {     /* Check device */
         return 0;
@@ -360,6 +387,9 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
 uint8_t
 ow_ds18x20_set_alarm_temp(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h) {
     uint8_t res;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+
     ow_protect(ow, 1);
     res = ow_ds18x20_set_alarm_temp_raw(ow, rom_id, temp_l, temp_h);
     ow_unprotect(ow, 1);
@@ -385,6 +415,9 @@ ow_ds18x20_search_alarm_raw(ow_t* ow, ow_rom_t* rom_id) {
 owr_t
 ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id) {
     owr_t res;
+
+    OW_ASSERT("ow != NULL", ow != NULL);
+
     ow_protect(ow, 1);
     res = ow_ds18x20_search_alarm_raw(ow, rom_id);
     ow_unprotect(ow, 1);
@@ -399,7 +432,8 @@ ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id) {
  */
 uint8_t
 ow_ds18x20_is_b_raw(ow_t* ow, const ow_rom_t* rom_id) {
-    OW_UNUSED(ow);                              /* Unused variable */
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_UNUSED(ow);
     return rom_id != NULL && rom_id->rom[0] == 0x28;/* Check for correct ROM family code */
 }
 
@@ -410,6 +444,9 @@ ow_ds18x20_is_b_raw(ow_t* ow, const ow_rom_t* rom_id) {
 uint8_t
 ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+
     ow_protect(ow, 1);
     res = ow_ds18x20_is_b_raw(ow, rom_id);
     ow_unprotect(ow, 1);
@@ -424,7 +461,8 @@ ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id) {
  */
 uint8_t
 ow_ds18x20_is_s_raw(ow_t* ow, const ow_rom_t* rom_id) {
-    OW_UNUSED(ow);                              /* Unused variable */
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_UNUSED(ow);
     return rom_id != NULL && rom_id->rom[0] == 0x10;/* Check for correct ROM family code */
 }
 
@@ -435,6 +473,9 @@ ow_ds18x20_is_s_raw(ow_t* ow, const ow_rom_t* rom_id) {
 uint8_t
 ow_ds18x20_is_s(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res;
+
+    OW_ASSERT0("ow != NULL", ow != NULL);
+
     ow_protect(ow, 1);
     res = ow_ds18x20_is_s_raw(ow, rom_id);
     ow_unprotect(ow, 1);

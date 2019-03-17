@@ -58,6 +58,7 @@ typedef enum {
     owOK = 0x00,                                /*!< Device returned OK */
     owERRPRESENCE = -1,                         /*!< Presence was not successful */
     owERRNODEV = -2,                            /*!< No device connected, maybe device removed during scan? */
+    owPARERR = -3,                              /*!< Parameter error */
     owERR,                                      /*!< General-Purpose error */
 } owr_t;
 
@@ -98,6 +99,24 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index
 #define OW_UNUSED(x)                ((void)(x)) /*!< Unused variable macro */
 
 /**
+ * \brief           Assert check function
+ */
+#define OW_ASSERT(msg, c)           do {    \
+    if (!(c)) {                             \
+        return owPARERR;                    \
+    }                                       \
+} while (0)
+
+/**
+ * \brief           Assert check function with return `0`
+ */
+#define OW_ASSERT0(msg, c)           do {   \
+    if (!(c)) {                             \
+        return 0;                           \
+    }                                       \
+} while (0)
+
+/**
  * \brief           Get size of statically declared array
  * \param[in]       x: Input array
  * \return          Number of array elements
@@ -108,14 +127,15 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index
 #define OW_CMD_RSCRATCHPAD          0xBE        /*!< Read scratchpad command for 1-Wire devices */
 #define OW_CMD_WSCRATCHPAD          0x4E        /*!< Write scratchpad command for 1-Wire devices */
 #define OW_CMD_CPYSCRATCHPAD        0x48        /*!< Copy scratchpad command for 1-Wire devices */
-#define OW_CMD_RECEEPROM            0xB8
-#define OW_CMD_RPWRSUPPLY           0xB4
+#define OW_CMD_RECEEPROM            0xB8        /*!< Read EEPROM command */
+#define OW_CMD_RPWRSUPPLY           0xB4        /*!< Read power supply command */
 #define OW_CMD_SEARCHROM            0xF0        /*!< Search ROM command */
 #define OW_CMD_READROM              0x33        /*!< Read ROM command */
 #define OW_CMD_MATCHROM             0x55        /*!< Match ROM command. Select device with specific ROM */
 #define OW_CMD_SKIPROM              0xCC        /*!< Skip ROM, select all devices */
 
 owr_t       ow_init(ow_t* ow, void* arg);
+void        ow_deinit(ow_t* ow);
 
 owr_t       ow_protect(ow_t* ow, const uint8_t protect);
 owr_t       ow_unprotect(ow_t* ow, const uint8_t protect);
