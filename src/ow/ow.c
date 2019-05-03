@@ -117,7 +117,7 @@ ow_protect(ow_t* ow, const uint8_t protect) {
     OW_ASSERT("ow != NULL", ow != NULL);
 
 #if OW_CFG_OS
-    if (protect && !ow_sys_mutex_wait(&ow->mutex, arg)) {
+    if (protect && !ow_sys_mutex_wait(&ow->mutex, ow->arg)) {
         return owERR;
     }
 #else
@@ -139,7 +139,7 @@ ow_unprotect(ow_t* ow, const uint8_t protect) {
     OW_ASSERT("ow != NULL", ow != NULL);
 
 #if OW_CFG_OS
-    if (protect && !ow_sys_mutex_release(&ow->mutex, arg)) {
+    if (protect && !ow_sys_mutex_release(&ow->mutex, ow->arg)) {
         return owERR;
     }
 #else
