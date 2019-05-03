@@ -701,7 +701,7 @@ ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_arr,
 
     ow_protect(ow, 1);
     res = ow_search_devices_with_command_raw(ow, cmd, rom_arr, rom_len, found);
-    ow_protect(ow, 1);
+    ow_unprotect(ow, 1);
     return res;
 }
 
@@ -730,6 +730,6 @@ ow_search_devices(ow_t* ow, ow_rom_t* rom_arr, size_t rom_len, size_t* found) {
 
     ow_protect(ow, 1);
     res = ow_search_devices_raw(ow, rom_arr, rom_len, found);
-    ow_protect(ow, 1);
+    ow_unprotect(ow, 1);
     return res;
 }
