@@ -116,14 +116,14 @@ owr_t
 ow_protect(ow_t* ow, const uint8_t protect) {
     OW_ASSERT("ow != NULL", ow != NULL);
 
-#if OW_USE_RTOS
+#if OW_CFG_OS
     if (protect && !ow_sys_mutex_wait(&ow->mutex, arg)) {
         return owERR;
     }
 #else
     (void)ow;
     (void)protect;
-#endif /* OW_USE_RTOS */
+#endif /* OW_CFG_OS */
     return owOK;
 }
 
@@ -138,14 +138,14 @@ owr_t
 ow_unprotect(ow_t* ow, const uint8_t protect) {
     OW_ASSERT("ow != NULL", ow != NULL);
 
-#if OW_USE_RTOS
+#if OW_CFG_OS
     if (protect && !ow_sys_mutex_release(&ow->mutex, arg)) {
         return owERR;
     }
 #else
     (void)ow;
     (void)protect;
-#endif /* OW_USE_RTOS */
+#endif /* OW_CFG_OS */
     return owOK;
 }
 
@@ -423,15 +423,16 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
              *
              * We have to react if b and b_cpl are the same:
              *
-             * - Both 1: No devices on 1-Wire line responded
+             *  - Both 1: No devices on 1-Wire line responded
              *      - No device connected at all
              *      - All devices were put to block state due to search
-             * - Both 0: We have "collision" as device with bit 0 and bit 1 are connected
+             *  - Both 0: We have "collision" as device with bit 0 and bit 1 are connected
              *
              * If b and b_cpl are different, it means we have:
+             *
              *  - Single device connected on 1-Wire or
              *  - All devices on 1-Wire have the same bit value at current position
-             *  - In this case, we move to direction of b value
+             *      - In this case, we move to direction of b value
              */
             if (b && b_cpl) {
                 goto out;                       /* We do not have device connected */
@@ -441,8 +442,8 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
                  *
                  * Force move to "1" in case of:
                  *
-                 * - known diff position is larger than current bit reading
-                 * - Previous ROM address bit 0 was 1 and known diff is different than reading
+                 *  - known diff position is larger than current bit reading
+                 *  - Previous ROM address bit 0 was 1 and known diff is different than reading
                  *
                  * Because we shift *id variable down by 1 bit every iteration,
                  * *id & 0x01 always returns 1 if bit on previous ROM is the same as current bit
@@ -456,9 +457,9 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
             /*
              * Devices are expecting master will send bit value back.
              * All devices which do not have this bit value
-             * will go on blocked state and will wait for next reset sequence
+             * will go to blocked state and will wait for next reset sequence
              *
-             * In case of "collision", we can decide here which devices we will
+             * In case of "collision", we decide here which devices we will
              * continue to scan (binary tree)
              */
             send_bit(ow, b);                    /* Send bit you want to continue with */
