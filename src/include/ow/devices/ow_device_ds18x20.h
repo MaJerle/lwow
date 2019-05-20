@@ -1,6 +1,6 @@
 /**
  * \file            ow_device_ds18x20.h
- * \brief           DS18x20 library based on 1-Wire
+ * \brief           DS18x20 driver header
  */
 
 /*

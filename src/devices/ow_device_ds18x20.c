@@ -1,6 +1,6 @@
 /**
- * \file            ow.c
- * \brief           OneWire protocol implementation
+ * \file            ow_device_ds18x20.h
+ * \brief           DS18x20 driver implementation
  */
 
 /*
