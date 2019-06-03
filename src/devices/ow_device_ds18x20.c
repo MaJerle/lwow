@@ -46,7 +46,7 @@ ow_ds18x20_start_raw(ow_t* ow, const ow_rom_t* rom_id) {
 
     OW_ASSERT0("NULL != ow", NULL != ow);
 
-    if (ow_reset_raw(ow) == owOK) {
+    if (owOK == ow_reset_raw(ow)) {
         if (NULL == rom_id) {                   /* Check for ROM id */
             ow_skip_rom_raw(ow);                /* Skip ROM, send to all devices */
         } else {
@@ -101,7 +101,7 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
      * First read bit and check if all devices completed with conversion.
      * If everything ready, try to reset the network and continue
      */
-    if (ow_read_bit_raw(ow) && ow_reset_raw(ow) == owOK) {
+    if (ow_read_bit_raw(ow) && owOK == ow_reset_raw(ow)) {
         if (NULL == rom_id) {                   /* Check for ROM id */
             ow_skip_rom_raw(ow);                /* Skip ROM, send to all devices */
         } else {
@@ -175,7 +175,7 @@ ow_ds18x20_get_resolution_raw(ow_t* ow, const ow_rom_t* rom_id) {
         return 0;
     }
 
-    if (ow_reset_raw(ow) == owOK) {             /* Reset bus */
+    if (owOK == ow_reset_raw(ow)) {             /* Reset bus */
         ow_match_rom_raw(ow, rom_id);           /* Select device */
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);  /* Read scratchpad command */
 
@@ -227,7 +227,7 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
         return 0;
     }
 
-    if (ow_reset_raw(ow) == owOK) {
+    if (owOK == ow_reset_raw(ow)) {
         ow_match_rom_raw(ow, rom_id);
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);
 
@@ -248,7 +248,7 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
         }
 
         /* Write data back to device */
-        if (ow_reset_raw(ow) == owOK) {
+        if (owOK == ow_reset_raw(ow)) {
             ow_match_rom_raw(ow, rom_id);
             ow_write_byte_raw(ow, OW_CMD_WSCRATCHPAD);
 
@@ -257,7 +257,7 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
             ow_write_byte_raw(ow, conf);
 
             /* Copy scratchpad to non-volatile memory */
-            if (ow_reset_raw(ow) == owOK) {
+            if (owOK == ow_reset_raw(ow)) {
                 ow_match_rom_raw(ow, rom_id);
                 ow_write_byte_raw(ow, OW_CMD_CPYSCRATCHPAD);
                 res = 1;
@@ -341,7 +341,7 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
         }
     }
 
-    if (ow_reset_raw(ow) == owOK) {
+    if (owOK == ow_reset_raw(ow)) {
         ow_match_rom_raw(ow, rom_id);
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);
 
@@ -359,7 +359,7 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
         tl = temp_l == OW_DS18X20_ALARM_NOCHANGE ? (uint8_t)tl : (uint8_t)temp_l;
 
         /* Write scratchpad */
-        if (ow_reset_raw(ow) == owOK) {
+        if (owOK == ow_reset_raw(ow)) {
             ow_match_rom_raw(ow, rom_id);
             ow_write_byte_raw(ow, OW_CMD_WSCRATCHPAD);
 
@@ -369,7 +369,7 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
             ow_write_byte_raw(ow, conf);
 
             /* Copy scratchpad to memory */
-            if (ow_reset_raw(ow) == owOK) {
+            if (owOK == ow_reset_raw(ow)) {
                 ow_match_rom_raw(ow, rom_id);
                 ow_write_byte_raw(ow, OW_CMD_CPYSCRATCHPAD);
 

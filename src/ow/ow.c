@@ -62,7 +62,7 @@ send_bit(ow_t* ow, uint8_t v) {
      */
     v = v ? 0xFF : 0x00;                        /* Convert to 0 or 1 */
     ow_ll_transmit_receive(&v, &b, 1, ow->arg); /* Exchange data over USART */
-    if (b == 0xFF) {                            /* To read bit 1, check for 0xFF sequence */
+    if (0xFF == b) {                            /* To read bit 1, check for 0xFF sequence */
         return 1;
     }
     return 0;
@@ -167,7 +167,7 @@ ow_reset_raw(ow_t* ow) {
     ow_ll_set_baudrate(115200, ow->arg);        /* Set high baudrate */
 
     /* Check if there is reply from any device */
-    if (!b || b == OW_RESET_BYTE) {
+    if (!b || OW_RESET_BYTE == b) {
         return owERRPRESENCE;
     }
     return owOK;
@@ -403,7 +403,7 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
     }
 
     /* Step 1: Reset all devices on 1-Wire line to be able to listen for new command */
-    if ((res = ow_reset_raw(ow)) != owOK) {
+    if (owOK != (res = ow_reset_raw(ow))) {
         return res;
     }
 
@@ -620,8 +620,8 @@ ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
     ow_protect(ow, 1);
     res = ow_search_reset_raw(ow);              /* Reset search */
     /* Search device-by-device until all found */
-    while (res == owOK && (res = ow_search_with_command_raw(ow, cmd, &rom_id)) == owOK) {
-        if ((res = func(ow, &rom_id, i, arg)) != owOK) {
+    while (owOK == res && owOK == (res = ow_search_with_command_raw(ow, cmd, &rom_id))) {
+        if (owOK != (res = func(ow, &rom_id, i, arg))) {
             break;
         }
         i++;
@@ -632,7 +632,7 @@ ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
     if (NULL != found) {
         *found = i;
     }
-    if (res == owERRNODEV) {                    /* `No device` might not be an error, but simply no devices on bus */
+    if (owERRNODEV == res) {                    /* `No device` might not be an error, but simply no devices on bus */
         res = owOK;
     }
     return res;
@@ -675,11 +675,11 @@ ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
 
     *found = 0;
     res = ow_search_reset_raw(ow);              /* Reset search */
-    while (*found < rom_len && res == owOK && (res = ow_search_with_command_raw(ow, cmd, rom_id_arr)) == owOK) {
+    while (*found < rom_len && owOK == res && owOK == (res = ow_search_with_command_raw(ow, cmd, rom_id_arr))) {
         rom_id_arr++;
         (*found)++;
     }
-    if (res == owERRNODEV) {
+    if (owERRNODEV == res) {
         res = owOK;
     }
     return res;
