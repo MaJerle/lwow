@@ -112,7 +112,7 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     size_t read = 0;
     DWORD br;
 
-    if (NULL != com_port) {
+    if (com_port != NULL) {
         /* Write file and send data */
         WriteFile(com_port, tx, len, &br, NULL);
         FlushFileBuffers(com_port);

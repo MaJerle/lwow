@@ -62,7 +62,7 @@ send_bit(ow_t* ow, uint8_t v) {
      */
     v = v ? 0xFF : 0x00;                        /* Convert to 0 or 1 */
     ow_ll_transmit_receive(&v, &b, 1, ow->arg); /* Exchange data over USART */
-    if (0xFF == b) {                            /* To read bit 1, check for 0xFF sequence */
+    if (b == 0xFF) {                            /* To read bit 1, check for 0xFF sequence */
         return 1;
     }
     return 0;
@@ -95,7 +95,7 @@ ow_init(ow_t* ow, void* arg) {
  */
 void
 ow_deinit(ow_t* ow) {
-    if (NULL == ow) {
+    if (ow == NULL) {
         return;
     }
 
@@ -114,7 +114,7 @@ ow_deinit(ow_t* ow) {
  */
 owr_t
 ow_protect(ow_t* ow, const uint8_t protect) {
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
 #if OW_CFG_OS
     if (protect && !ow_sys_mutex_wait(&ow->mutex, ow->arg)) {
@@ -136,7 +136,7 @@ ow_protect(ow_t* ow, const uint8_t protect) {
  */
 owr_t
 ow_unprotect(ow_t* ow, const uint8_t protect) {
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
 #if OW_CFG_OS
     if (protect && !ow_sys_mutex_release(&ow->mutex, ow->arg)) {
@@ -158,7 +158,7 @@ owr_t
 ow_reset_raw(ow_t* ow) {
     uint8_t b;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     /* First send reset pulse */
     b = OW_RESET_BYTE;                          /* Set reset sequence byte = 0xF0 */
@@ -167,7 +167,7 @@ ow_reset_raw(ow_t* ow) {
     ow_ll_set_baudrate(115200, ow->arg);        /* Set high baudrate */
 
     /* Check if there is reply from any device */
-    if (!b || OW_RESET_BYTE == b) {
+    if (!b || b == OW_RESET_BYTE) {
         return owERRPRESENCE;
     }
     return owOK;
@@ -181,7 +181,7 @@ owr_t
 ow_reset(ow_t* ow) {
     owr_t res;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_reset_raw(ow);
@@ -199,7 +199,7 @@ uint8_t
 ow_write_byte_raw(ow_t* ow, uint8_t b) {
     uint8_t r = 0, tr[8];
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     /*
      * Each BIT on 1-wire level represents 1-byte on UART level at 115200 bauds.
@@ -250,7 +250,7 @@ uint8_t
 ow_write_byte(ow_t* ow, uint8_t b) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_write_byte_raw(ow, b);
@@ -265,7 +265,7 @@ ow_write_byte(ow_t* ow, uint8_t b) {
  */
 uint8_t
 ow_read_byte_raw(ow_t* ow) {
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     /*
      * When we want to read byte over 1-Wire,
@@ -284,7 +284,7 @@ uint8_t
 ow_read_byte(ow_t* ow) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_read_byte_raw(ow);
@@ -310,7 +310,7 @@ uint8_t
 ow_read_bit(ow_t* ow) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_read_bit_raw(ow);
@@ -325,7 +325,7 @@ ow_read_bit(ow_t* ow) {
  */
 owr_t
 ow_search_reset_raw(ow_t* ow) {
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     ow->disrepancy = OW_FIRST_DEV;              /* Reset disrepancy to default value */
     return owOK;
@@ -339,7 +339,7 @@ owr_t
 ow_search_reset(ow_t* ow) {
     owr_t res;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_search_reset_raw(ow);
@@ -358,7 +358,7 @@ ow_search_reset(ow_t* ow) {
  */
 owr_t
 ow_search_raw(ow_t* ow, ow_rom_t* rom_id) {
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
     return ow_search_with_command_raw(ow, OW_CMD_SEARCHROM, rom_id);
 }
 
@@ -370,7 +370,7 @@ owr_t
 ow_search(ow_t* ow, ow_rom_t* rom_id) {
     owr_t res;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_search_raw(ow, rom_id);
@@ -392,7 +392,7 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
     uint8_t id_bit_number, next_disrepancy;
     uint8_t* id;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     id = ow->rom.rom;
 
@@ -403,7 +403,7 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
     }
 
     /* Step 1: Reset all devices on 1-Wire line to be able to listen for new command */
-    if (owOK != (res = ow_reset_raw(ow))) {
+    if ((res = ow_reset_raw(ow)) != owOK) {
         return res;
     }
 
@@ -500,7 +500,7 @@ ow_search_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
  */
 uint8_t
 ow_match_rom_raw(ow_t* ow, const ow_rom_t* rom_id) {
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_write_byte_raw(ow, OW_CMD_MATCHROM);     /* Write byte to match rom exactly */
     for (uint8_t i = 0; i < 8; i++) {           /* Send 8 bytes representing ROM address */
@@ -518,7 +518,7 @@ uint8_t
 ow_match_rom(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_match_rom_raw(ow, rom_id);
@@ -533,7 +533,7 @@ ow_match_rom(ow_t* ow, const ow_rom_t* rom_id) {
  */
 uint8_t
 ow_skip_rom_raw(ow_t* ow) {
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_write_byte_raw(ow, OW_CMD_SKIPROM);      /* Write byte to match rom exactly */
     return 1;
@@ -547,7 +547,7 @@ uint8_t
 ow_skip_rom(ow_t* ow) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_skip_rom_raw(ow);
@@ -566,7 +566,7 @@ ow_crc_raw(const void* in, size_t len) {
     uint8_t crc = 0, inbyte, mix;
     const uint8_t* d = in;
 
-    if (NULL == in && len) {
+    if (in == NULL && len) {
         return 0;
     }
 
@@ -614,14 +614,14 @@ ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
     ow_rom_t rom_id;
     size_t i = 0;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
-    OW_ASSERT("NULL != func", NULL != func);
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("func != NULL", func != NULL);
 
     ow_protect(ow, 1);
     res = ow_search_reset_raw(ow);              /* Reset search */
     /* Search device-by-device until all found */
-    while (owOK == res && owOK == (res = ow_search_with_command_raw(ow, cmd, &rom_id))) {
-        if (owOK != (res = func(ow, &rom_id, i, arg))) {
+    while (res == owOK && (res = ow_search_with_command_raw(ow, cmd, &rom_id)) == owOK) {
+        if ((res = func(ow, &rom_id, i, arg)) != owOK) {
             break;
         }
         i++;
@@ -629,10 +629,10 @@ ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
     func(ow, NULL, i, arg);                     /* Call with NULL rom_id parameter */
     ow_unprotect(ow, 1);
 
-    if (NULL != found) {
+    if (found != NULL) {
         *found = i;
     }
-    if (owERRNODEV == res) {                    /* `No device` might not be an error, but simply no devices on bus */
+    if (res == owERRNODEV) {                    /* `No device` might not be an error, but simply no devices on bus */
         res = owOK;
     }
     return res;
@@ -668,18 +668,18 @@ ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
                                     size_t rom_len, size_t* found) {
     owr_t res;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
-    OW_ASSERT("rom_len > 0", rom_len > 0);
-    OW_ASSERT("NULL != found", NULL != found);
-    OW_ASSERT("NULL != rom_id_arr", NULL != rom_id_arr);
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("rom_len", rom_len);
+    OW_ASSERT("found != NULL", found != NULL);
+    OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
     *found = 0;
     res = ow_search_reset_raw(ow);              /* Reset search */
-    while (*found < rom_len && owOK == res && owOK == (res = ow_search_with_command_raw(ow, cmd, rom_id_arr))) {
+    while (*found < rom_len && res == owOK && (res = ow_search_with_command_raw(ow, cmd, rom_id_arr)) == owOK) {
         rom_id_arr++;
         (*found)++;
     }
-    if (owERRNODEV == res) {
+    if (res == owERRNODEV) {
         res = owOK;
     }
     return res;
@@ -694,10 +694,10 @@ ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
                                 size_t rom_len, size_t* found) {
     owr_t res;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
-    OW_ASSERT("rom_len > 0", rom_len > 0);
-    OW_ASSERT("NULL != found", NULL != found);
-    OW_ASSERT("NULL != rom_id_arr", NULL != rom_id_arr);
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("rom_len", rom_len);
+    OW_ASSERT("found != NULL", found != NULL);
+    OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
     ow_protect(ow, 1);
     res = ow_search_devices_with_command_raw(ow, cmd, rom_id_arr, rom_len, found);
@@ -726,7 +726,7 @@ owr_t
 ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found) {
     owr_t res;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_search_devices_raw(ow, rom_id_arr, rom_len, found);

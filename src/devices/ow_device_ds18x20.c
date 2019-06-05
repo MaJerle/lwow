@@ -44,10 +44,10 @@ uint8_t
 ow_ds18x20_start_raw(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t ret = 0;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
-    if (owOK == ow_reset_raw(ow)) {
-        if (NULL == rom_id) {                   /* Check for ROM id */
+    if (ow_reset_raw(ow) == owOK) {
+        if (rom_id == NULL) {                   /* Check for ROM id */
             ow_skip_rom_raw(ow);                /* Skip ROM, send to all devices */
         } else {
             ow_match_rom_raw(ow, rom_id);       /* Select exact device by ROM address */
@@ -66,7 +66,7 @@ uint8_t
 ow_ds18x20_start(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_ds18x20_start_raw(ow, rom_id);
@@ -88,9 +88,9 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
     float dec;
     uint16_t temp;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
-    OW_ASSERT0("NULL != rom_id", NULL != rom_id);
-    OW_ASSERT0("NULL != t", NULL != t);
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
+    OW_ASSERT0("t != NULL", t != NULL);
 
     /* Check ROM device */
     if (!ow_ds18x20_is_b_raw(ow, rom_id) && !ow_ds18x20_is_s_raw(ow, rom_id)) {
@@ -101,8 +101,8 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
      * First read bit and check if all devices completed with conversion.
      * If everything ready, try to reset the network and continue
      */
-    if (ow_read_bit_raw(ow) && owOK == ow_reset_raw(ow)) {
-        if (NULL == rom_id) {                   /* Check for ROM id */
+    if (ow_read_bit_raw(ow) && ow_reset_raw(ow) == owOK) {
+        if (rom_id == NULL) {                   /* Check for ROM id */
             ow_skip_rom_raw(ow);                /* Skip ROM, send to all devices */
         } else {
             ow_match_rom_raw(ow, rom_id);       /* Select exact device by ROM address */
@@ -149,7 +149,7 @@ uint8_t
 ow_ds18x20_read(ow_t* ow, const ow_rom_t* rom_id, float* t) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_ds18x20_read_raw(ow, rom_id, t);
@@ -167,15 +167,15 @@ uint8_t
 ow_ds18x20_get_resolution_raw(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res = 0;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
-    OW_ASSERT0("NULL != rom_id", NULL != rom_id);
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     /* Check if it is B version */
     if (!ow_ds18x20_is_b_raw(ow, rom_id)) {
         return 0;
     }
 
-    if (owOK == ow_reset_raw(ow)) {             /* Reset bus */
+    if (ow_reset_raw(ow) == owOK) {             /* Reset bus */
         ow_match_rom_raw(ow, rom_id);           /* Select device */
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);  /* Read scratchpad command */
 
@@ -199,7 +199,7 @@ uint8_t
 ow_ds18x20_get_resolution(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_ds18x20_get_resolution_raw(ow, rom_id);
@@ -219,15 +219,15 @@ uint8_t
 ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
     uint8_t th, tl, conf, res = 0;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
-    OW_ASSERT0("NULL != rom_id", NULL != rom_id);
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     if (bits < 9 || bits > 12 ||                /* Check bits range */
         !ow_ds18x20_is_b_raw(ow, rom_id)) {     /* Check if it is B version */
         return 0;
     }
 
-    if (owOK == ow_reset_raw(ow)) {
+    if (ow_reset_raw(ow) == owOK) {
         ow_match_rom_raw(ow, rom_id);
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);
 
@@ -248,7 +248,7 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
         }
 
         /* Write data back to device */
-        if (owOK == ow_reset_raw(ow)) {
+        if (ow_reset_raw(ow) == owOK) {
             ow_match_rom_raw(ow, rom_id);
             ow_write_byte_raw(ow, OW_CMD_WSCRATCHPAD);
 
@@ -257,7 +257,7 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
             ow_write_byte_raw(ow, conf);
 
             /* Copy scratchpad to non-volatile memory */
-            if (owOK == ow_reset_raw(ow)) {
+            if (ow_reset_raw(ow) == owOK) {
                 ow_match_rom_raw(ow, rom_id);
                 ow_write_byte_raw(ow, OW_CMD_CPYSCRATCHPAD);
                 res = 1;
@@ -275,7 +275,7 @@ uint8_t
 ow_ds18x20_set_resolution(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_ds18x20_set_resolution_raw(ow, rom_id, bits);
@@ -313,8 +313,8 @@ uint8_t
 ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h) {
     uint8_t res = 0, conf, th, tl;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
-    OW_ASSERT0("NULL != rom_id", NULL != rom_id);
+    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     if (!ow_ds18x20_is_b_raw(ow, rom_id)) {     /* Check device */
         return 0;
@@ -341,7 +341,7 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
         }
     }
 
-    if (owOK == ow_reset_raw(ow)) {
+    if (ow_reset_raw(ow) == owOK) {
         ow_match_rom_raw(ow, rom_id);
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);
 
@@ -359,7 +359,7 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
         tl = temp_l == OW_DS18X20_ALARM_NOCHANGE ? (uint8_t)tl : (uint8_t)temp_l;
 
         /* Write scratchpad */
-        if (owOK == ow_reset_raw(ow)) {
+        if (ow_reset_raw(ow) == owOK) {
             ow_match_rom_raw(ow, rom_id);
             ow_write_byte_raw(ow, OW_CMD_WSCRATCHPAD);
 
@@ -369,7 +369,7 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
             ow_write_byte_raw(ow, conf);
 
             /* Copy scratchpad to memory */
-            if (owOK == ow_reset_raw(ow)) {
+            if (ow_reset_raw(ow) == owOK) {
                 ow_match_rom_raw(ow, rom_id);
                 ow_write_byte_raw(ow, OW_CMD_CPYSCRATCHPAD);
 
@@ -388,7 +388,7 @@ uint8_t
 ow_ds18x20_set_alarm_temp(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_ds18x20_set_alarm_temp_raw(ow, rom_id, temp_l, temp_h);
@@ -416,7 +416,7 @@ owr_t
 ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id) {
     owr_t res;
 
-    OW_ASSERT("NULL != ow", NULL != ow);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_ds18x20_search_alarm_raw(ow, rom_id);
@@ -432,9 +432,9 @@ ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id) {
  */
 uint8_t
 ow_ds18x20_is_b_raw(ow_t* ow, const ow_rom_t* rom_id) {
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
     OW_UNUSED(ow);
-    return NULL != rom_id && rom_id->rom[0] == 0x28;/* Check for correct ROM family code */
+    return rom_id != NULL && rom_id->rom[0] == 0x28;/* Check for correct ROM family code */
 }
 
 /**
@@ -445,7 +445,7 @@ uint8_t
 ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_ds18x20_is_b_raw(ow, rom_id);
@@ -461,9 +461,9 @@ ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id) {
  */
 uint8_t
 ow_ds18x20_is_s_raw(ow_t* ow, const ow_rom_t* rom_id) {
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
     OW_UNUSED(ow);
-    return NULL != rom_id && rom_id->rom[0] == 0x10;/* Check for correct ROM family code */
+    return rom_id != NULL && rom_id->rom[0] == 0x10;/* Check for correct ROM family code */
 }
 
 /**
@@ -474,7 +474,7 @@ uint8_t
 ow_ds18x20_is_s(ow_t* ow, const ow_rom_t* rom_id) {
     uint8_t res;
 
-    OW_ASSERT0("NULL != ow", NULL != ow);
+    OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_ds18x20_is_s_raw(ow, rom_id);
