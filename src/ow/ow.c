@@ -167,7 +167,7 @@ ow_reset_raw(ow_t* ow) {
     ow_ll_set_baudrate(115200, ow->arg);        /* Set high baudrate */
 
     /* Check if there is reply from any device */
-    if (!b || b == OW_RESET_BYTE) {
+    if (b == 0 || b == OW_RESET_BYTE) {
         return owERRPRESENCE;
     }
     return owOK;
@@ -397,7 +397,7 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
     id = ow->rom.rom;
 
     /* Check for last device */
-    if (!ow->disrepancy) {
+    if (ow->disrepancy == 0) {
         ow_search_reset_raw(ow);                /* Reset search for next search */
         return owERRNODEV;                      /* No devices anymore */
     }
@@ -476,7 +476,7 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
 out:
     ow->disrepancy = next_disrepancy;           /* Save disrepancy value */
     memcpy(rom_id->rom, ow->rom.rom, sizeof(ow->rom.rom));  /* Copy ROM to user memory */
-    return !id_bit_number ? owOK : owERRNODEV;  /* Return search result status */
+    return id_bit_number == 0 ? owOK : owERRNODEV;  /* Return search result status */
 }
 
 /**
@@ -575,7 +575,7 @@ ow_crc_raw(const void* in, size_t len) {
         for (uint8_t i = 8; i; i--) {
             mix = (crc ^ inbyte) & 0x01;
             crc >>= 1;
-            if (mix) {
+            if (mix > 0) {
                 crc ^= 0x8C;
             }
             inbyte >>= 0x01;
@@ -669,7 +669,7 @@ ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
     owr_t res;
 
     OW_ASSERT("ow != NULL", ow != NULL);
-    OW_ASSERT("rom_len", rom_len);
+    OW_ASSERT("rom_len > 0", rom_len > 0);
     OW_ASSERT("found != NULL", found != NULL);
     OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
@@ -695,7 +695,7 @@ ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
     owr_t res;
 
     OW_ASSERT("ow != NULL", ow != NULL);
-    OW_ASSERT("rom_len", rom_len);
+    OW_ASSERT("rom_len > 0", rom_len > 0);
     OW_ASSERT("found != NULL", found != NULL);
     OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 

@@ -114,7 +114,7 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
             data[i] = ow_read_byte_raw(ow);     /* Read byte */
         }
         crc = ow_crc_raw(data, 0x09);           /* Calculate CRC */
-        if (!crc) {                             /* Result must be 0 to match the CRC */
+        if (crc == 0) {                         /* Result must be 0 to match the CRC */
             temp = (data[1] << 0x08) | data[0]; /* Format data in integer format */
             resolution = ((data[4] & 0x60) >> 0x05) + 0x09; /* Set resolution in units of bits */
             if (temp & 0x8000) {                /* Check for negative temperature */
