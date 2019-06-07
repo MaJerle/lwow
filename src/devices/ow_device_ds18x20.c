@@ -222,8 +222,8 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
     OW_ASSERT0("ow != NULL", ow != NULL);
     OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
-    if (bits < 9 || bits > 12 ||                /* Check bits range */
-        !ow_ds18x20_is_b_raw(ow, rom_id)) {     /* Check if it is B version */
+    if (bits < 9 || bits > 12                   /* Check bits range */
+        || !ow_ds18x20_is_b_raw(ow, rom_id)) {  /* Check if it is B version */
         return 0;
     }
 
@@ -238,7 +238,7 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
         /* Read important data */
         th = ow_read_byte_raw(ow);
         tl = ow_read_byte_raw(ow);
-        conf = ow_read_byte_raw(ow) & ~(0x60);  /* Remove configuration bits for temperature resolution */
+        conf = ow_read_byte_raw(ow) & ~0x60;    /* Remove configuration bits for temperature resolution */
 
         switch (bits) {                         /* Check bits configuration */
             case 10: conf |= 0x20; break;       /* 10-bits configuration */

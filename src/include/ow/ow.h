@@ -110,7 +110,7 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index
 /**
  * \brief           Assert check function with return `0`
  */
-#define OW_ASSERT0(msg, c)           do {   \
+#define OW_ASSERT0(msg, c)          do {    \
     if (!(c)) {                             \
         return 0;                           \
     }                                       \
