@@ -75,13 +75,13 @@ typedef struct {
 typedef struct {
 #if OW_CFG_OS || __DOXYGEN__
     OW_CFG_OS_MUTEX_HANDLE mutex;               /*!< Mutex handle */
-#endif /* OW_USE_RTOS || __DOXYGEN__ */
+#endif /* OW_CFG_OS || __DOXYGEN__ */
 
     ow_rom_t rom;                               /*!< ROM address of last device found.
                                                      When searching for new devices, we always need last found address,
                                                      to be able to decide which way to go next time during scan. */
     uint8_t disrepancy;                         /*!< Disrepancy value on last search */
-	void* arg;                                  /*!< User custom argument */
+    void* arg;                                  /*!< User custom argument */
 } ow_t;
 
 /**
@@ -163,8 +163,8 @@ owr_t       ow_search(ow_t* ow, ow_rom_t* rom_id);
 owr_t       ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
 owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
 
-owr_t		ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found, ow_search_cb_fn func, void* arg);
-owr_t		ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg);
+owr_t       ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found, ow_search_cb_fn func, void* arg);
+owr_t       ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg);
 
 owr_t       ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found);
 owr_t       ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found);
