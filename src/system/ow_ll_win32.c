@@ -32,7 +32,7 @@
  */
 #include "system/ow_ll.h"
 #include "windows.h"
-#include "stdio.h"
+#include <stdio.h>
 
 #if !__DOXYGEN__
 

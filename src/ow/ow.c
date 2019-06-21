@@ -32,7 +32,7 @@
  */
 #include "ow/ow.h"
 #include "system/ow_ll.h"
-#include "string.h"
+#include <string.h>
 #if OW_CFG_OS
 #include "system/ow_sys.h"
 #endif /* OW_CFG_OS */
