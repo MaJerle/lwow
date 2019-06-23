@@ -113,15 +113,25 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     DWORD br;
 
     if (com_port != NULL) {
+        /*
+         * Flush any data in RX buffer.
+         * This helps to reset communication in case of on-the-fly device management
+         * if one-or-more device(s) are added or removed.
+         *
+         * Every touch on UART wires could potential create noise on the line and start invalid byte
+         */
+        PurgeComm(com_port, PURGE_RXCLEAR | PURGE_RXABORT);
+
         /* Write file and send data */
         WriteFile(com_port, tx, len, &br, NULL);
         FlushFileBuffers(com_port);
 
-        /* We need to wait data back in loop-back mode */
+        /* Read same amount of data as sent previously (loopback) */
         do {
-            ReadFile(com_port, rx, (DWORD)(len - read), &br, NULL);
-            read += (size_t)br;
-            rx += (size_t)br;
+            if (ReadFile(com_port, rx, (DWORD)(len - read), &br, NULL)) {
+                read += (size_t)br;
+                rx += (size_t)br;
+            }
         } while (read < len);
     }
 
