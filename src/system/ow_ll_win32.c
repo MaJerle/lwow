@@ -118,7 +118,8 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
          * This helps to reset communication in case of on-the-fly device management
          * if one-or-more device(s) are added or removed.
          *
-         * Every touch on UART wires could potential create noise on the line and start invalid byte
+         * Any noise on UART level could start byte and put it to Win buffer,
+         * preventing to read aligned data from it
          */
         PurgeComm(com_port, PURGE_RXCLEAR | PURGE_RXABORT);
 
