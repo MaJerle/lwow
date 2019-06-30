@@ -44,7 +44,7 @@ ow_ll_init(void* arg) {
     dcb.DCBlength = sizeof(dcb);
 
     /* Open virtual file as read/write */
-    com_port = CreateFile(L"\\\\.\\COM6",
+    com_port = CreateFile(L"\\\\.\\COM4",
         GENERIC_READ | GENERIC_WRITE,
         0,
         0,

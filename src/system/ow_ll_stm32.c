@@ -89,7 +89,7 @@ ow_ll_init(void* arg) {
     usart_init.OverSampling = LL_USART_OVERSAMPLING_16;
     LL_USART_Init(ONEWIRE_USART, &usart_init);
     LL_USART_ConfigAsyncMode(ONEWIRE_USART);
-    LL_USART_Enable(ONEWIRE_USART);
+
     OW_UNUSED(arg);
 
     return 1;
@@ -115,10 +115,9 @@ ow_ll_deinit(void* arg) {
  */
 uint8_t
 ow_ll_set_baudrate(uint32_t baud, void* arg) {
-    LL_USART_Disable(ONEWIRE_USART);        /* First disable USART */
     usart_init.BaudRate = baud;
     LL_USART_Init(ONEWIRE_USART, &usart_init);
-    LL_USART_Enable(ONEWIRE_USART);         /* Enable USART back */
+    LL_USART_ConfigAsyncMode(ONEWIRE_USART);
     OW_UNUSED(arg);
 
     return 1;
@@ -138,12 +137,14 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     uint8_t* r = rx;
 
     /* Send byte with polling */
+    LL_USART_Enable(ONEWIRE_USART);
     while (len--) {
         LL_USART_TransmitData8(ONEWIRE_USART, *t++);
         while (!LL_USART_IsActiveFlag_TXE(ONEWIRE_USART));
         while (!LL_USART_IsActiveFlag_RXNE(ONEWIRE_USART));
         *r++ = LL_USART_ReceiveData8(ONEWIRE_USART);
     }
+    LL_USART_Disable(ONEWIRE_USART);
     OW_UNUSED(arg);
     return 1;
 }
