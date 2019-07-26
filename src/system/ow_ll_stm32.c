@@ -144,6 +144,7 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
         while (!LL_USART_IsActiveFlag_RXNE(ONEWIRE_USART));
         *r++ = LL_USART_ReceiveData8(ONEWIRE_USART);
     }
+    while (!LL_USART_IsActiveFlag_TC(ONEWIRE_USART)) {}
     LL_USART_Disable(ONEWIRE_USART);
     OW_UNUSED(arg);
     return 1;
