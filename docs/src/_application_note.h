@@ -4,27 +4,15 @@
  *
  * \section         sect_getting_started Getting started
  *
- * Library development is fully hosted on Github and there is no future plans to move to any other platform.
+ * Repository <a href="https://github.com/MaJerle/onewire_uart"><b>onewire_uart is hosted on Github</b></a>. It combines source code and example projects.
  *
- * There are `2` repositories
- *
- *	- <a href="https://github.com/MaJerle/onewire_uart"><b>onewire_uart</b></a>: Source code of library itself.
- *	    - Repository is required when developing final project
- *
- *	- <a href="https://github.com/MaJerle/onewire_uart_res"><b>onewire_uart_res</b></a>: Resources, development code,
- *		documentation sources, examples, code snippets, etc.
- *      - This repository uses `onewire_uart` repository as `submodule`
- *	    - Repository is used to evaluate library using prepared examples
- *
- * \subsection      sect_clone_res Clone resources with examples
- *
- * Easiest way to test the library is to clone resources repository.
+ * \subsection      sect_clone Clone repository
  *
  * \par             First-time clone
  *
  *  - Download and install `git` if not already
  *  - Open console and navigate to path in the system to clone repository to. Use command `cd your_path`
- *  - Run `git clone --recurse-submodules https://github.com/MaJerle/onewire_uart_res` command to clone repository including submodules
+ *  - Run `git clone --recurse-submodules https://github.com/MaJerle/onewire_uart` command to clone repository including submodules
  *  - Navigate to `examples` directory and run favourite example
  *
  * \par             Already cloned, update to latest version
@@ -33,26 +21,9 @@
  *  - Run `git pull origin master --recurse-submodules` command to pull latest changes and to fetch latest changes from submodules
  *  - Run `git submodule foreach git pull origin master` to update & merge all submodules
  *
- * \subsection      sect_clone_lib Clone library only
- *
- * If you are already familiar with library and you wish to include it in existing project, easiest way to do so is to clone library repository only.
- *
- * \par             First-time clone
- *
- *  - Download and install `git` if not already
- *  - Open console and navigate to path in the system to clone repository to. Use command `cd your_path`
- *  - Run `git clone --recurse-submodules https://github.com/MaJerle/onewire_uart` command to clone repository
- *
- * \par             Already cloned, update to latest version
- *
- *  - Open console and navigate to path in the system where your repository is. Use command `cd your_path`
- *  - Run `git pull origin master --recurse-submodules` to update & merge latest repository changes
- *
  * \section         sect_project_examples Example projects
  *
  * Several examples are available to show application use cases. These are split and can be tested on different systems.
- *
- * \note            Examples are part of `onewire_uart_res` repository. Refer to \ref sect_clone_res
  *
  * \subsection      sect_project_examples_arm_embedded ARM Cortex-M examples
  *
