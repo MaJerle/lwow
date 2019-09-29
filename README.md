@@ -14,10 +14,6 @@ https://www.maximintegrated.com/en/app-notes/index.mvp/id/214
 	- `DS18x20` temperature sensor
 - User friendly MIT license
 
-## Examples and resources
-
-For examples, please check second repository, available at https://github.com/MaJerle/onewire_uart_res
-
 ## Documentation
 
 Full API documentation with description and examples is available and is regulary updated with the source changes
