@@ -29,7 +29,7 @@
  * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         $_version_$
+ * Version:         v1.1
  */
 #ifndef OW_HDR_H
 #define OW_HDR_H
