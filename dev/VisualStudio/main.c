@@ -29,7 +29,7 @@ scan:
         Sleep(1000);
     }
 
-    if (rom_found) {
+    if (rom_found > 0) {
         /* Infinite loop */
         for (size_t c = 0; c < 5; c++) {
             printf("Start temperature conversion\r\n");

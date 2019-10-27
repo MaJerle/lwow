@@ -217,7 +217,7 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
      */
 
     /* Prepare output data */
-    for (uint8_t i = 0; i < 8; i++) {
+    for (uint8_t i = 0; i < 8; ++i) {
         /*
          * If we have to send high bit, set byte as 0xFF,
          * otherwise set it as low bit, 0x00
@@ -235,7 +235,7 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
      * Check received data. If we read 0xFF,
      * our logical write 1 was successful, otherwise it was 0.
      */
-    for (uint8_t i = 0; i < 8; i++) {
+    for (uint8_t i = 0; i < 8; ++i) {
         if (tr[i] == 0xFF) {
             r |= 0x01 << i;
         }
@@ -472,7 +472,7 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
             *id = (*id >> 0x01) | (b << 0x07);  /* Shift ROM byte down and add next, protocol is LSB first */
             id_bit_number--;
         }
-        id++;                                   /* Go to next byte */
+        ++id;                                   /* Go to next byte */
     }
 out:
     ow->disrepancy = next_disrepancy;           /* Save disrepancy value */
@@ -504,7 +504,7 @@ ow_match_rom_raw(ow_t* ow, const ow_rom_t* rom_id) {
     OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_write_byte_raw(ow, OW_CMD_MATCHROM);     /* Write byte to match rom exactly */
-    for (uint8_t i = 0; i < 8; i++) {           /* Send 8 bytes representing ROM address */
+    for (uint8_t i = 0; i < 8; ++i) {           /* Send 8 bytes representing ROM address */
         ow_write_byte_raw(ow, rom_id->rom[i]);  /* Send ROM bytes */
     }
 
@@ -567,12 +567,12 @@ ow_crc_raw(const void* in, size_t len) {
     uint8_t crc = 0, inbyte, mix;
     const uint8_t* d = in;
 
-    if (in == NULL && len) {
+    if (in == NULL && len > 0) {
         return 0;
     }
 
-    while (len--) {
-        inbyte = *d++;
+    for (; len-- > 0; ++d) {
+        inbyte = *d;
         for (uint8_t i = 8; i; i--) {
             mix = (crc ^ inbyte) & 0x01;
             crc >>= 1;
@@ -613,19 +613,18 @@ ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
                                 ow_search_cb_fn func, void* arg) {
     owr_t res;
     ow_rom_t rom_id;
-    size_t i = 0;
+    size_t i;
 
     OW_ASSERT("ow != NULL", ow != NULL);
     OW_ASSERT("func != NULL", func != NULL);
 
     ow_protect(ow, 1);
-    res = ow_search_reset_raw(ow);              /* Reset search */
     /* Search device-by-device until all found */
-    while (res == owOK && (res = ow_search_with_command_raw(ow, cmd, &rom_id)) == owOK) {
+    for (i = 0, res = ow_search_reset_raw(ow);
+        res == owOK && (res = ow_search_with_command_raw(ow, cmd, &rom_id)) == owOK; ++i) {
         if ((res = func(ow, &rom_id, i, arg)) != owOK) {
             break;
         }
-        i++;
     }
     func(ow, NULL, i, arg);                     /* Call with NULL rom_id parameter */
     ow_unprotect(ow, 1);
@@ -675,10 +674,10 @@ ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
     OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
     *found = 0;
-    res = ow_search_reset_raw(ow);              /* Reset search */
+    res = ow_search_reset_raw(ow);
     while (*found < rom_len && res == owOK && (res = ow_search_with_command_raw(ow, cmd, rom_id_arr)) == owOK) {
-        rom_id_arr++;
-        (*found)++;
+        ++rom_id_arr;
+        ++*found;
     }
     if (res == owERRNODEV) {
         res = owOK;

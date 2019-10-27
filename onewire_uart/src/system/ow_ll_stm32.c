@@ -139,11 +139,11 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
 
     /* Send byte with polling */
     LL_USART_Enable(ONEWIRE_USART);
-    while (len--) {
-        LL_USART_TransmitData8(ONEWIRE_USART, *t++);
+    for (; len-- > 0; ++t, ++r) {
+        LL_USART_TransmitData8(ONEWIRE_USART, *t);
         while (!LL_USART_IsActiveFlag_TXE(ONEWIRE_USART));
         while (!LL_USART_IsActiveFlag_RXNE(ONEWIRE_USART));
-        *r++ = LL_USART_ReceiveData8(ONEWIRE_USART);
+        *r = LL_USART_ReceiveData8(ONEWIRE_USART);
     }
     while (!LL_USART_IsActiveFlag_TC(ONEWIRE_USART)) {}
     LL_USART_Disable(ONEWIRE_USART);

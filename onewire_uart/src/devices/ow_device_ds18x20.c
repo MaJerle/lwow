@@ -111,7 +111,7 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);  /* Send command to read scratchpad */
 
         /* Read plain data from device */
-        for (uint8_t i = 0; i < 9; i++) {
+        for (uint8_t i = 0; i < 9; ++i) {
             data[i] = ow_read_byte_raw(ow);     /* Read byte */
         }
         crc = ow_crc_raw(data, 0x09);           /* Calculate CRC */
