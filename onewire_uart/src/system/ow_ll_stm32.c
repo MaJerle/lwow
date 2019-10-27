@@ -139,7 +139,7 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
 
     /* Send byte with polling */
     LL_USART_Enable(ONEWIRE_USART);
-    for (; len-- > 0; ++t, ++r) {
+    for (; len > 0; --len, ++t, ++r) {
         LL_USART_TransmitData8(ONEWIRE_USART, *t);
         while (!LL_USART_IsActiveFlag_TXE(ONEWIRE_USART));
         while (!LL_USART_IsActiveFlag_RXNE(ONEWIRE_USART));
