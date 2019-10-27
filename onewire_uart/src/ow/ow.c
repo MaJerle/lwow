@@ -412,10 +412,9 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
     ow_write_byte_raw(ow, cmd);                 /* Start with search ROM command */
     next_disrepancy = OW_LAST_DEV;              /* This is currently last device */
 
-    id_bit_number = 64;                         /* We have to read 8 bytes, each 8 bits */
-    while (id_bit_number) {
-        uint8_t j = 8, b, b_cpl;
-        while (j--) {
+    for (id_bit_number = 64; id_bit_number > 0;) {
+        uint8_t b, b_cpl;
+        for (uint8_t j = 8; j > 0; --j, --id_bit_number) {
             b       = send_bit(ow, 1);          /* Read first bit = next address bit */
             b_cpl   = send_bit(ow, 1);          /* Read second bit = complementary bit of next address bit */
 
@@ -470,7 +469,6 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
              * and it will be automatically positioned correct way.
              */
             *id = (*id >> 0x01) | (b << 0x07);  /* Shift ROM byte down and add next, protocol is LSB first */
-            id_bit_number--;
         }
         ++id;                                   /* Go to next byte */
     }
@@ -573,7 +571,7 @@ ow_crc_raw(const void* in, size_t len) {
 
     for (; len-- > 0; ++d) {
         inbyte = *d;
-        for (uint8_t i = 8; i; i--) {
+        for (uint8_t i = 8; i > 0; --i) {
             mix = (crc ^ inbyte) & 0x01;
             crc >>= 1;
             if (mix > 0) {
