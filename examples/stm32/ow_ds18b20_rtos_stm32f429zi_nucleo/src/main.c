@@ -124,7 +124,7 @@ app_thread(void* arg) {
         }
     }
     printf("Terminating application thread\r\n");
-    osThreadExit();                             /* Terminate thread */
+    osThreadExit();
 }
 
 /**
