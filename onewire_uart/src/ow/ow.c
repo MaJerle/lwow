@@ -565,11 +565,11 @@ ow_crc_raw(const void* in, size_t len) {
     uint8_t crc = 0, inbyte, mix;
     const uint8_t* d = in;
 
-    if (in == NULL && len > 0) {
+    if (in == NULL || len == 0) {
         return 0;
     }
 
-    for (; len-- > 0; ++d) {
+    for (; len > 0; --len, ++d) {
         inbyte = *d;
         for (uint8_t i = 8; i > 0; --i) {
             mix = (crc ^ inbyte) & 0x01;
@@ -600,15 +600,15 @@ ow_crc(const void* in, size_t len) {
  *                  When new device is detected, callback function `func` is called to notify user
  * \param[in]       ow: 1-Wire handle
  * \param[in]       cmd: 1-Wire search command
- * \param[out]      found: Output variable to save number of found devices
+ * \param[out]      roms_found: Output variable to save number of found devices
  * \param[in]       func: Callback function to call for each device
  * \param[in]       arg: Custom user argument, used in callback function
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  * \note            This function is thread-safe
  */
 owr_t
-ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
-                                ow_search_cb_fn func, void* arg) {
+ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* roms_found,
+    ow_search_cb_fn func, void* arg) {
     owr_t res;
     ow_rom_t rom_id;
     size_t i;
@@ -627,8 +627,8 @@ ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
     func(ow, NULL, i, arg);                     /* Call with NULL rom_id parameter */
     ow_unprotect(ow, 1);
 
-    if (found != NULL) {
-        *found = i;
+    if (roms_found != NULL) {
+        *roms_found = i;
     }
     if (res == owERRNODEV) {                    /* `No device` might not be an error, but simply no devices on bus */
         res = owOK;
@@ -658,25 +658,28 @@ ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg
  * \param[in]       cmd: 1-Wire search command
  * \param[in]       rom_id_arr: Pointer to output array to store found ROM IDs into
  * \param[in]       rom_len: Length of input ROM array
- * \param[in]       found: Output value with number of found devices on 1-Wire
+ * \param[in]       roms_found: Output value with number of devices found on 1-Wire
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
 ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
-                                    size_t rom_len, size_t* found) {
+    size_t rom_len, size_t* roms_found) {
     owr_t res;
+    size_t cnt = 0;
 
     OW_ASSERT("ow != NULL", ow != NULL);
     OW_ASSERT("rom_len > 0", rom_len > 0);
-    OW_ASSERT("found != NULL", found != NULL);
+    OW_ASSERT("roms_found != NULL", roms_found != NULL);
     OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
-    *found = 0;
-    res = ow_search_reset_raw(ow);
-    while (*found < rom_len && res == owOK && (res = ow_search_with_command_raw(ow, cmd, rom_id_arr)) == owOK) {
-        ++rom_id_arr;
-        ++*found;
+    for (cnt = 0, res = ow_search_reset_raw(ow); cnt < rom_len && res == owOK; ++rom_id_arr, ++cnt) {
+        if (ow_search_with_command_raw(ow, cmd, rom_id_arr) != owOK) {
+            break;
+        }
     }
+          
+    *roms_found = cnt;
+
     if (res == owERRNODEV) {
         res = owOK;
     }
@@ -689,16 +692,16 @@ ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
  */
 owr_t
 ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
-                                size_t rom_len, size_t* found) {
+                                size_t rom_len, size_t* roms_found) {
     owr_t res;
 
     OW_ASSERT("ow != NULL", ow != NULL);
     OW_ASSERT("rom_len > 0", rom_len > 0);
-    OW_ASSERT("found != NULL", found != NULL);
+    OW_ASSERT("roms_found != NULL", roms_found != NULL);
     OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
     ow_protect(ow, 1);
-    res = ow_search_devices_with_command_raw(ow, cmd, rom_id_arr, rom_len, found);
+    res = ow_search_devices_with_command_raw(ow, cmd, rom_id_arr, rom_len, roms_found);
     ow_unprotect(ow, 1);
     return res;
 }
