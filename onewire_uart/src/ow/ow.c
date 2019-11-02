@@ -672,15 +672,15 @@ ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
     OW_ASSERT("roms_found != NULL", roms_found != NULL);
     OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
-    for (cnt = 0, res = ow_search_reset_raw(ow); cnt < rom_len && res == owOK; ++rom_id_arr, ++cnt) {
-        if (ow_search_with_command_raw(ow, cmd, rom_id_arr) != owOK) {
+    for (cnt = 0, res = ow_search_reset_raw(ow); cnt < rom_len; ++rom_id_arr, ++cnt) {
+        if ((res = ow_search_with_command_raw(ow, cmd, rom_id_arr)) != owOK) {
             break;
         }
     }
           
     *roms_found = cnt;
 
-    if (res == owERRNODEV) {
+    if (res == owERRNODEV && cnt > 0) {
         res = owOK;
     }
     return res;
