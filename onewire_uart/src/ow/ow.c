@@ -608,7 +608,7 @@ ow_crc(const void* in, size_t len) {
  */
 owr_t
 ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* roms_found,
-    ow_search_cb_fn func, void* arg) {
+                                    ow_search_cb_fn func, void* arg) {
     owr_t res;
     ow_rom_t rom_id;
     size_t i;
@@ -648,8 +648,8 @@ ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* roms_found,
  * \note            This function is thread-safe
  */
 owr_t
-ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg) {
-    return ow_search_with_command_callback(ow, OW_CMD_SEARCHROM, found, func, arg);
+ow_search_with_callback(ow_t* ow, size_t* roms_found, ow_search_cb_fn func, void* arg) {
+    return ow_search_with_command_callback(ow, OW_CMD_SEARCHROM, roms_found, func, arg);
 }
 
 /**
@@ -711,12 +711,12 @@ ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id_arr: Pointer to output array to store found ROM IDs into
  * \param[in]       rom_len: Length of input ROM array
- * \param[in]       found: Output value with number of found devices on 1-Wire
+ * \param[in]       roms_found: Output value with number of found devices on 1-Wire
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found) {
-    return ow_search_devices_with_command_raw(ow, OW_CMD_SEARCHROM, rom_id_arr, rom_len, found);
+ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found) {
+    return ow_search_devices_with_command_raw(ow, OW_CMD_SEARCHROM, rom_id_arr, rom_len, roms_found);
 }
 
 /**
@@ -724,13 +724,16 @@ ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* fo
  * \note            This function is thread-safe
  */
 owr_t
-ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found) {
+ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found) {
     owr_t res;
 
     OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("rom_len > 0", rom_len > 0);
+    OW_ASSERT("roms_found != NULL", roms_found != NULL);
+    OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
     ow_protect(ow, 1);
-    res = ow_search_devices_raw(ow, rom_id_arr, rom_len, found);
+    res = ow_search_devices_raw(ow, rom_id_arr, rom_len, roms_found);
     ow_unprotect(ow, 1);
     return res;
 }
