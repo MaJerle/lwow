@@ -742,7 +742,6 @@ ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_f
  * \brief           When only one devide is connected at 1-Wire network, get the family code, the rom id and validate it to CRC
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: Pointer to store the only ROM ID
- * \param[in]       family_code: Output value with number the only device family code
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
