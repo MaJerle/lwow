@@ -38,7 +38,7 @@
 
 /* User specific config which overwrites setup from ow_config_default.h file */
 #define OW_CFG_OS                               1
-#define OW_CFG_OS_MUTEX_HANDLE                  osMutexId
+#define OW_CFG_OS_MUTEX_HANDLE                  osMutexId_t
 
 /* Include default configuration setup */
 #include "ow/ow_config_default.h"
