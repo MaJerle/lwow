@@ -29,7 +29,7 @@
  * This file is part of OneWire-UART.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.1
+ * Version:         v1.2.0
  */
 #ifndef OW_HDR_CONFIG_H
 #define OW_HDR_CONFIG_H
@@ -40,7 +40,7 @@
  * User specific config which overwrites setup from ow_config_default.h file
  */
 #define OW_CFG_OS                               1
-#define OW_CFG_OS_MUTEX_HANDLE                  osMutexId
+#define OW_CFG_OS_MUTEX_HANDLE                  osMutexId_t
 
 /* Include default configuration setup */
 #include "ow/ow_config_default.h"

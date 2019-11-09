@@ -27,7 +27,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.1
+ * Version:         v1.2.0
  */
 #include "main.h"
 #include "cmsis_os.h"
@@ -39,8 +39,7 @@ static void LL_Init(void);
 void SystemClock_Config(void);
 static void USART_Printf_Init(void);
 
-static void app_thread(void const* arg);
-osThreadDef(app_thread, app_thread, osPriorityNormal, 0, 512);
+static void app_thread(void* arg);
 
 /* Create new 1-Wire instance */
 ow_t ow;
@@ -58,7 +57,12 @@ main(void) {
     
     printf("Application running on STM32L496G-Discovery!\r\n");
     
-    osThreadCreate(osThread(app_thread), NULL); /* Create application thread */
+    osKernelInitialize();
+    const osThreadAttr_t app_thread_attr = {
+        .priority = osPriorityNormal,
+        .stack_size = 512
+    };
+    osThreadNew(app_thread, NULL, &app_thread_attr);/* Create application thread */
     osKernelStart();                            /* Start kernel */
     
     while (1) {}
@@ -69,7 +73,7 @@ main(void) {
  * \param[in]       arg: Thread argument
  */
 static void
-app_thread(void const* arg) {
+app_thread(void* arg) {
     float avg_temp;
     size_t avg_temp_count;
 
@@ -120,7 +124,7 @@ app_thread(void const* arg) {
         }
     }
     printf("Terminating application thread\r\n");
-    osThreadTerminate(NULL);                    /* Terminate thread */
+    osThreadExit();
 }
 
 /**

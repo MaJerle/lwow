@@ -29,7 +29,7 @@
  * This file is part of OneWire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.1
+ * Version:         v1.2.0
  */
 #ifndef OW_HDR_CONFIG_H
 #define OW_HDR_CONFIG_H

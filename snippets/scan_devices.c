@@ -17,20 +17,15 @@ scan_onewire_devices(ow_t* ow, ow_rom_t* rom_ids, size_t rtf, size_t* rf) {
     /* Search for devices and save it to array */
     res = ow_search_devices(ow, rom_ids, rtf, &found);
 
-    if (found > 0) {
-        /* Print all devices */
-        for (size_t i = 0; i < found; i++) {
-            printf("Device ROM addr: %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X\r\n",
-                (unsigned)rom_ids[i].rom[0], (unsigned)rom_ids[i].rom[1], (unsigned)rom_ids[i].rom[2], (unsigned)rom_ids[i].rom[3],
-                (unsigned)rom_ids[i].rom[4], (unsigned)rom_ids[i].rom[5], (unsigned)rom_ids[i].rom[6], (unsigned)rom_ids[i].rom[7]
-            );
-        }
+    /* Print all devices */
+    for (size_t i = 0; i < found; ++i) {
+        printf("Device ROM addr: %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X\r\n",
+            (unsigned)rom_ids[i].rom[0], (unsigned)rom_ids[i].rom[1], (unsigned)rom_ids[i].rom[2], (unsigned)rom_ids[i].rom[3],
+            (unsigned)rom_ids[i].rom[4], (unsigned)rom_ids[i].rom[5], (unsigned)rom_ids[i].rom[6], (unsigned)rom_ids[i].rom[7]
+        );
     }
     if (rf != NULL) {
     	*rf = found;
-    }
-    if (owERRNODEV == res && found) {
-    	return owOK;
     }
     return res;
 }

@@ -29,7 +29,7 @@
  * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.1
+ * Version:         v1.2.0
  */
 #include "ow/ow.h"
 #include "system/ow_ll.h"
@@ -217,7 +217,7 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
      */
 
     /* Prepare output data */
-    for (uint8_t i = 0; i < 8; i++) {
+    for (uint8_t i = 0; i < 8; ++i) {
         /*
          * If we have to send high bit, set byte as 0xFF,
          * otherwise set it as low bit, 0x00
@@ -235,7 +235,7 @@ ow_write_byte_raw(ow_t* ow, uint8_t b) {
      * Check received data. If we read 0xFF,
      * our logical write 1 was successful, otherwise it was 0.
      */
-    for (uint8_t i = 0; i < 8; i++) {
+    for (uint8_t i = 0; i < 8; ++i) {
         if (tr[i] == 0xFF) {
             r |= 0x01 << i;
         }
@@ -412,10 +412,9 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
     ow_write_byte_raw(ow, cmd);                 /* Start with search ROM command */
     next_disrepancy = OW_LAST_DEV;              /* This is currently last device */
 
-    id_bit_number = 64;                         /* We have to read 8 bytes, each 8 bits */
-    while (id_bit_number) {
-        uint8_t j = 8, b, b_cpl;
-        while (j--) {
+    for (id_bit_number = 64; id_bit_number > 0;) {
+        uint8_t b, b_cpl;
+        for (uint8_t j = 8; j > 0; --j, --id_bit_number) {
             b       = send_bit(ow, 1);          /* Read first bit = next address bit */
             b_cpl   = send_bit(ow, 1);          /* Read second bit = complementary bit of next address bit */
 
@@ -470,9 +469,8 @@ ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id) {
              * and it will be automatically positioned correct way.
              */
             *id = (*id >> 0x01) | (b << 0x07);  /* Shift ROM byte down and add next, protocol is LSB first */
-            id_bit_number--;
         }
-        id++;                                   /* Go to next byte */
+        ++id;                                   /* Go to next byte */
     }
 out:
     ow->disrepancy = next_disrepancy;           /* Save disrepancy value */
@@ -504,7 +502,7 @@ ow_match_rom_raw(ow_t* ow, const ow_rom_t* rom_id) {
     OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_write_byte_raw(ow, OW_CMD_MATCHROM);     /* Write byte to match rom exactly */
-    for (uint8_t i = 0; i < 8; i++) {           /* Send 8 bytes representing ROM address */
+    for (uint8_t i = 0; i < 8; ++i) {           /* Send 8 bytes representing ROM address */
         ow_write_byte_raw(ow, rom_id->rom[i]);  /* Send ROM bytes */
     }
 
@@ -567,13 +565,13 @@ ow_crc_raw(const void* in, size_t len) {
     uint8_t crc = 0, inbyte, mix;
     const uint8_t* d = in;
 
-    if (in == NULL && len) {
+    if (in == NULL || len == 0) {
         return 0;
     }
 
-    while (len--) {
-        inbyte = *d++;
-        for (uint8_t i = 8; i; i--) {
+    for (; len > 0; --len, ++d) {
+        inbyte = *d;
+        for (uint8_t i = 8; i > 0; --i) {
             mix = (crc ^ inbyte) & 0x01;
             crc >>= 1;
             if (mix > 0) {
@@ -602,36 +600,35 @@ ow_crc(const void* in, size_t len) {
  *                  When new device is detected, callback function `func` is called to notify user
  * \param[in]       ow: 1-Wire handle
  * \param[in]       cmd: 1-Wire search command
- * \param[out]      found: Output variable to save number of found devices
+ * \param[out]      roms_found: Output variable to save number of found devices
  * \param[in]       func: Callback function to call for each device
  * \param[in]       arg: Custom user argument, used in callback function
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  * \note            This function is thread-safe
  */
 owr_t
-ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
-                                ow_search_cb_fn func, void* arg) {
+ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* roms_found,
+                                    ow_search_cb_fn func, void* arg) {
     owr_t res;
     ow_rom_t rom_id;
-    size_t i = 0;
+    size_t i;
 
     OW_ASSERT("ow != NULL", ow != NULL);
     OW_ASSERT("func != NULL", func != NULL);
 
     ow_protect(ow, 1);
-    res = ow_search_reset_raw(ow);              /* Reset search */
     /* Search device-by-device until all found */
-    while (res == owOK && (res = ow_search_with_command_raw(ow, cmd, &rom_id)) == owOK) {
+    for (i = 0, res = ow_search_reset_raw(ow);
+        res == owOK && (res = ow_search_with_command_raw(ow, cmd, &rom_id)) == owOK; ++i) {
         if ((res = func(ow, &rom_id, i, arg)) != owOK) {
             break;
         }
-        i++;
     }
     func(ow, NULL, i, arg);                     /* Call with NULL rom_id parameter */
     ow_unprotect(ow, 1);
 
-    if (found != NULL) {
-        *found = i;
+    if (roms_found != NULL) {
+        *roms_found = i;
     }
     if (res == owERRNODEV) {                    /* `No device` might not be an error, but simply no devices on bus */
         res = owOK;
@@ -651,8 +648,8 @@ ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found,
  * \note            This function is thread-safe
  */
 owr_t
-ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg) {
-    return ow_search_with_command_callback(ow, OW_CMD_SEARCHROM, found, func, arg);
+ow_search_with_callback(ow_t* ow, size_t* roms_found, ow_search_cb_fn func, void* arg) {
+    return ow_search_with_command_callback(ow, OW_CMD_SEARCHROM, roms_found, func, arg);
 }
 
 /**
@@ -661,26 +658,29 @@ ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg
  * \param[in]       cmd: 1-Wire search command
  * \param[in]       rom_id_arr: Pointer to output array to store found ROM IDs into
  * \param[in]       rom_len: Length of input ROM array
- * \param[in]       found: Output value with number of found devices on 1-Wire
+ * \param[in]       roms_found: Output value with number of devices found on 1-Wire
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
 ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
-                                    size_t rom_len, size_t* found) {
+    size_t rom_len, size_t* roms_found) {
     owr_t res;
+    size_t cnt = 0;
 
     OW_ASSERT("ow != NULL", ow != NULL);
     OW_ASSERT("rom_len > 0", rom_len > 0);
-    OW_ASSERT("found != NULL", found != NULL);
+    OW_ASSERT("roms_found != NULL", roms_found != NULL);
     OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
-    *found = 0;
-    res = ow_search_reset_raw(ow);              /* Reset search */
-    while (*found < rom_len && res == owOK && (res = ow_search_with_command_raw(ow, cmd, rom_id_arr)) == owOK) {
-        rom_id_arr++;
-        (*found)++;
+    for (cnt = 0, res = ow_search_reset_raw(ow); cnt < rom_len; ++rom_id_arr, ++cnt) {
+        if ((res = ow_search_with_command_raw(ow, cmd, rom_id_arr)) != owOK) {
+            break;
+        }
     }
-    if (res == owERRNODEV) {
+          
+    *roms_found = cnt;
+
+    if (res == owERRNODEV && cnt > 0) {
         res = owOK;
     }
     return res;
@@ -692,16 +692,16 @@ ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
  */
 owr_t
 ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
-                                size_t rom_len, size_t* found) {
+                                size_t rom_len, size_t* roms_found) {
     owr_t res;
 
     OW_ASSERT("ow != NULL", ow != NULL);
     OW_ASSERT("rom_len > 0", rom_len > 0);
-    OW_ASSERT("found != NULL", found != NULL);
+    OW_ASSERT("roms_found != NULL", roms_found != NULL);
     OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
     ow_protect(ow, 1);
-    res = ow_search_devices_with_command_raw(ow, cmd, rom_id_arr, rom_len, found);
+    res = ow_search_devices_with_command_raw(ow, cmd, rom_id_arr, rom_len, roms_found);
     ow_unprotect(ow, 1);
     return res;
 }
@@ -711,12 +711,12 @@ ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr,
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id_arr: Pointer to output array to store found ROM IDs into
  * \param[in]       rom_len: Length of input ROM array
- * \param[in]       found: Output value with number of found devices on 1-Wire
+ * \param[in]       roms_found: Output value with number of found devices on 1-Wire
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found) {
-    return ow_search_devices_with_command_raw(ow, OW_CMD_SEARCHROM, rom_id_arr, rom_len, found);
+ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found) {
+    return ow_search_devices_with_command_raw(ow, OW_CMD_SEARCHROM, rom_id_arr, rom_len, roms_found);
 }
 
 /**
@@ -724,13 +724,16 @@ ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* fo
  * \note            This function is thread-safe
  */
 owr_t
-ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found) {
+ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found) {
     owr_t res;
 
     OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("rom_len > 0", rom_len > 0);
+    OW_ASSERT("roms_found != NULL", roms_found != NULL);
+    OW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
 
     ow_protect(ow, 1);
-    res = ow_search_devices_raw(ow, rom_id_arr, rom_len, found);
+    res = ow_search_devices_raw(ow, rom_id_arr, rom_len, roms_found);
     ow_unprotect(ow, 1);
     return res;
 }

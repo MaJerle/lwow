@@ -29,7 +29,7 @@
  * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.1
+ * Version:         v1.2.0
  */
 #ifndef OW_HDR_H
 #define OW_HDR_H
@@ -164,14 +164,14 @@ owr_t       ow_search(ow_t* ow, ow_rom_t* rom_id);
 owr_t       ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
 owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
 
-owr_t       ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* found, ow_search_cb_fn func, void* arg);
-owr_t       ow_search_with_callback(ow_t* ow, size_t* found, ow_search_cb_fn func, void* arg);
+owr_t       ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* roms_found, ow_search_cb_fn func, void* arg);
+owr_t       ow_search_with_callback(ow_t* ow, size_t* roms_found, ow_search_cb_fn func, void* arg);
 
-owr_t       ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found);
-owr_t       ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found);
+owr_t       ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
+owr_t       ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
 
-owr_t       ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found);
-owr_t       ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found);
+owr_t       ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
+owr_t       ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
 
 uint8_t     ow_match_rom_raw(ow_t* ow, const ow_rom_t* rom_id);
 uint8_t     ow_match_rom(ow_t* ow, const ow_rom_t* rom_id);
