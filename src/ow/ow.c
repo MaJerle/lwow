@@ -29,7 +29,7 @@
  * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- */
+*/
 #include "ow/ow.h"
 #include "system/ow_ll.h"
 #include <string.h>
@@ -730,6 +730,54 @@ ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* found)
 
     ow_protect(ow, 1);
     res = ow_search_devices_raw(ow, rom_id_arr, rom_len, found);
+    ow_unprotect(ow, 1);
+    return res;
+}
+
+/**
+ * \brief           When only one devide is connected at 1-Wire network, get the family code, the rom id and validate it to CRC
+ * \param[in]       ow: 1-Wire handle
+ * \param[in]       rom_id: Pointer to store the only ROM ID
+ * \param[in]       family_code: Output value with number the only device family code
+ * \return          \ref owOK on success, member of \ref owr_t otherwise
+ */
+owr_t
+ow_read_rom_raw(ow_t* ow, ow_rom_t* rom_id) {
+	owr_t res;
+
+	OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("rom_id != NULL", rom_id != NULL);
+
+	res = ow_reset_raw(ow);
+    if(res != owOK) {
+    	return res;
+    }
+	uint8_t wr = ow_write_byte_raw(ow, OW_CMD_READROM);
+    if(wr != OW_CMD_READROM) {
+    	return owPARERR;
+    }
+    for(int i=0; i < sizeof(rom_id->rom); i++)
+    	rom_id->rom[i] = ow_read_byte_raw(ow);
+    uint8_t crc = *(rom_id->rom+7);
+
+    if(ow_crc(rom_id->rom, sizeof(rom_id->rom)-sizeof(uint8_t)) != crc)
+    	return owPARERR;
+
+    return owOK;
+}
+
+/**
+ * \copydoc         ow_search_devices_raw
+ * \note            This function is thread-safe
+ */
+owr_t
+ow_read_rom(ow_t* ow, ow_rom_t* rom_id) {
+	owr_t res;
+
+	OW_ASSERT("ow != NULL", ow != NULL);
+
+    ow_protect(ow, 1);
+    res = ow_read_rom_raw(ow, rom_id);
     ow_unprotect(ow, 1);
     return res;
 }
