@@ -29,7 +29,7 @@
  * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         $_version_$
+ * Version:         v1.2.0
  */
 #include "ow/ow.h"
 #include "system/ow_ll.h"
