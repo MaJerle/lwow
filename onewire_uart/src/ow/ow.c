@@ -56,7 +56,7 @@
 static uint8_t
 send_bit(ow_t* ow, uint8_t v) {
     uint8_t b;
-	
+    
     /*
      * To send logical 1 over 1-wire, send 0xFF over UART
      * To send logical 0 over 1-wire, send 0x00 over UART
@@ -746,25 +746,27 @@ ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_f
  */
 owr_t
 ow_read_rom_raw(ow_t* ow, ow_rom_t* rom_id) {
-	owr_t res;
+    owr_t res;
+    uint8_t wr;
 
-	OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("ow != NULL", ow != NULL);
     OW_ASSERT("rom_id != NULL", rom_id != NULL);
 
-	res = ow_reset_raw(ow);
-    if(res != owOK) {
-    	return res;
+    res = ow_reset_raw(ow);
+    if (res != owOK) {
+        return res;
     }
-	uint8_t wr = ow_write_byte_raw(ow, OW_CMD_READROM);
-    if(wr != OW_CMD_READROM) {
-    	return owPARERR;
+    wr = ow_write_byte_raw(ow, OW_CMD_READROM);
+    if (wr != OW_CMD_READROM) {
+        return owPARERR;
     }
-    for(int i=0; i < sizeof(rom_id->rom); i++)
-    	rom_id->rom[i] = ow_read_byte_raw(ow);
-    uint8_t crc = *(rom_id->rom+7);
+    for (size_t i = 0; i < sizeof(rom_id->rom); ++i) {
+        rom_id->rom[i] = ow_read_byte_raw(ow);
+    }
 
-    if(ow_crc(rom_id->rom, sizeof(rom_id->rom)-sizeof(uint8_t)) != crc)
-    	return owPARERR;
+    if (ow_crc(rom_id->rom, sizeof(rom_id->rom)) != 0) {
+        return owPARERR;
+    }
 
     return owOK;
 }
@@ -775,9 +777,9 @@ ow_read_rom_raw(ow_t* ow, ow_rom_t* rom_id) {
  */
 owr_t
 ow_read_rom(ow_t* ow, ow_rom_t* rom_id) {
-	owr_t res;
+    owr_t res;
 
-	OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_read_rom_raw(ow, rom_id);

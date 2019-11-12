@@ -41,47 +41,42 @@
  */
 uint8_t
 ow_ll_init(void* arg) {
-	/* Configure and enable UART at 115200 bauds */
-	UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
+    /* Configure and enable UART at 115200 bauds */
+    UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
 
-	if(huart->Instance == NULL)
-		huart->Instance = USART2;
-	/*else
-		HAL_UART_DeInit(huart);*/
+    if (huart->Instance == NULL) {
+        huart->Instance = USART2;
+    }
 
-	huart->Init.BaudRate = 115200;
-	huart->Init.WordLength = UART_WORDLENGTH_8B;
-	huart->Init.StopBits = UART_STOPBITS_1;
-	huart->Init.Parity = UART_PARITY_NONE;
-	huart->Init.Mode = UART_MODE_TX_RX;
-	huart->Init.HwFlowCtl = UART_HWCONTROL_NONE;
-	huart->Init.OverSampling = UART_OVERSAMPLING_16;
-	huart->Init.OneBitSampling = UART_ONE_BIT_SAMPLE_ENABLE;
-	huart->Init.ClockPrescaler = UART_PRESCALER_DIV1;
-	huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-	if (HAL_HalfDuplex_Init(huart) != HAL_OK)
-	{
-		return 0;
-	}
-    if (HAL_UARTEx_SetTxFifoThreshold(huart, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-    {
-		return 0;
+    huart->Init.BaudRate = 115200;
+    huart->Init.WordLength = UART_WORDLENGTH_8B;
+    huart->Init.StopBits = UART_STOPBITS_1;
+    huart->Init.Parity = UART_PARITY_NONE;
+    huart->Init.Mode = UART_MODE_TX_RX;
+    huart->Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart->Init.OverSampling = UART_OVERSAMPLING_16;
+    huart->Init.OneBitSampling = UART_ONE_BIT_SAMPLE_ENABLE;
+    huart->Init.ClockPrescaler = UART_PRESCALER_DIV1;
+    huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+    if (HAL_HalfDuplex_Init(huart) != HAL_OK) {
+        return 0;
     }
-    if (HAL_UARTEx_SetRxFifoThreshold(huart, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-    {
-		return 0;
+    if (HAL_UARTEx_SetTxFifoThreshold(huart, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK) {
+        return 0;
     }
-    if (HAL_UARTEx_EnableFifoMode(huart) != HAL_OK)
-    {
-		return 0;
+    if (HAL_UARTEx_SetRxFifoThreshold(huart, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK) {
+        return 0;
     }
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
+    if (HAL_UARTEx_EnableFifoMode(huart) != HAL_OK) {
+        return 0;
+    }
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
     GPIO_InitStruct.Pin = GPIO_PIN_2;
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     return 1;
 }
 
@@ -93,9 +88,9 @@ ow_ll_init(void* arg) {
 uint8_t
 ow_ll_deinit(void* arg) {
     /* Disable UART peripheral */
-	UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
-	HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2);
-	HAL_UART_DeInit(huart);
+    UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2);
+    HAL_UART_DeInit(huart);
     return 1;
 }
 
@@ -108,17 +103,12 @@ ow_ll_deinit(void* arg) {
 uint8_t
 ow_ll_set_baudrate(uint32_t baud, void* arg) {
     /* Configure UART to selected baudrate */
-	UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
-	huart->Init.BaudRate = baud;
-	/*if (HAL_UART_DeInit(huart) != HAL_OK)
-	{
-		return 0;
-	}*/
-	if (HAL_HalfDuplex_Init(huart) != HAL_OK)
-	{
-		return 0;
-	}
-	return 1;
+    UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
+    huart->Init.BaudRate = baud;
+    if (HAL_HalfDuplex_Init(huart) != HAL_OK) {
+        return 0;
+    }
+    return 1;
 }
 
 /**
@@ -132,13 +122,15 @@ ow_ll_set_baudrate(uint32_t baud, void* arg) {
 uint8_t
 ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     /* Perform data exchange */
-	UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
-	HAL_StatusTypeDef stat;
-	stat = HAL_UART_Transmit(huart, tx, len, 2);
-	if(stat != HAL_OK)
-		return 0;
-	stat = HAL_UART_Receive(huart, rx, len, 1);
-	if(stat != HAL_OK)
-		return 0;
+    UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
+    HAL_StatusTypeDef stat;
+    stat = HAL_UART_Transmit(huart, tx, len, 2);
+    if(stat != HAL_OK) {
+        return 0;
+    }
+    stat = HAL_UART_Receive(huart, rx, len, 1);
+    if(stat != HAL_OK) {
+        return 0;
+    }
     return 1;
 }
