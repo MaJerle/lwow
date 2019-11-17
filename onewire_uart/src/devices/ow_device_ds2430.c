@@ -39,9 +39,9 @@
  * \brief           Write the storage scratchpad.
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to read data from, accepts NULL
- * \param[in]      	address: the address to be written (<0x20)
- * \param[in]      	reg: stores the data to be written
- * \param[in]      	length: the length of reg
+ * \param[in]       address: the address to be written (<0x20)
+ * \param[in]       reg: stores the data to be written
+ * \param[in]       length: the length of reg
  * \return          `1` on success, `0` otherwise
  */
 owr_t
@@ -110,9 +110,9 @@ ow_ds2430_storage_write_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8
  * \brief           Read the storage scratchpad.
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to read data from, accepts NULL
- * \param[in]      	address: the address to be read (<0x20)
- * \param[out]     	reg: stores the data to be read
- * \param[in]      	length: the length of reg
+ * \param[in]       address: the address to be read (<0x20)
+ * \param[out]      reg: stores the data to be read
+ * \param[in]       length: the length of reg
  * \return          `1` on success, `0` otherwise
  */
 owr_t
@@ -178,7 +178,7 @@ ow_ds2430_storage_read_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8_
  * \brief           Write the storage memory from scratchpad
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to read data from, accepts NULL
- * \param[in]      	delay10ms_fn: a pointer to a function to call to wait for 10ms
+ * \param[in]       delay10ms_fn: a pointer to a function to call to wait for 10ms
  * \return          `0` on success, `1` otherwise
  */
 owr_t

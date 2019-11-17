@@ -59,11 +59,11 @@ extern "C" {
 #define OW_DS2430_RD_APP_REGISTER           ((uint8_t)0xC3)  /*!< Data Memory read  64bit app register memory/scratchpad */
 #define OW_DS2430_CPLK_APP_REGISTER         ((uint8_t)0x5A)  /*!< Data Memory copy  64bit scratchpad to memory and perpetually lock memory */
 
-#define OW_DS2430_CP_VALIDATION_KEY			((uint8_t)0xA5)  /*!< Data Memory Copy operations requires validation key */
+#define OW_DS2430_CP_VALIDATION_KEY         ((uint8_t)0xA5)  /*!< Data Memory Copy operations requires validation key */
 #define OW_DS2430_RD_STS_VALIDATION_KEY     ((uint8_t)0x00)  /*!< Data Memory Read status requires validation key */
 
-#define OW_DS2430_STORAGE_LENGTH	 	    ((uint8_t)0x20)  /*!< Data Memory Read scratchpad memory length */
-#define OW_DS2430_APP_REG_LENGTH	 	    ((uint8_t)0x08)  /*!< Data Memory Read app register length */
+#define OW_DS2430_STORAGE_LENGTH            ((uint8_t)0x20)  /*!< Data Memory Read scratchpad memory length */
+#define OW_DS2430_APP_REG_LENGTH            ((uint8_t)0x08)  /*!< Data Memory Read app register length */
 
 owr_t   ow_ds2430_storage_write_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, const uint8_t* reg, uint8_t length);
 owr_t   ow_ds2430_storage_write_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, const uint8_t* reg, uint8_t length);
@@ -86,11 +86,11 @@ owr_t   ow_ds2430_app_register_read(ow_t* ow, const ow_rom_t* rom_id, const uint
 owr_t   ow_ds2430_app_register_copylock_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms_fn)());
 owr_t   ow_ds2430_app_register_copylock_from_scratchpad(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms_fn)());
 
-owr_t	ow_ds2430_status_read_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t* status);
-owr_t	ow_ds2430_status_read(ow_t* ow, const ow_rom_t* rom_id, uint8_t* status);
+owr_t   ow_ds2430_status_read_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t* status);
+owr_t   ow_ds2430_status_read(ow_t* ow, const ow_rom_t* rom_id, uint8_t* status);
 
-owr_t	ow_ds2430_app_register_is_locked_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t* locked);
-owr_t	ow_ds2430_app_register_is_locked(ow_t* ow, const ow_rom_t* rom_id, uint8_t* locked);
+owr_t   ow_ds2430_app_register_is_locked_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t* locked);
+owr_t   ow_ds2430_app_register_is_locked(ow_t* ow, const ow_rom_t* rom_id, uint8_t* locked);
 
 /**
  * \}

@@ -176,8 +176,8 @@ owr_t       ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, si
 uint8_t     ow_match_rom_raw(ow_t* ow, const ow_rom_t* rom_id);
 uint8_t     ow_match_rom(ow_t* ow, const ow_rom_t* rom_id);
 
-owr_t	    ow_read_rom_raw(ow_t* ow, ow_rom_t* rom_id);
-owr_t   	ow_read_rom(ow_t* ow, ow_rom_t* rom_id);
+owr_t       ow_read_rom_raw(ow_t* ow, ow_rom_t* rom_id);
+owr_t       ow_read_rom(ow_t* ow, ow_rom_t* rom_id);
 
 uint8_t     ow_skip_rom_raw(ow_t* ow);
 uint8_t     ow_skip_rom(ow_t* ow);

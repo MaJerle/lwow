@@ -42,7 +42,7 @@
 uint8_t
 ow_ll_init(void* arg) {
     /* Configure and enable UART at 115200 bauds */
-    UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
+    UART_HandleTypeDef* huart = arg;
 
     GPIO_InitTypeDef GPIO_InitStruct = {
         .Pin = GPIO_PIN_2,
@@ -90,7 +90,7 @@ ow_ll_init(void* arg) {
 uint8_t
 ow_ll_deinit(void* arg) {
     /* Disable UART peripheral */
-    UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
+    UART_HandleTypeDef* huart = arg;
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2);
     HAL_UART_DeInit(huart);
     return 1;
@@ -105,7 +105,7 @@ ow_ll_deinit(void* arg) {
 uint8_t
 ow_ll_set_baudrate(uint32_t baud, void* arg) {
     /* Configure UART to selected baudrate */
-    UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
+    UART_HandleTypeDef* huart = arg;
     huart->Init.BaudRate = baud;
     if (HAL_HalfDuplex_Init(huart) != HAL_OK) {
         return 0;
@@ -124,7 +124,7 @@ ow_ll_set_baudrate(uint32_t baud, void* arg) {
 uint8_t
 ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     /* Perform data exchange */
-    UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
+    UART_HandleTypeDef* huart = arg;
     HAL_StatusTypeDef stat;
     stat = HAL_UART_Transmit(huart, tx, len, 2);
     if (stat != HAL_OK) {
