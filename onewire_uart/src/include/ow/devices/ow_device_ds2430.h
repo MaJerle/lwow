@@ -71,8 +71,8 @@ owr_t   ow_ds2430_storage_write_scratchpad(ow_t* ow, const ow_rom_t* rom_id, con
 owr_t   ow_ds2430_storage_read_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length);
 owr_t   ow_ds2430_storage_read_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length);
 
-owr_t   ow_ds2430_storage_copy_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms)());
-owr_t   ow_ds2430_storage_copy_from_scratchpad(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms)());
+owr_t   ow_ds2430_storage_copy_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms_fn)());
+owr_t   ow_ds2430_storage_copy_from_scratchpad(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms_fn)());
 
 owr_t   ow_ds2430_storage_read_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length);
 owr_t   ow_ds2430_storage_read(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length);
@@ -83,8 +83,8 @@ owr_t   ow_ds2430_app_register_write_scratchpad(ow_t* ow, const ow_rom_t* rom_id
 owr_t   ow_ds2430_app_register_read_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length);
 owr_t   ow_ds2430_app_register_read(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length);
 
-owr_t   ow_ds2430_app_register_copylock_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms)());
-owr_t   ow_ds2430_app_register_copylock_from_scratchpad(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms)());
+owr_t   ow_ds2430_app_register_copylock_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms_fn)());
+owr_t   ow_ds2430_app_register_copylock_from_scratchpad(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms_fn)());
 
 owr_t	ow_ds2430_status_read_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t* status);
 owr_t	ow_ds2430_status_read(ow_t* ow, const ow_rom_t* rom_id, uint8_t* status);

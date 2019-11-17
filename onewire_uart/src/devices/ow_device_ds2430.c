@@ -45,8 +45,7 @@
  * \return          `1` on success, `0` otherwise
  */
 owr_t
-ow_ds2430_storage_write_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, const uint8_t* reg, uint8_t length)
-{
+ow_ds2430_storage_write_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, const uint8_t* reg, uint8_t length) {
     owr_t ret = owOK;
     uint8_t sent;
 
@@ -64,10 +63,8 @@ ow_ds2430_storage_write_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const u
         if (ow_skip_rom_raw(ow) < 1) {          /* Skip ROM, send to all devices */
             return owERR;
         }
-    } else {
-        if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
-            return owERRNODEV;
-        }
+    } else if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
+        return owERRNODEV;
     }
     sent = ow_write_byte_raw(ow, OW_DS2430_WR_SCRATCHPAD);    /* Send command to read app register */
     if (sent != OW_DS2430_WR_SCRATCHPAD) {
@@ -97,8 +94,7 @@ ow_ds2430_storage_write_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const u
  * \note            This function is thread-safe
  */
 owr_t
-ow_ds2430_storage_write_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, const uint8_t* reg, uint8_t length)
-{
+ow_ds2430_storage_write_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, const uint8_t* reg, uint8_t length) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -120,8 +116,7 @@ ow_ds2430_storage_write_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8
  * \return          `1` on success, `0` otherwise
  */
 owr_t
-ow_ds2430_storage_read_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length)
-{
+ow_ds2430_storage_read_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length) {
     owr_t ret = owOK;
     uint8_t sent;
 
@@ -139,10 +134,8 @@ ow_ds2430_storage_read_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const ui
         if (ow_skip_rom_raw(ow) < 1) {          /* Skip ROM, send to all devices */
             return owERR;
         }
-    } else {
-        if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
-            return owERRNODEV;
-        }
+    } else if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
+        return owERRNODEV;
     }
     sent = ow_write_byte_raw(ow, OW_DS2430_RD_SCRATCHPAD);    /* Send command to read app register */
     if (sent != OW_DS2430_RD_SCRATCHPAD) {
@@ -169,8 +162,7 @@ ow_ds2430_storage_read_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, const ui
  * \note            This function is thread-safe
  */
 owr_t
-ow_ds2430_storage_read_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length)
-{
+ow_ds2430_storage_read_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8_t address, uint8_t* reg, uint8_t length) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -186,11 +178,11 @@ ow_ds2430_storage_read_scratchpad(ow_t* ow, const ow_rom_t* rom_id, const uint8_
  * \brief           Write the storage memory from scratchpad
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to read data from, accepts NULL
- * \param[in]      	delay10ms: a pointer to a function to call to wait for 10ms
+ * \param[in]      	delay10ms_fn: a pointer to a function to call to wait for 10ms
  * \return          `0` on success, `1` otherwise
  */
 owr_t
-ow_ds2430_storage_copy_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms)()) {
+ow_ds2430_storage_copy_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms_fn)()) {
     owr_t ret = owOK;
     uint8_t sent;
 
@@ -205,10 +197,8 @@ ow_ds2430_storage_copy_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, voi
         if (ow_skip_rom_raw(ow) < 1) {          /* Skip ROM, send to all devices */
             return owERR;
         }
-    } else {
-        if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
-            return owERRNODEV;
-        }
+    } else if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
+        return owERRNODEV;
     }
     sent = ow_write_byte_raw(ow, OW_DS2430_CP_SCRATCHPAD);    /* Send command to read app register */
     if (sent != OW_DS2430_CP_SCRATCHPAD) {
@@ -220,8 +210,8 @@ ow_ds2430_storage_copy_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, voi
         return owERR;
     }
 
-    if (delay10ms != NULL) {
-        delay10ms();
+    if (delay10ms_fn != NULL) {
+        delay10ms_fn();
     }
 
     return ret;
@@ -232,13 +222,13 @@ ow_ds2430_storage_copy_from_scratchpad_raw(ow_t* ow, const ow_rom_t* rom_id, voi
  * \note            This function is thread-safe
  */
 owr_t
-ow_ds2430_storage_copy_from_scratchpad(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms)()) {
+ow_ds2430_storage_copy_from_scratchpad(ow_t* ow, const ow_rom_t* rom_id, void (*delay10ms_fn)()) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
-    res = ow_ds2430_storage_copy_from_scratchpad_raw(ow, rom_id, delay10ms);
+    res = ow_ds2430_storage_copy_from_scratchpad_raw(ow, rom_id, delay10ms_fn);
     ow_unprotect(ow, 1);
     return res;
 }
@@ -266,10 +256,8 @@ ow_ds2430_storage_read_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t addre
         if (ow_skip_rom_raw(ow) < 1) {          /* Skip ROM, send to all devices */
             return owERR;
         }
-    } else {
-        if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
-            return owERRNODEV;
-        }
+    } else if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
+        return owERRNODEV;
     }
 
     sent = ow_write_byte_raw(ow, OW_DS2430_RD_MEMORY);  /* Send command to read app register */
@@ -339,11 +327,11 @@ ow_ds2430_app_register_read_raw(ow_t* ow, const ow_rom_t* rom_id, const uint8_t 
     }
 
     if (rom_id == NULL) {                       /* Check for ROM id */
-        if (ow_skip_rom_raw(ow) < 1)            /* Skip ROM, send to all devices */
+        if (ow_skip_rom_raw(ow) < 1) {          /* Skip ROM, send to all devices */
             return owERR;
-    } else {
-        if (ow_match_rom_raw(ow, rom_id) < 1)   /* Select exact device by ROM address */
-            return owERRNODEV;
+        }
+    } else if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
+        return owERRNODEV;
     }
     sent = ow_write_byte_raw(ow, OW_DS2430_RD_APP_REGISTER);  /* Send command to read app register */
     if (sent != OW_DS2430_RD_APP_REGISTER) {
@@ -398,11 +386,11 @@ ow_ds2430_status_read_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t* status) {
     }
 
     if (rom_id == NULL) {                       /* Check for ROM id */
-        if (ow_skip_rom_raw(ow) < 1)            /* Skip ROM, send to all devices */
+        if (ow_skip_rom_raw(ow) < 1) {          /* Skip ROM, send to all devices */
             return owERR;
-    } else {
-        if (ow_match_rom_raw(ow, rom_id) < 1)   /* Select exact device by ROM address */
-            return owERRNODEV;
+        }
+    } else if (ow_match_rom_raw(ow, rom_id) < 1) { /* Select exact device by ROM address */
+        return owERRNODEV;
     }
     sent = ow_write_byte_raw(ow, OW_DS2430_RD_STATUS);  /* Send command to read app register */
     if (sent != OW_DS2430_RD_STATUS) {

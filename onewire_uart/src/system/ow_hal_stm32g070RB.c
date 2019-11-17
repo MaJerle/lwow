@@ -44,6 +44,14 @@ ow_ll_init(void* arg) {
     /* Configure and enable UART at 115200 bauds */
     UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
 
+    GPIO_InitTypeDef GPIO_InitStruct = {
+        .Pin = GPIO_PIN_2,
+        .Mode = GPIO_MODE_AF_OD,
+        .Pull = GPIO_PULLUP,
+        .Speed = GPIO_SPEED_FREQ_LOW,
+        .Alternate = GPIO_AF1_USART2
+    };
+
     if (huart->Instance == NULL) {
         huart->Instance = USART2;
     }
@@ -70,12 +78,6 @@ ow_ll_init(void* arg) {
     if (HAL_UARTEx_EnableFifoMode(huart) != HAL_OK) {
         return 0;
     }
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-    GPIO_InitStruct.Pin = GPIO_PIN_2;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     return 1;
 }
@@ -125,11 +127,11 @@ ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     UART_HandleTypeDef* huart = (UART_HandleTypeDef*)arg;
     HAL_StatusTypeDef stat;
     stat = HAL_UART_Transmit(huart, tx, len, 2);
-    if(stat != HAL_OK) {
+    if (stat != HAL_OK) {
         return 0;
     }
     stat = HAL_UART_Receive(huart, rx, len, 1);
-    if(stat != HAL_OK) {
+    if (stat != HAL_OK) {
         return 0;
     }
     return 1;

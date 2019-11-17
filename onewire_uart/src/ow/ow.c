@@ -765,10 +765,10 @@ ow_read_rom_raw(ow_t* ow, ow_rom_t* rom_id) {
     }
 
     if (ow_crc(rom_id->rom, sizeof(rom_id->rom)) != 0) {
-        return owPARERR;
+        res = owPARERR;
     }
 
-    return owOK;
+    return res;
 }
 
 /**
