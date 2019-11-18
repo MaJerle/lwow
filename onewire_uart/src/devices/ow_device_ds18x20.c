@@ -109,7 +109,7 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
         for (uint8_t i = 0; i < 9; ++i) {
             data[i] = ow_read_byte_raw(ow);     /* Read byte */
         }
-        crc = ow_crc_raw(data, 0x09);           /* Calculate CRC */
+        crc = ow_crc(data, 0x09);               /* Calculate CRC */
         if (crc == 0) {                         /* Result must be 0 to match the CRC */
             temp = (data[1] << 0x08) | data[0]; /* Format data in integer format */
             resolution = ((data[4] & 0x60) >> 0x05) + 0x09; /* Set resolution in units of bits */
@@ -216,12 +216,15 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
     uint8_t th, tl, conf, res = 0;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
-    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
     OW_ASSERT0("bits >= 9 && bits <= 12", bits >= 9 && bits <= 12);
     OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id));
 
     if (ow_reset_raw(ow) == owOK) {
-        ow_match_rom_raw(ow, rom_id);
+        if (rom_id == NULL) {
+            ow_match_rom_raw(ow, rom_id);
+        } else {
+            ow_skip_rom_raw(ow);
+        }
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);
 
         /* Read and ignore bytes */
@@ -269,7 +272,6 @@ ow_ds18x20_set_resolution(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
-    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
     OW_ASSERT0("bits >= 9 && bits <= 12", bits >= 9 && bits <= 12);
     OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id));
 
@@ -385,7 +387,7 @@ ow_ds18x20_set_alarm_temp(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
-    OW_ASSERT0("ow_ds18x20_is_b_raw(ow, rom_id)", ow_ds18x20_is_b_raw(ow, rom_id));
+    OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id));
 
     ow_protect(ow, 1);
     res = ow_ds18x20_set_alarm_temp_raw(ow, rom_id, temp_l, temp_h);
