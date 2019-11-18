@@ -74,15 +74,15 @@ typedef struct {
  * \brief           1-Wire structure
  */
 typedef struct {
-#if OW_CFG_OS || __DOXYGEN__
-    OW_CFG_OS_MUTEX_HANDLE mutex;               /*!< Mutex handle */
-#endif /* OW_CFG_OS || __DOXYGEN__ */
-
     ow_rom_t rom;                               /*!< ROM address of last device found.
                                                      When searching for new devices, we always need last found address,
                                                      to be able to decide which way to go next time during scan. */
     uint8_t disrepancy;                         /*!< Disrepancy value on last search */
     void* arg;                                  /*!< User custom argument */
+
+#if OW_CFG_OS || __DOXYGEN__
+    OW_CFG_OS_MUTEX_HANDLE mutex;               /*!< Mutex handle */
+#endif /* OW_CFG_OS || __DOXYGEN__ */
 } ow_t;
 
 /**
