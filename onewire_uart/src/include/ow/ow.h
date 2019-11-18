@@ -95,7 +95,7 @@ typedef struct {
  * \param[in]       arg: Custom user argument
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
-typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index, void* arg);
+typedef owr_t (*ow_search_cb_fn) (ow_t* const ow, const ow_rom_t* const rom_id, size_t index, void* arg);
 
 #define OW_UNUSED(x)                ((void)(x)) /*!< Unused variable macro */
 
@@ -135,52 +135,51 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index
 #define OW_CMD_MATCHROM             0x55        /*!< Match ROM command. Select device with specific ROM */
 #define OW_CMD_SKIPROM              0xCC        /*!< Skip ROM, select all devices */
 
-owr_t       ow_init(ow_t* ow, void* arg);
-void        ow_deinit(ow_t* ow);
+owr_t       ow_init(ow_t* const ow, void* arg);
+void        ow_deinit(ow_t* const ow);
 
-owr_t       ow_protect(ow_t* ow, const uint8_t protect);
-owr_t       ow_unprotect(ow_t* ow, const uint8_t protect);
-
-
-owr_t       ow_reset_raw(ow_t* ow);
-owr_t       ow_reset(ow_t* ow);
-
-uint8_t     ow_write_byte_raw(ow_t* ow, uint8_t b);
-uint8_t     ow_write_byte(ow_t* ow, uint8_t b);
-
-uint8_t     ow_read_byte_raw(ow_t* ow);
-uint8_t     ow_read_byte(ow_t* ow);
-
-uint8_t     ow_read_bit_raw(ow_t* ow);
-uint8_t     ow_read_bit(ow_t* ow);
+owr_t       ow_protect(ow_t* const ow, const uint8_t protect);
+owr_t       ow_unprotect(ow_t* const ow, const uint8_t protect);
 
 
-owr_t       ow_search_reset_raw(ow_t* ow);
-owr_t       ow_search_reset(ow_t* ow);
+owr_t       ow_reset_raw(ow_t* const ow);
+owr_t       ow_reset(ow_t* const ow);
 
-owr_t       ow_search_raw(ow_t* ow, ow_rom_t* rom_id);
-owr_t       ow_search(ow_t* ow, ow_rom_t* rom_id);
+uint8_t     ow_write_byte_raw(ow_t* const ow, const uint8_t b);
+uint8_t     ow_write_byte(ow_t* const ow, const uint8_t b);
 
-owr_t       ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
-owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
+uint8_t     ow_read_byte_raw(ow_t* const ow);
+uint8_t     ow_read_byte(ow_t* const ow);
 
-owr_t       ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* roms_found, ow_search_cb_fn func, void* arg);
-owr_t       ow_search_with_callback(ow_t* ow, size_t* roms_found, ow_search_cb_fn func, void* arg);
+uint8_t     ow_read_bit_raw(ow_t* const ow);
+uint8_t     ow_read_bit(ow_t* const ow);
 
-owr_t       ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
-owr_t       ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
 
-owr_t       ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
-owr_t       ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
+owr_t       ow_search_reset_raw(ow_t* const ow);
+owr_t       ow_search_reset(ow_t* const ow);
 
-uint8_t     ow_match_rom_raw(ow_t* ow, const ow_rom_t* rom_id);
-uint8_t     ow_match_rom(ow_t* ow, const ow_rom_t* rom_id);
+owr_t       ow_search_raw(ow_t* const ow, ow_rom_t* const rom_id);
+owr_t       ow_search(ow_t* const ow, ow_rom_t* const rom_id);
 
-uint8_t     ow_skip_rom_raw(ow_t* ow);
-uint8_t     ow_skip_rom(ow_t* ow);
+owr_t       ow_search_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id);
+owr_t       ow_search_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id);
 
-uint8_t     ow_crc_raw(const void* in, size_t len);
-uint8_t     ow_crc(const void* in, size_t len);
+owr_t       ow_search_with_command_callback(ow_t* const ow, const uint8_t cmd, size_t* const roms_found, const ow_search_cb_fn func, void* const arg);
+owr_t       ow_search_with_callback(ow_t* const ow, size_t* const roms_found, const ow_search_cb_fn func, void* const arg);
+
+owr_t       ow_search_devices_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr, size_t rom_len, size_t* const roms_found);
+owr_t       ow_search_devices_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr, size_t rom_len, size_t* const roms_found);
+
+owr_t       ow_search_devices_raw(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
+owr_t       ow_search_devices(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
+
+uint8_t     ow_match_rom_raw(ow_t* const ow, const ow_rom_t* const rom_id);
+uint8_t     ow_match_rom(ow_t* const ow, const ow_rom_t* const rom_id);
+
+uint8_t     ow_skip_rom_raw(ow_t* const ow);
+uint8_t     ow_skip_rom(ow_t* const ow);
+
+uint8_t     ow_crc(const void* const in, const size_t len);
 
 /**
  * \}

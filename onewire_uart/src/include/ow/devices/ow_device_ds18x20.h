@@ -55,26 +55,26 @@ extern "C" {
 #define OW_DS18X20_TEMP_MIN                     ((int8_t)-55)   /*!< Minimum temperature */
 #define OW_DS18X20_TEMP_MAX                     ((int8_t)125)   /*!< Maximal temperature */
 
-uint8_t     ow_ds18x20_start_raw(ow_t* ow, const ow_rom_t* rom_id);
-uint8_t     ow_ds18x20_start(ow_t* ow, const ow_rom_t* rom_id);
+uint8_t     ow_ds18x20_start_raw(ow_t* const ow, const ow_rom_t* const rom_id);
+uint8_t     ow_ds18x20_start(ow_t* const ow, const ow_rom_t* const rom_id);
 
-uint8_t     ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t);
-uint8_t     ow_ds18x20_read(ow_t* ow, const ow_rom_t* rom_id, float* t);
+uint8_t     ow_ds18x20_read_raw(ow_t* const ow, const ow_rom_t* const rom_id, float* const t);
+uint8_t     ow_ds18x20_read(ow_t* const ow, const ow_rom_t* const rom_id, float* const t);
 
-uint8_t     ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits);
-uint8_t     ow_ds18x20_set_resolution(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits);
+uint8_t     ow_ds18x20_set_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id, const uint8_t bits);
+uint8_t     ow_ds18x20_set_resolution(ow_t* const ow, const ow_rom_t* const rom_id, const uint8_t bits);
 
-uint8_t     ow_ds18x20_get_resolution_raw(ow_t* ow, const ow_rom_t* rom_id);
-uint8_t     ow_ds18x20_get_resolution(ow_t* ow, const ow_rom_t* rom_id);
+uint8_t     ow_ds18x20_get_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id);
+uint8_t     ow_ds18x20_get_resolution(ow_t* const ow, const ow_rom_t* const rom_id);
 
-uint8_t     ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h);
-uint8_t     ow_ds18x20_set_alarm_temp(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h);
+uint8_t     ow_ds18x20_set_alarm_temp_raw(ow_t* const ow, const ow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h);
+uint8_t     ow_ds18x20_set_alarm_temp(ow_t* const ow, const ow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h);
 
-owr_t       ow_ds18x20_search_alarm_raw(ow_t* ow, ow_rom_t* rom_id);
-owr_t       ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id);
+owr_t       ow_ds18x20_search_alarm_raw(ow_t* const ow, ow_rom_t* const rom_id);
+owr_t       ow_ds18x20_search_alarm(ow_t* const ow, ow_rom_t* const rom_id);
 
-uint8_t     ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id);
-uint8_t     ow_ds18x20_is_s(ow_t* ow, const ow_rom_t* rom_id);
+uint8_t     ow_ds18x20_is_b(ow_t* const ow, const ow_rom_t* const rom_id);
+uint8_t     ow_ds18x20_is_s(ow_t* const ow, const ow_rom_t* const rom_id);
 
 /**
  * \}

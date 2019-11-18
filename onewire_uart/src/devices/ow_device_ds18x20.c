@@ -42,7 +42,7 @@
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_start_raw(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_start_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
     uint8_t ret = 0;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -64,7 +64,7 @@ ow_ds18x20_start_raw(ow_t* ow, const ow_rom_t* rom_id) {
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_start(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_start(ow_t* const ow, const ow_rom_t* const rom_id) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -83,7 +83,7 @@ ow_ds18x20_start(ow_t* ow, const ow_rom_t* rom_id) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
+ow_ds18x20_read_raw(ow_t* const ow, const ow_rom_t* const rom_id, float* const t) {
     float dec;
     uint16_t temp;
     uint8_t ret = 0, data[9], crc, resolution, m = 0;
@@ -142,7 +142,7 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_read(ow_t* ow, const ow_rom_t* rom_id, float* t) {
+ow_ds18x20_read(ow_t* const ow, const ow_rom_t* const rom_id, float* const t) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -162,7 +162,7 @@ ow_ds18x20_read(ow_t* ow, const ow_rom_t* rom_id, float* t) {
  * \return          Resolution in units of bits (`9 - 12`) on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_get_resolution_raw(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_get_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
     uint8_t res = 0;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -190,7 +190,7 @@ ow_ds18x20_get_resolution_raw(ow_t* ow, const ow_rom_t* rom_id) {
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_get_resolution(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_get_resolution(ow_t* const ow, const ow_rom_t* const rom_id) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -212,7 +212,7 @@ ow_ds18x20_get_resolution(ow_t* ow, const ow_rom_t* rom_id) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
+ow_ds18x20_set_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id, const uint8_t bits) {
     uint8_t th, tl, conf, res = 0;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -268,7 +268,7 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_set_resolution(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
+ow_ds18x20_set_resolution(ow_t* const ow, const ow_rom_t* const rom_id, const uint8_t bits) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -308,7 +308,7 @@ ow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h) {
+ow_ds18x20_set_alarm_temp_raw(ow_t* const ow, const ow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h) {
     uint8_t res = 0, conf, th, tl;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -383,7 +383,7 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_set_alarm_temp(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h) {
+ow_ds18x20_set_alarm_temp(ow_t* const ow, const ow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -403,7 +403,7 @@ ow_ds18x20_set_alarm_temp(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_ds18x20_search_alarm_raw(ow_t* ow, ow_rom_t* rom_id) {
+ow_ds18x20_search_alarm_raw(ow_t* const ow, ow_rom_t* const rom_id) {
     return ow_search_with_command_raw(ow, 0xEC, rom_id);
 }
 
@@ -412,7 +412,7 @@ ow_ds18x20_search_alarm_raw(ow_t* ow, ow_rom_t* rom_id) {
  * \note            This function is thread-safe
  */
 owr_t
-ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id) {
+ow_ds18x20_search_alarm(ow_t* const ow, ow_rom_t* const rom_id) {
     owr_t res;
 
     OW_ASSERT("ow != NULL", ow != NULL);
@@ -431,9 +431,10 @@ ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id) {
  * \note            This function is reentrant
  */
 uint8_t
-ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_is_b(ow_t* const ow, const ow_rom_t* const rom_id) {
     OW_ASSERT0("ow != NULL", ow != NULL);
     OW_ASSERT0("rom_id != NULL", rom_id != NULL);
+
     OW_UNUSED(ow);
     return rom_id->rom[0] == 0x28;          /* Check for correct ROM family code */
 }
@@ -446,7 +447,7 @@ ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id) {
  * \note            This function is reentrant
  */
 uint8_t
-ow_ds18x20_is_s(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_is_s(ow_t* const ow, const ow_rom_t* const rom_id) {
     OW_ASSERT0("ow != NULL", ow != NULL);
     OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
