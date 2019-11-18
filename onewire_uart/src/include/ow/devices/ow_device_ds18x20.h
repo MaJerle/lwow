@@ -73,9 +73,7 @@ uint8_t     ow_ds18x20_set_alarm_temp(ow_t* ow, const ow_rom_t* rom_id, int8_t t
 owr_t       ow_ds18x20_search_alarm_raw(ow_t* ow, ow_rom_t* rom_id);
 owr_t       ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id);
 
-uint8_t     ow_ds18x20_is_b_raw(ow_t* ow, const ow_rom_t* rom_id);
 uint8_t     ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id);
-uint8_t     ow_ds18x20_is_s_raw(ow_t* ow, const ow_rom_t* rom_id);
 uint8_t     ow_ds18x20_is_s(ow_t* ow, const ow_rom_t* rom_id);
 
 /**
