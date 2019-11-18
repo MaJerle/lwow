@@ -84,10 +84,10 @@ ow_ds18x20_start(ow_t* ow, const ow_rom_t* rom_id) {
  */
 uint8_t
 ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
-    uint8_t ret = 0, data[9], crc, resolution, m = 0;
-    int8_t digit;
     float dec;
     uint16_t temp;
+    uint8_t ret = 0, data[9], crc, resolution, m = 0;
+    int8_t digit;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
     OW_ASSERT0("rom_id != NULL", rom_id != NULL);
@@ -293,13 +293,13 @@ ow_ds18x20_set_resolution(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
  *
  * Example usage would look something similar to:
  * \code{c}
-//Set alarm temperature; low = 10캜, high = 30캜
+//Set alarm temperature; low = 10째C, high = 30째C
 ow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
 //Set alarm temperature; low = disable, high = no change
 ow_ds18x20_set_alarm_temp(&ow, dev_id, OW_DS18X20_ALARM_DISABLE, OW_DS18X20_ALARM_NOCHANGE);
 //Set alarm temperature; low = no change, high = disable
 ow_ds18x20_set_alarm_temp(&ow, dev_id, OW_DS18X20_ALARM_NOCHANGE, OW_DS18X20_ALARM_DISABLE);
-//Set alarm temperature; low = 10캜, high = 30캜
+//Set alarm temperature; low = 10째C, high = 30째C
 ow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
 \endcode
  *
