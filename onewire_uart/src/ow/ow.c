@@ -197,7 +197,7 @@ ow_reset(ow_t* const ow) {
  * \return          Received byte over 1-wire protocol
  */
 uint8_t
-ow_write_byte_raw(ow_t* const ow, uint8_t b) {
+ow_write_byte_raw(ow_t* const ow, const uint8_t b) {
     uint8_t r = 0, tr[8];
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -248,7 +248,7 @@ ow_write_byte_raw(ow_t* const ow, uint8_t b) {
  * \note            This function is thread-safe
  */
 uint8_t
-ow_write_byte(ow_t* const ow, uint8_t b) {
+ow_write_byte(ow_t* const ow, const uint8_t b) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);

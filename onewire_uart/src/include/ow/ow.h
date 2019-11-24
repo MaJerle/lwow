@@ -167,8 +167,8 @@ owr_t       ow_search_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* 
 owr_t       ow_search_with_command_callback(ow_t* const ow, const uint8_t cmd, size_t* const roms_found, const ow_search_cb_fn func, void* const arg);
 owr_t       ow_search_with_callback(ow_t* const ow, size_t* const roms_found, const ow_search_cb_fn func, void* const arg);
 
-owr_t       ow_search_devices_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr, size_t rom_len, size_t* const roms_found);
-owr_t       ow_search_devices_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr, size_t rom_len, size_t* const roms_found);
+owr_t       ow_search_devices_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
+owr_t       ow_search_devices_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
 
 owr_t       ow_search_devices_raw(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
 owr_t       ow_search_devices(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
