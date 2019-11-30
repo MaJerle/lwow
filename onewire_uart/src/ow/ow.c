@@ -50,6 +50,7 @@
 
 /**
  * \brief           Send single bit to OneWire port
+ * \param[in]       ow: OneWire instance
  * \param[in]       v: Value to send, either `1` or `0`
  * \return          Read byte on 1-wire port, either `1` or `0`
  */
