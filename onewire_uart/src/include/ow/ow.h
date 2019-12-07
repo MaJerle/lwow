@@ -71,6 +71,41 @@ typedef struct {
 } ow_rom_t;
 
 /**
+ * \defgroup        OW_LL Low-Level functions
+ * \brief           Low-level device dependant functions
+ * \{
+ */
+
+/**
+ * \brief           1-Wire low-level driver structure
+ */
+typedef struct {
+    uint8_t (*init)(void* arg);                 /*!< Initialize low-level driver */
+    uint8_t (*deinit)(void* arg);               /*!< Deinit low-level driver */
+    uint8_t (*set_baudrate)(uint32_t baud, void* arg);  /*!< Set uart baudrate */
+    uint8_t (*tx_rx)(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);    /* Exchange the data over UART port */
+} ow_ll_drv_t;
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup        OW_SYS System functions
+ * \brief           System functions when used with operating system
+ * \{
+ */
+
+uint8_t ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+uint8_t ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+uint8_t ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+uint8_t ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+
+/**
+ * \}
+ */
+
+/**
  * \brief           1-Wire structure
  */
 typedef struct {
@@ -80,6 +115,7 @@ typedef struct {
     uint8_t disrepancy;                         /*!< Disrepancy value on last search */
     void* arg;                                  /*!< User custom argument */
 
+    const ow_ll_drv_t* ll_drv;                  /*!< Low-level functions driver */
 #if OW_CFG_OS || __DOXYGEN__
     OW_CFG_OS_MUTEX_HANDLE mutex;               /*!< Mutex handle */
 #endif /* OW_CFG_OS || __DOXYGEN__ */
@@ -135,7 +171,8 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* const ow, const ow_rom_t* const rom_id, 
 #define OW_CMD_MATCHROM             0x55        /*!< Match ROM command. Select device with specific ROM */
 #define OW_CMD_SKIPROM              0xCC        /*!< Skip ROM, select all devices */
 
-owr_t       ow_init(ow_t* const ow, void* arg);
+
+owr_t       ow_init(ow_t* const ow, const ow_ll_drv_t* const ll_drv, void* arg);
 void        ow_deinit(ow_t* const ow);
 
 owr_t       ow_protect(ow_t* const ow, const uint8_t protect);

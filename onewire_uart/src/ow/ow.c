@@ -32,11 +32,7 @@
  * Version:         v1.2.0
  */
 #include "ow/ow.h"
-#include "system/ow_ll.h"
 #include <string.h>
-#if OW_CFG_OS
-#include "system/ow_sys.h"
-#endif /* OW_CFG_OS */
 
 #if !__DOXYGEN__
 
@@ -63,7 +59,7 @@ send_bit(ow_t* const ow, uint8_t v) {
      * To send logical 0 over 1-wire, send 0x00 over UART
      */
     v = v ? 0xFF : 0x00;                        /* Convert to 0 or 1 */
-    ow_ll_transmit_receive(&v, &b, 1, ow->arg); /* Exchange data over USART */
+    ow->ll_drv->tx_rx(&v, &b, 1, ow->arg);      /* Exchange data over USART */
     if (b == 0xFF) {                            /* To read bit 1, check for 0xFF sequence */
         return 1;
     }
@@ -73,21 +69,31 @@ send_bit(ow_t* const ow, uint8_t v) {
 /**
  * \brief           Initialize OneWire instance
  * \param[in]       ow: OneWire instance
+ * \param[in]       ll_drv: Low-level driver
+ * \param[in]       sys_drv: System functions driver
  * \param[in]       arg: Custom argument
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_init(ow_t* const ow, void* arg) {
-    if (!ow_ll_init(arg)) {                     /* Init low-level directly */
+ow_init(ow_t* const ow, const ow_ll_drv_t* const ll_drv, void* arg) {
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("ll_drv != NULL", ll_drv != NULL);
+    OW_ASSERT("ll_drv->init != NULL", ll_drv->init != NULL);
+    OW_ASSERT("ll_drv->deinit != NULL", ll_drv->deinit != NULL);
+    OW_ASSERT("ll_drv->set_baudrate != NULL", ll_drv->set_baudrate != NULL);
+    OW_ASSERT("ll_drv->tx_rx != NULL", ll_drv->tx_rx != NULL);
+
+    ow->arg = arg;
+    ow->ll_drv = ll_drv;                        /* Assign low-level driver */
+    if (!ow->ll_drv->init(ow->arg)) {           /* Init low-level directly */
         return owERR;
     }
 #if OW_CFG_OS
     if (!ow_sys_mutex_create(&ow->mutex, arg)) {
-        ow_ll_deinit(arg);                      /* Deinit low-level */
+        ow->ll_drv->deinit(ow->arg);            /* Deinit low-level */
         return owERR;
     }
 #endif /* OW_CFG_OS */
-    ow->arg = arg;
     return owOK;
 }
 
@@ -97,14 +103,15 @@ ow_init(ow_t* const ow, void* arg) {
  */
 void
 ow_deinit(ow_t* const ow) {
-    if (ow == NULL) {
+    if (ow == NULL || ow->ll_drv == NULL
+        ) {
         return;
     }
 
 #if OW_CFG_OS
     ow_sys_mutex_delete(&ow->mutex, ow->arg);
 #endif /* OW_CFG_OS */
-    ow_ll_deinit(ow->arg);
+    ow->ll_drv->deinit(ow->arg);
 }
 
 /**
@@ -164,9 +171,9 @@ ow_reset_raw(ow_t* const ow) {
 
     /* First send reset pulse */
     b = OW_RESET_BYTE;                          /* Set reset sequence byte = 0xF0 */
-    ow_ll_set_baudrate(9600, ow->arg);          /* Set low baudrate */
-    ow_ll_transmit_receive(&b, &b, 1, ow->arg); /* Exchange data over onewire */
-    ow_ll_set_baudrate(115200, ow->arg);        /* Set high baudrate */
+    ow->ll_drv->set_baudrate(9600, ow->arg);    /* Set low baudrate */
+    ow->ll_drv->tx_rx(&b, &b, 1, ow->arg);      /* Exchange data over onewire */
+    ow->ll_drv->set_baudrate(115200, ow->arg);  /* Set high baudrate */
 
     /* Check if there is reply from any device */
     if (b == 0 || b == OW_RESET_BYTE) {
@@ -230,7 +237,7 @@ ow_write_byte_raw(ow_t* const ow, const uint8_t b) {
      * Exchange data on UART level,
      * send single byte for each bit = 8 bytes
      */
-    ow_ll_transmit_receive(tr, tr, 8, ow->arg); /* Exchange data over UART */
+    ow->ll_drv->tx_rx(tr, tr, 8, ow->arg);      /* Exchange data over UART */
 
     /*
      * Check received data. If we read 0xFF,
