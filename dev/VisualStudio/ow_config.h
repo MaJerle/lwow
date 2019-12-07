@@ -38,6 +38,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#define OW_CFG_OS               1
+
 #include "ow/ow_config_default.h"
 
 #ifdef __cplusplus
