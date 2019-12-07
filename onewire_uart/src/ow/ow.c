@@ -70,7 +70,6 @@ send_bit(ow_t* const ow, uint8_t v) {
  * \brief           Initialize OneWire instance
  * \param[in]       ow: OneWire instance
  * \param[in]       ll_drv: Low-level driver
- * \param[in]       sys_drv: System functions driver
  * \param[in]       arg: Custom argument
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
