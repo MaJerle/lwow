@@ -31,7 +31,7 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v1.2.0
  */
-#include "system/ow_sys.h"
+#include "ow/ow.h"
 
 #if OW_CFG_OS && !__DOXYGEN__
 

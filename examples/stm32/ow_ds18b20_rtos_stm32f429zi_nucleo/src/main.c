@@ -42,6 +42,7 @@ static void USART_Printf_Init(void);
 static void app_thread(void* arg);
 
 /* Create new 1-Wire instance */
+extern const ow_ll_drv_t ow_ll_drv_stm32;
 ow_t ow;
 ow_rom_t rom_ids[20];
 size_t rom_found;
@@ -77,7 +78,7 @@ app_thread(void* arg) {
     float avg_temp;
     size_t avg_temp_count;
 
-    ow_init(&ow, NULL);                         /* Initialize 1-Wire library and set user argument to NULL */
+    ow_init(&ow, &ow_ll_drv_stm32, NULL);       /* Initialize 1-Wire library and set user argument to NULL */
 
     /* Get onewire devices connected on 1-wire port */
     do {

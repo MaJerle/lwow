@@ -31,30 +31,32 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v1.2.0
  */
-#include "system/ow_sys.h"
+#include "ow/ow.h"
+#include "windows.h"
 
 #if OW_CFG_OS && !__DOXYGEN__
 
-#include "cmsis_os.h"
-
 uint8_t
 ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    *mutex = CreateMutex(NULL, 0, NULL);
     return 1;
 }
 
 uint8_t
 ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    CloseHandle(*mutex);
+    *mutex = NULL;
     return 1;
 }
 
 uint8_t
 ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    return 1;
+    return WaitForSingleObject(*mutex, INFINITE) == WAIT_OBJECT_0;
 }
 
 uint8_t
 ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    return 1;
+    return ReleaseMutex(*mutex);
 }
 
 #endif /* OW_CFG_OS && !__DOXYGEN__ */
