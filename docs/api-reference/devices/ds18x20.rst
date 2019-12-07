@@ -1,0 +1,6 @@
+.. _api_device_ds18x20:
+
+DS18x20 temperature sensor
+==========================
+
+.. doxygengroup:: OW_DEVICE_DS18x20

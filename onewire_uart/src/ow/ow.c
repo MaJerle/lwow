@@ -358,8 +358,6 @@ ow_search_reset(ow_t* const ow) {
 /**
  * \brief           Search for devices on 1-wire bus
  * \note            To reset search and to start over, use \ref ow_search_reset function
- *
- * \include         _ow_search.c
  * \param[in,out]   ow: 1-Wire handle
  * \param[out]      rom_id: Pointer to ROM structure to save ROM
  * \return          \ref owOK on success, member of \ref owr_t otherwise
