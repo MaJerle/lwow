@@ -29,7 +29,7 @@
  * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.2.0
+ * Version:         v2.0.0
  */
 #include "ow/ow.h"
 #include "ow/devices/ow_device_ds18x20.h"
@@ -42,7 +42,7 @@
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_start_raw(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_start_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
     uint8_t ret = 0;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -64,7 +64,7 @@ ow_ds18x20_start_raw(ow_t* ow, const ow_rom_t* rom_id) {
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_start(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_start(ow_t* const ow, const ow_rom_t* const rom_id) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -83,20 +83,15 @@ ow_ds18x20_start(ow_t* ow, const ow_rom_t* rom_id) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
-    uint8_t ret = 0, data[9], crc, resolution, m = 0;
-    int8_t digit;
+ow_ds18x20_read_raw(ow_t* const ow, const ow_rom_t* const rom_id, float* const t) {
     float dec;
     uint16_t temp;
+    uint8_t ret = 0, data[9], crc, resolution, m = 0;
+    int8_t digit;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
-    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
     OW_ASSERT0("t != NULL", t != NULL);
-
-    /* Check ROM device */
-    if (!ow_ds18x20_is_b_raw(ow, rom_id) && !ow_ds18x20_is_s_raw(ow, rom_id)) {
-        return 0;
-    }
+    OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id) || ow_ds18x20_is_s(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id) || ow_ds18x20_is_s(ow, rom_id));
 
     /*
      * First read bit and check if all devices completed with conversion.
@@ -114,7 +109,7 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
         for (uint8_t i = 0; i < 9; ++i) {
             data[i] = ow_read_byte_raw(ow);     /* Read byte */
         }
-        crc = ow_crc_raw(data, 0x09);           /* Calculate CRC */
+        crc = ow_crc(data, 0x09);               /* Calculate CRC */
         if (crc == 0) {                         /* Result must be 0 to match the CRC */
             temp = (data[1] << 0x08) | data[0]; /* Format data in integer format */
             resolution = ((data[4] & 0x60) >> 0x05) + 0x09; /* Set resolution in units of bits */
@@ -147,10 +142,12 @@ ow_ds18x20_read_raw(ow_t* ow, const ow_rom_t* rom_id, float* t) {
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_read(ow_t* ow, const ow_rom_t* rom_id, float* t) {
+ow_ds18x20_read(ow_t* const ow, const ow_rom_t* const rom_id, float* const t) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("t != NULL", t != NULL);
+    OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id) || ow_ds18x20_is_s(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id) || ow_ds18x20_is_s(ow, rom_id));
 
     ow_protect(ow, 1);
     res = ow_ds18x20_read_raw(ow, rom_id, t);
@@ -165,16 +162,12 @@ ow_ds18x20_read(ow_t* ow, const ow_rom_t* rom_id, float* t) {
  * \return          Resolution in units of bits (`9 - 12`) on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_get_resolution_raw(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_get_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
     uint8_t res = 0;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
     OW_ASSERT0("rom_id != NULL", rom_id != NULL);
-
-    /* Check if it is B version */
-    if (!ow_ds18x20_is_b_raw(ow, rom_id)) {
-        return 0;
-    }
+    OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id));
 
     if (ow_reset_raw(ow) == owOK) {             /* Reset bus */
         ow_match_rom_raw(ow, rom_id);           /* Select device */
@@ -197,10 +190,12 @@ ow_ds18x20_get_resolution_raw(ow_t* ow, const ow_rom_t* rom_id) {
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_get_resolution(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_get_resolution(ow_t* const ow, const ow_rom_t* const rom_id) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
+    OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id));
 
     ow_protect(ow, 1);
     res = ow_ds18x20_get_resolution_raw(ow, rom_id);
@@ -217,19 +212,19 @@ ow_ds18x20_get_resolution(ow_t* ow, const ow_rom_t* rom_id) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
+ow_ds18x20_set_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id, const uint8_t bits) {
     uint8_t th, tl, conf, res = 0;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
-    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
-
-    if (bits < 9 || bits > 12                   /* Check bits range */
-        || !ow_ds18x20_is_b_raw(ow, rom_id)) {  /* Check if it is B version */
-        return 0;
-    }
+    OW_ASSERT0("bits >= 9 && bits <= 12", bits >= 9 && bits <= 12);
+    OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id));
 
     if (ow_reset_raw(ow) == owOK) {
-        ow_match_rom_raw(ow, rom_id);
+        if (rom_id == NULL) {
+            ow_match_rom_raw(ow, rom_id);
+        } else {
+            ow_skip_rom_raw(ow);
+        }
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);
 
         /* Read and ignore bytes */
@@ -273,10 +268,12 @@ ow_ds18x20_set_resolution_raw(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_set_resolution(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
+ow_ds18x20_set_resolution(ow_t* const ow, const ow_rom_t* const rom_id, const uint8_t bits) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("bits >= 9 && bits <= 12", bits >= 9 && bits <= 12);
+    OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id));
 
     ow_protect(ow, 1);
     res = ow_ds18x20_set_resolution_raw(ow, rom_id, bits);
@@ -293,13 +290,13 @@ ow_ds18x20_set_resolution(ow_t* ow, const ow_rom_t* rom_id, uint8_t bits) {
  *
  * Example usage would look something similar to:
  * \code{c}
-//Set alarm temperature; low = 10캜, high = 30캜
+//Set alarm temperature; low = 10째C, high = 30째C
 ow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
 //Set alarm temperature; low = disable, high = no change
 ow_ds18x20_set_alarm_temp(&ow, dev_id, OW_DS18X20_ALARM_DISABLE, OW_DS18X20_ALARM_NOCHANGE);
 //Set alarm temperature; low = no change, high = disable
 ow_ds18x20_set_alarm_temp(&ow, dev_id, OW_DS18X20_ALARM_NOCHANGE, OW_DS18X20_ALARM_DISABLE);
-//Set alarm temperature; low = 10캜, high = 30캜
+//Set alarm temperature; low = 10째C, high = 30째C
 ow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
 \endcode
  *
@@ -311,15 +308,11 @@ ow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h) {
+ow_ds18x20_set_alarm_temp_raw(ow_t* const ow, const ow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h) {
     uint8_t res = 0, conf, th, tl;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
-    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
-
-    if (!ow_ds18x20_is_b_raw(ow, rom_id)) {     /* Check device */
-        return 0;
-    }
+    OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id));
 
     /* Check if there is need to do anything */
     if (temp_l == OW_DS18X20_ALARM_NOCHANGE && temp_h == OW_DS18X20_ALARM_NOCHANGE) {
@@ -343,7 +336,11 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
     }
 
     if (ow_reset_raw(ow) == owOK) {
-        ow_match_rom_raw(ow, rom_id);
+        if (rom_id == NULL) {
+            ow_skip_rom_raw(ow);
+        } else {
+            ow_match_rom_raw(ow, rom_id);
+        }
         ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);
 
         /* Read and ignore 2 bytes */
@@ -386,10 +383,11 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, i
  * \note            This function is thread-safe
  */
 uint8_t
-ow_ds18x20_set_alarm_temp(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_t temp_h) {
+ow_ds18x20_set_alarm_temp(ow_t* const ow, const ow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h) {
     uint8_t res;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("ow_ds18x20_is_b(ow, rom_id)", ow_ds18x20_is_b(ow, rom_id));
 
     ow_protect(ow, 1);
     res = ow_ds18x20_set_alarm_temp_raw(ow, rom_id, temp_l, temp_h);
@@ -405,7 +403,7 @@ ow_ds18x20_set_alarm_temp(ow_t* ow, const ow_rom_t* rom_id, int8_t temp_l, int8_
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 owr_t
-ow_ds18x20_search_alarm_raw(ow_t* ow, ow_rom_t* rom_id) {
+ow_ds18x20_search_alarm_raw(ow_t* const ow, ow_rom_t* const rom_id) {
     return ow_search_with_command_raw(ow, 0xEC, rom_id);
 }
 
@@ -414,7 +412,7 @@ ow_ds18x20_search_alarm_raw(ow_t* ow, ow_rom_t* rom_id) {
  * \note            This function is thread-safe
  */
 owr_t
-ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id) {
+ow_ds18x20_search_alarm(ow_t* const ow, ow_rom_t* const rom_id) {
     owr_t res;
 
     OW_ASSERT("ow != NULL", ow != NULL);
@@ -430,28 +428,15 @@ ow_ds18x20_search_alarm(ow_t* ow, ow_rom_t* rom_id) {
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to test against `DS18B20`
  * \return          `1` on success, `0` otherwise
+ * \note            This function is reentrant
  */
 uint8_t
-ow_ds18x20_is_b_raw(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_is_b(ow_t* const ow, const ow_rom_t* const rom_id) {
     OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
+
     OW_UNUSED(ow);
-    return rom_id != NULL && rom_id->rom[0] == 0x28;/* Check for correct ROM family code */
-}
-
-/**
- * \copydoc         ow_ds18x20_is_b_raw
- * \note            This function is thread-safe
- */
-uint8_t
-ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id) {
-    uint8_t res;
-
-    OW_ASSERT0("ow != NULL", ow != NULL);
-
-    ow_protect(ow, 1);
-    res = ow_ds18x20_is_b_raw(ow, rom_id);
-    ow_unprotect(ow, 1);
-    return res;
+    return rom_id->rom[0] == 0x28;          /* Check for correct ROM family code */
 }
 
 /**
@@ -459,26 +444,13 @@ ow_ds18x20_is_b(ow_t* ow, const ow_rom_t* rom_id) {
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to test against `DS18S20`
  * \return          `1` on success, `0` otherwise
+ * \note            This function is reentrant
  */
 uint8_t
-ow_ds18x20_is_s_raw(ow_t* ow, const ow_rom_t* rom_id) {
+ow_ds18x20_is_s(ow_t* const ow, const ow_rom_t* const rom_id) {
     OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
+
     OW_UNUSED(ow);
-    return rom_id != NULL && rom_id->rom[0] == 0x10;/* Check for correct ROM family code */
-}
-
-/**
- * \copydoc         ow_ds18x20_is_s_raw
- * \note            This function is thread-safe
- */
-uint8_t
-ow_ds18x20_is_s(ow_t* ow, const ow_rom_t* rom_id) {
-    uint8_t res;
-
-    OW_ASSERT0("ow != NULL", ow != NULL);
-
-    ow_protect(ow, 1);
-    res = ow_ds18x20_is_s_raw(ow, rom_id);
-    ow_unprotect(ow, 1);
-    return res;
+    return rom_id->rom[0] == 0x10;/* Check for correct ROM family code */
 }

@@ -29,18 +29,33 @@
  * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.2.0
+ * Version:         v2.0.0
  */
-#include "system/ow_ll.h"
+#include "ow/ow.h"
 #include "windows.h"
 #include <stdio.h>
 
 #if !__DOXYGEN__
 
+/* Function prototypes */
+static uint8_t ow_ll_init(void* arg);
+static uint8_t ow_ll_deinit(void* arg);
+static uint8_t ow_ll_set_baudrate(uint32_t baud, void* arg);
+static uint8_t ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
+
+/* Win 32 LL driver for OW */
+const ow_ll_drv_t
+ow_ll_drv_win32 = {
+    .init = ow_ll_init,
+    .deinit = ow_ll_deinit,
+    .set_baudrate = ow_ll_set_baudrate,
+    .tx_rx = ow_ll_transmit_receive,
+};
+
 static HANDLE com_port;
 static DCB dcb = { 0 };
 
-uint8_t
+static uint8_t
 ow_ll_init(void* arg) {
     dcb.DCBlength = sizeof(dcb);
 

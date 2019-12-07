@@ -29,7 +29,7 @@
  * This file is part of OneWire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.2.0
+ * Version:         v2.0.0
  */
 #ifndef OW_HDR_CONFIG_H
 #define OW_HDR_CONFIG_H
@@ -37,6 +37,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+#define OW_CFG_OS               1
 
 #include "ow/ow_config_default.h"
 

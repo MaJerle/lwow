@@ -29,7 +29,7 @@
  * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.2.0
+ * Version:         v2.0.0
  */
 #ifndef OW_HDR_H
 #define OW_HDR_H
@@ -71,18 +71,54 @@ typedef struct {
 } ow_rom_t;
 
 /**
+ * \defgroup        OW_LL Low-Level functions
+ * \brief           Low-level device dependant functions
+ * \{
+ */
+
+/**
+ * \brief           1-Wire low-level driver structure
+ */
+typedef struct {
+    uint8_t (*init)(void* arg);                 /*!< Initialize low-level driver */
+    uint8_t (*deinit)(void* arg);               /*!< Deinit low-level driver */
+    uint8_t (*set_baudrate)(uint32_t baud, void* arg);  /*!< Set uart baudrate */
+    uint8_t (*tx_rx)(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);    /* Exchange the data over UART port */
+} ow_ll_drv_t;
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup        OW_SYS System functions
+ * \brief           System functions when used with operating system
+ * \{
+ */
+
+uint8_t ow_sys_mutex_create(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+uint8_t ow_sys_mutex_delete(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+uint8_t ow_sys_mutex_wait(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+uint8_t ow_sys_mutex_release(OW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
+
+/**
+ * \}
+ */
+
+/**
  * \brief           1-Wire structure
  */
 typedef struct {
-#if OW_CFG_OS || __DOXYGEN__
-    OW_CFG_OS_MUTEX_HANDLE mutex;               /*!< Mutex handle */
-#endif /* OW_CFG_OS || __DOXYGEN__ */
-
     ow_rom_t rom;                               /*!< ROM address of last device found.
                                                      When searching for new devices, we always need last found address,
                                                      to be able to decide which way to go next time during scan. */
     uint8_t disrepancy;                         /*!< Disrepancy value on last search */
     void* arg;                                  /*!< User custom argument */
+
+    const ow_ll_drv_t* ll_drv;                  /*!< Low-level functions driver */
+#if OW_CFG_OS || __DOXYGEN__
+    OW_CFG_OS_MUTEX_HANDLE mutex;               /*!< Mutex handle */
+#endif /* OW_CFG_OS || __DOXYGEN__ */
 } ow_t;
 
 /**
@@ -95,7 +131,7 @@ typedef struct {
  * \param[in]       arg: Custom user argument
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
-typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index, void* arg);
+typedef owr_t (*ow_search_cb_fn) (ow_t* const ow, const ow_rom_t* const rom_id, size_t index, void* arg);
 
 #define OW_UNUSED(x)                ((void)(x)) /*!< Unused variable macro */
 
@@ -135,52 +171,52 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* ow, const ow_rom_t* rom_id, size_t index
 #define OW_CMD_MATCHROM             0x55        /*!< Match ROM command. Select device with specific ROM */
 #define OW_CMD_SKIPROM              0xCC        /*!< Skip ROM, select all devices */
 
-owr_t       ow_init(ow_t* ow, void* arg);
-void        ow_deinit(ow_t* ow);
 
-owr_t       ow_protect(ow_t* ow, const uint8_t protect);
-owr_t       ow_unprotect(ow_t* ow, const uint8_t protect);
+owr_t       ow_init(ow_t* const ow, const ow_ll_drv_t* const ll_drv, void* arg);
+void        ow_deinit(ow_t* const ow);
 
-
-owr_t       ow_reset_raw(ow_t* ow);
-owr_t       ow_reset(ow_t* ow);
-
-uint8_t     ow_write_byte_raw(ow_t* ow, uint8_t b);
-uint8_t     ow_write_byte(ow_t* ow, uint8_t b);
-
-uint8_t     ow_read_byte_raw(ow_t* ow);
-uint8_t     ow_read_byte(ow_t* ow);
-
-uint8_t     ow_read_bit_raw(ow_t* ow);
-uint8_t     ow_read_bit(ow_t* ow);
+owr_t       ow_protect(ow_t* const ow, const uint8_t protect);
+owr_t       ow_unprotect(ow_t* const ow, const uint8_t protect);
 
 
-owr_t       ow_search_reset_raw(ow_t* ow);
-owr_t       ow_search_reset(ow_t* ow);
+owr_t       ow_reset_raw(ow_t* const ow);
+owr_t       ow_reset(ow_t* const ow);
 
-owr_t       ow_search_raw(ow_t* ow, ow_rom_t* rom_id);
-owr_t       ow_search(ow_t* ow, ow_rom_t* rom_id);
+uint8_t     ow_write_byte_raw(ow_t* const ow, const uint8_t b);
+uint8_t     ow_write_byte(ow_t* const ow, const uint8_t b);
 
-owr_t       ow_search_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
-owr_t       ow_search_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id);
+uint8_t     ow_read_byte_raw(ow_t* const ow);
+uint8_t     ow_read_byte(ow_t* const ow);
 
-owr_t       ow_search_with_command_callback(ow_t* ow, uint8_t cmd, size_t* roms_found, ow_search_cb_fn func, void* arg);
-owr_t       ow_search_with_callback(ow_t* ow, size_t* roms_found, ow_search_cb_fn func, void* arg);
+uint8_t     ow_read_bit_raw(ow_t* const ow);
+uint8_t     ow_read_bit(ow_t* const ow);
 
-owr_t       ow_search_devices_with_command_raw(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
-owr_t       ow_search_devices_with_command(ow_t* ow, uint8_t cmd, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
 
-owr_t       ow_search_devices_raw(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
-owr_t       ow_search_devices(ow_t* ow, ow_rom_t* rom_id_arr, size_t rom_len, size_t* roms_found);
+owr_t       ow_search_reset_raw(ow_t* const ow);
+owr_t       ow_search_reset(ow_t* const ow);
 
-uint8_t     ow_match_rom_raw(ow_t* ow, const ow_rom_t* rom_id);
-uint8_t     ow_match_rom(ow_t* ow, const ow_rom_t* rom_id);
+owr_t       ow_search_raw(ow_t* const ow, ow_rom_t* const rom_id);
+owr_t       ow_search(ow_t* const ow, ow_rom_t* const rom_id);
 
-uint8_t     ow_skip_rom_raw(ow_t* ow);
-uint8_t     ow_skip_rom(ow_t* ow);
+owr_t       ow_search_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id);
+owr_t       ow_search_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id);
 
-uint8_t     ow_crc_raw(const void* in, size_t len);
-uint8_t     ow_crc(const void* in, size_t len);
+owr_t       ow_search_with_command_callback(ow_t* const ow, const uint8_t cmd, size_t* const roms_found, const ow_search_cb_fn func, void* const arg);
+owr_t       ow_search_with_callback(ow_t* const ow, size_t* const roms_found, const ow_search_cb_fn func, void* const arg);
+
+owr_t       ow_search_devices_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
+owr_t       ow_search_devices_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
+
+owr_t       ow_search_devices_raw(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
+owr_t       ow_search_devices(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
+
+uint8_t     ow_match_rom_raw(ow_t* const ow, const ow_rom_t* const rom_id);
+uint8_t     ow_match_rom(ow_t* const ow, const ow_rom_t* const rom_id);
+
+uint8_t     ow_skip_rom_raw(ow_t* const ow);
+uint8_t     ow_skip_rom(ow_t* const ow);
+
+uint8_t     ow_crc(const void* const in, const size_t len);
 
 /**
  * \}

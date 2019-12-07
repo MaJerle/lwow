@@ -29,7 +29,7 @@
  * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v1.2.0
+ * Version:         v2.0.0
  */
 
 /*
@@ -37,22 +37,28 @@
  *
  * https://majerle.eu/documentation/ow/html/page_appnote.html#sect_hw_connection
  */
-#include "system/ow_ll.h"
+#include "ow/ow.h"
 
 #if !__DOXYGEN__
 
-/**
- * \brief           USART structure
- */
+static uint8_t ow_ll_init(void* arg);
+static uint8_t ow_ll_deinit(void* arg);
+static uint8_t ow_ll_set_baudrate(uint32_t baud, void* arg);
+static uint8_t ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
+
+/* STM32 LL driver for OW */
+const ow_ll_drv_t
+ow_ll_drv_stm32 = {
+    .init = ow_ll_init,
+    .deinit = ow_ll_deinit,
+    .set_baudrate = ow_ll_set_baudrate,
+    .tx_rx = ow_ll_transmit_receive,
+};
+
 static LL_USART_InitTypeDef
 usart_init;
 
-/**
- * \brief           Initialize low-level communication
- * \param[in]       arg: User argument
- * \return          `1` on success, `0` otherwise
- */
-uint8_t
+static uint8_t
 ow_ll_init(void* arg) {
     LL_GPIO_InitTypeDef gpio_init;
 
@@ -96,25 +102,14 @@ ow_ll_init(void* arg) {
     return 1;
 }
 
-/**
- * \brief           Deinit low-level
- * \param[in]       arg: User argument
- * \return          `1` on success, `0` otherwise
- */
-uint8_t
+static uint8_t
 ow_ll_deinit(void* arg) {
     LL_USART_DeInit(ONEWIRE_USART);
     OW_UNUSED(arg);
     return 1;
 }
 
-/**
- * \brief           UART set baudrate function
- * \param[in]       arg: User argument
- * \param[in]       baud: Expected baudrate for UART
- * \return          `1` on success, `0` otherwise
- */
-uint8_t
+static uint8_t
 ow_ll_set_baudrate(uint32_t baud, void* arg) {
     usart_init.BaudRate = baud;
     LL_USART_Init(ONEWIRE_USART, &usart_init);
@@ -124,15 +119,7 @@ ow_ll_set_baudrate(uint32_t baud, void* arg) {
     return 1;
 }
 
-/**
- * \brief           Transmit-Receive data over OneWire bus
- * \param[in]       tx: Array of data to send
- * \param[out]      rx: Array to save receive data
- * \param[in]       len: Number of bytes to send
- * \param[in]       arg: User argument
- * \return          `1` on success, `0` otherwise
- */
-uint8_t
+static uint8_t
 ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     const uint8_t* t = tx;
     uint8_t* r = rx;
