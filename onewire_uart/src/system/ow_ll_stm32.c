@@ -35,7 +35,7 @@
 /*
  * How it works
  *
- * https://majerle.eu/documentation/ow/html/page_appnote.html#sect_hw_connection
+ * https://docs.majerle.eu/projects/onewire-uart/en/latest/user-manual/hw_connection.html#
  */
 #include "ow/ow.h"
 
