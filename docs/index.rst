@@ -3,9 +3,10 @@ OneWire-UART documentation!
 
 OneWire-UART is lightweight, platform independent library for Onewire protocol for embedded systems.
 
-.. class::center
+.. rst-class:: center
+.. rst-class:: index_links
 
-:ref:`download_library` · `Github <https://github.com/MaJerle/onewire-uart>`_
+  	:ref:`download_library` · `Github <https://github.com/MaJerle/onewire-uart>`_
 
 Features
 ^^^^^^^^
@@ -19,13 +20,14 @@ Features
   * DS18x20 temperature sensor is natively supported
 * Works with operating system due to hardware timing management
   * Separate thread-safe API is available
+* API for device scan, reading and writing single bits
 * User friendly MIT license
 
 Requirements
 ^^^^^^^^^^^^
 
 * C compiler
-* Platform dependant drivers
+* Platform dependent drivers
 * Few *kB* of volatile memory
 
 Contribute
