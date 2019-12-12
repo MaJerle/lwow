@@ -16,7 +16,7 @@ Library is primarly hosted on `Github <https://github.com/MaJerle/onewire-uart>`
 Download from releases
 **********************
 
-All releases are available on Github releases `releases area <https://github.com/MaJerle/onewire-uart/releases>`_.
+All releases are available on Github `releases area <https://github.com/MaJerle/onewire-uart/releases>`_.
 
 Clone from Github
 *****************
