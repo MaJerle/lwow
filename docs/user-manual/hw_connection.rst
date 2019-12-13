@@ -36,7 +36,7 @@ Since many latest embedded systems allow you to configure *TX* pin to open-drain
 	Embedded system with native open-drain TX pin support
 
 .. warning::
-	Application must assure that *TX* pin is always confiured to open-drain mode, either with converted or directly.
+	Application must assure that *TX* pin is always configured to open-drain mode, either with *push-pull to open-drain* converter or directly configured in the system.
 
 TX and RX pins
 """"""""""""""
