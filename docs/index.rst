@@ -34,7 +34,7 @@ Requirements
 
 * C compiler
 * Platform dependent drivers
-* Few *kB* of non volatile memory
+* Few *kB* of non-volatile memory
 
 Contribute
 ^^^^^^^^^^
