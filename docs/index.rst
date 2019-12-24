@@ -6,7 +6,7 @@ OneWire-UART is lightweight, platform independent library for Onewire protocol f
 .. rst-class:: center
 .. rst-class:: index_links
 
-  	:ref:`download_library` · `Github <https://github.com/MaJerle/onewire-uart>`_
+  	:ref:`download_library` · `Open Github <https://github.com/MaJerle/onewire-uart>`_
 
 Features
 ^^^^^^^^
