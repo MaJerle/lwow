@@ -25,6 +25,7 @@ Example code for ``CMSIS-OS V2``
 
 .. literalinclude:: ../../onewire_uart/src/system/ow_sys_cmsis_os.c
     :language: c
+    :linenos:
     :caption: System functions for CMSIS-OS based operating system
 
 .. toctree::

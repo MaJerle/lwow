@@ -68,4 +68,5 @@ This file shall be named ``ow_config.h`` and its default template looks like the
 
 .. literalinclude:: ../../onewire_uart/src/include/ow/ow_config_template.h
     :language: c
+    :linenos:
     :caption: Config template file
