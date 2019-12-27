@@ -23,7 +23,7 @@ subprocess.call('doxygen doxy_ow.doxy', shell=True)
 # -- Project information -----------------------------------------------------
 
 project = 'OneWire UART'
-copyright = '2019, Tilen Majerle'
+copyright = '2019, Tilen MAJERLE'
 author = 'Tilen MAJERLE'
 
 # The full version, including alpha/beta/rc tags
