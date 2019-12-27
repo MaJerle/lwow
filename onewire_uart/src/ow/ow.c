@@ -53,7 +53,7 @@
 static uint8_t
 send_bit(ow_t* const ow, uint8_t v) {
     uint8_t b;
-	
+
     /*
      * To send logical 1 over 1-wire, send 0xFF over UART
      * To send logical 0 over 1-wire, send 0x00 over UART
