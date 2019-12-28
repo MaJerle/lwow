@@ -7,8 +7,8 @@ List of all the modules:
 
 .. toctree::
 	:maxdepth: 2
-	:glob:
 
-	*
-	*/index
-	
+	ow
+	config
+	port/index
+	devices/index

@@ -1,4 +1,4 @@
-.. _thread_safety:
+.. _um_thread_safety:
 
 Thread safety
 =============

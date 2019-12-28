@@ -1,6 +1,6 @@
 .. _api_ow_ll:
 
-Low-level functions
-===================
+Low-level driver
+================
 
 .. doxygengroup:: OW_LL

@@ -1,7 +1,7 @@
-.. _uart_timing:
+.. _um_uart_timing:
 
 UART and 1-Wire timing relation
-================================
+===============================
 
 This part is explaining how UART and 1-Wire timings are connected together and what is important to take into consideration for stable and reliable communication.
 
