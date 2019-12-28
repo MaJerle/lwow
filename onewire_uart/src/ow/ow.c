@@ -599,7 +599,8 @@ ow_crc(const void* in, const size_t len) {
 /**
  * \brief           Search devices on 1-wire network by using callback function and custom search command
  *
- *                  When new device is detected, callback function `func` is called to notify user
+ * When new device is detected, callback function `func` is called to notify user
+ *
  * \param[in]       ow: 1-Wire handle
  * \param[in]       cmd: 1-Wire search command
  * \param[out]      roms_found: Output variable to save number of found devices. Set to `NULL` if not used
@@ -641,7 +642,8 @@ ow_search_with_command_callback(ow_t* const ow, const uint8_t cmd, size_t* const
 /**
  * \brief           Search devices on 1-wire network by using callback function and `SEARCH_ROM` 1-Wire command
  *
- *                  When new device is detected, callback function `func` is called to notify user
+ * When new device is detected, callback function `func` is called to notify user
+ *
  * \param[in]       ow: 1-Wire handle
  * \param[out]      roms_found: Output variable to save number of found devices. Set to `NULL` if not used
  * \param[in]       func: Callback function to call for each device
