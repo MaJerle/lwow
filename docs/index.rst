@@ -3,6 +3,9 @@ OneWire-UART documentation!
 
 OneWire-UART is lightweight, platform independent library for Onewire protocol for embedded systems.
 
+.. image:: static/images/logo.svg
+	:align: center
+
 .. rst-class:: center
 .. rst-class:: index_links
 
@@ -61,8 +64,8 @@ Table of contents
 .. toctree::
 	:maxdepth: 2
 
+	self
 	get-started/index
 	user-manual/index
 	api-reference/index
 	examples/index
-
