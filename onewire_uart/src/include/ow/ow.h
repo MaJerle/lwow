@@ -80,10 +80,44 @@ typedef struct {
  * \brief           1-Wire low-level driver structure
  */
 typedef struct {
-    uint8_t (*init)(void* arg);                 /*!< Initialize low-level driver */
-    uint8_t (*deinit)(void* arg);               /*!< Deinit low-level driver */
-    uint8_t (*set_baudrate)(uint32_t baud, void* arg);  /*!< Set uart baudrate */
-    uint8_t (*tx_rx)(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);    /* Exchange the data over UART port */
+    /**
+     * \brief       Initialize low-level driver
+     * \param[in]   arg: Custom argument passed to \ref ow_init function
+     * \return      `1` on success, `0` otherwise
+     */
+    uint8_t (*init)(void* arg);
+
+    /**
+     * \brief       De-initialize low-level driver
+     * \param[in]   arg: Custom argument passed to \ref ow_init function
+     * \return      `1` on success, `0` otherwise
+     */
+    uint8_t (*deinit)(void* arg);
+
+    /**
+     * \brief       Set UART baudrate
+     * \param[in]   baud: Baudrate to set in units of bauds, normally `9600` or `115200`
+     * \param[in]   arg: Custom argument passed to \ref ow_init function
+     * \return      `1` on success, `0` otherwise
+     */
+    uint8_t (*set_baudrate)(uint32_t baud, void* arg);
+
+    /**
+     * \brief       Transmit and receive bytes over UART hardware (or custom implementation)
+     *
+     * Bytes array for `tx` is already prepared to be directly transmitted over UART hardware,
+     * no data manipulation is necessary.
+     *
+     * At the same time, library must read received data on RX port and put it to `rx` data array,
+     * one by one, up to `len` number of bytes
+     *
+     * \param[in]   tx: Data to transmit over UART
+     * \param[out]  rx: Array to write received data to
+     * \param[in]   len: Number of bytes to exchange
+     * \param[in]   arg: Custom argument passed to \ref ow_init function
+     * \return      `1` on success, `0` otherwise
+     */
+    uint8_t (*tx_rx)(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
 } ow_ll_drv_t;
 
 /**

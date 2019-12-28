@@ -41,25 +41,25 @@
 
 #if !__DOXYGEN__
 
-static uint8_t ow_ll_init(void* arg);
-static uint8_t ow_ll_deinit(void* arg);
-static uint8_t ow_ll_set_baudrate(uint32_t baud, void* arg);
-static uint8_t ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
+static uint8_t init(void* arg);
+static uint8_t deinit(void* arg);
+static uint8_t set_baudrate(uint32_t baud, void* arg);
+static uint8_t transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
 
 /* STM32 LL driver for OW */
 const ow_ll_drv_t
 ow_ll_drv_stm32 = {
-    .init = ow_ll_init,
-    .deinit = ow_ll_deinit,
-    .set_baudrate = ow_ll_set_baudrate,
-    .tx_rx = ow_ll_transmit_receive,
+    .init = init,
+    .deinit = deinit,
+    .set_baudrate = set_baudrate,
+    .tx_rx = transmit_receive,
 };
 
 static LL_USART_InitTypeDef
 usart_init;
 
 static uint8_t
-ow_ll_init(void* arg) {
+init(void* arg) {
     LL_GPIO_InitTypeDef gpio_init;
 
     /* Peripheral clock enable */
@@ -103,14 +103,14 @@ ow_ll_init(void* arg) {
 }
 
 static uint8_t
-ow_ll_deinit(void* arg) {
+deinit(void* arg) {
     LL_USART_DeInit(ONEWIRE_USART);
     OW_UNUSED(arg);
     return 1;
 }
 
 static uint8_t
-ow_ll_set_baudrate(uint32_t baud, void* arg) {
+set_baudrate(uint32_t baud, void* arg) {
     usart_init.BaudRate = baud;
     LL_USART_Init(ONEWIRE_USART, &usart_init);
     LL_USART_ConfigAsyncMode(ONEWIRE_USART);
@@ -120,7 +120,7 @@ ow_ll_set_baudrate(uint32_t baud, void* arg) {
 }
 
 static uint8_t
-ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
+transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     const uint8_t* t = tx;
     uint8_t* r = rx;
 

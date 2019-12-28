@@ -38,25 +38,25 @@
 #if !__DOXYGEN__
 
 /* Function prototypes */
-static uint8_t ow_ll_init(void* arg);
-static uint8_t ow_ll_deinit(void* arg);
-static uint8_t ow_ll_set_baudrate(uint32_t baud, void* arg);
-static uint8_t ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
+static uint8_t init(void* arg);
+static uint8_t deinit(void* arg);
+static uint8_t set_baudrate(uint32_t baud, void* arg);
+static uint8_t transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
 
 /* Win 32 LL driver for OW */
 const ow_ll_drv_t
 ow_ll_drv_win32 = {
-    .init = ow_ll_init,
-    .deinit = ow_ll_deinit,
-    .set_baudrate = ow_ll_set_baudrate,
-    .tx_rx = ow_ll_transmit_receive,
+    .init = init,
+    .deinit = deinit,
+    .set_baudrate = set_baudrate,
+    .tx_rx = transmit_receive,
 };
 
 static HANDLE com_port;
 static DCB dcb = { 0 };
 
 static uint8_t
-ow_ll_init(void* arg) {
+init(void* arg) {
     dcb.DCBlength = sizeof(dcb);
 
     /* Open virtual file as read/write */
@@ -102,14 +102,14 @@ ow_ll_init(void* arg) {
 }
 
 uint8_t
-ow_ll_deinit(void* arg) {
+deinit(void* arg) {
     /* Disable UART peripheral */
 
     return 1;
 }
 
 uint8_t
-ow_ll_set_baudrate(uint32_t baud, void* arg) {
+set_baudrate(uint32_t baud, void* arg) {
     /* Configure UART to selected baudrate */
     dcb.BaudRate = baud;
 
@@ -123,7 +123,7 @@ ow_ll_set_baudrate(uint32_t baud, void* arg) {
 }
 
 uint8_t
-ow_ll_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
+transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     /* Perform data exchange */
     size_t read = 0;
     DWORD br;
