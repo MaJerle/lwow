@@ -102,8 +102,7 @@ ow_init(ow_t* const ow, const ow_ll_drv_t* const ll_drv, void* arg) {
  */
 void
 ow_deinit(ow_t* const ow) {
-    if (ow == NULL || ow->ll_drv == NULL
-        ) {
+    if (ow == NULL || ow->ll_drv == NULL) {
         return;
     }
 
