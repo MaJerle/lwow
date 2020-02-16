@@ -1,5 +1,7 @@
-OneWire-UART documentation!
-===========================
+OneWire-UART |version| documentation
+====================================
+
+Welcome to the documentation for version |version|.
 
 OneWire-UART is lightweight, platform independent library for Onewire protocol for embedded systems.
 
