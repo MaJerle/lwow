@@ -82,6 +82,29 @@ Example: System functions for CMSIS-OS
     :linenos:
     :caption: Actual implementation of system functions for CMSIS-OS
 
+Low-Level driver for STM32 with STM32CubeMX
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Specific low-level driver has been implemented for STM32 series of microcontrollers,
+to allow easy and simple link of OneWire-UART library with projects generated with STM32CubeMX or STm32CubeIDE development tools.
+
+Driver is based on HAL (Hardware Abstraction Layer) and it uses interrupt configuration to transmit/receive data.
+When customer starts a new project using CubeMX, it must:
+
+- Configure specific UART IP as async mode both directions
+- UART must have enabled global interrupts, to allow transmitting/receiving data using interrupts
+- Application must pass pointer to UART handle when calling ``ow_init`` function
+
+.. tip::
+	Special example has been developed to demonstrate how can application use
+	multiple OneWire instances on multiple UART ports at the same time.
+	It uses custom argument to determine which UART handle shall be used for data transmit.
+	Check ``/examples/stm32/`` folder for actual implementation.
+
+.. literalinclude:: ../../onewire_uart/src/system/ow_ll_stm32_hal.c
+    :language: c
+    :linenos:
+    :caption: Actual implementation of low-level driver for STM32 with HAL drivers
 
 .. toctree::
     :maxdepth: 2

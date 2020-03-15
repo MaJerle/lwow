@@ -1,5 +1,5 @@
 /**
- * \file            ow_ll_stm32_cubemx_hal_dma.c
+ * \file            ow_ll_stm32_cubemx_hal.c
  * \brief           UART driver implementation for STM32 with HAL code
  */
 

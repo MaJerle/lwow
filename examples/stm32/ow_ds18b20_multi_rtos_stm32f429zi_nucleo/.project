@@ -42,9 +42,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/onewire_uart/src/devices/ow_device_ds18x20.c</locationURI>
 		</link>
 		<link>
-			<name>OW/ow_ll_stm32_cubemx_hal_dma.c</name>
+			<name>OW/ow_ll_stm32_hal.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/onewire_uart/src/system/ow_ll_stm32_cubemx_hal_dma.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/onewire_uart/src/system/ow_ll_stm32_hal.c</locationURI>
 		</link>
 		<link>
 			<name>OW/ow_sys_cmsis_os.c</name>
