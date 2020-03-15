@@ -92,8 +92,7 @@ app_thread(void* arg) {
         }
     } while (rom_found == 0);
 
-
-    if (rom_found) {
+    if (rom_found > 0) {
         /* Infinite loop */
         while (1) {
             printf("Start temperature conversion\r\n");
