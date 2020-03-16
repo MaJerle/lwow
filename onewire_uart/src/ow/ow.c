@@ -44,26 +44,33 @@
 
 #endif /* !__DOXYGEN__ */
 
+/* Set value if not NULL */
+#define SET_NOT_NULL(p, v)          if ((p) != NULL) { *(p) = (v); }
+
 /**
  * \brief           Send single bit to OneWire port
  * \param[in]       ow: OneWire instance
- * \param[in]       v: Value to send, either `1` or `0`
- * \return          Read byte on 1-wire port, either `1` or `0`
+ * \param[in]       btw: Bit to send, either `1` or `0`
+ * \param[out]      btr: Pointer to output variable to write read bit
+ * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
-static uint8_t
-send_bit(ow_t* const ow, uint8_t v) {
+static owr_t
+send_bit(ow_t* const ow, uint8_t btw, uint8_t* btr) {
     uint8_t b;
+
+    SET_NOT_NULL(btr, 0);
 
     /*
      * To send logical 1 over 1-wire, send 0xFF over UART
      * To send logical 0 over 1-wire, send 0x00 over UART
      */
-    v = v ? 0xFF : 0x00;                        /* Convert to 0 or 1 */
-    ow->ll_drv->tx_rx(&v, &b, 1, ow->arg);      /* Exchange data over USART */
-    if (b == 0xFF) {                            /* To read bit 1, check for 0xFF sequence */
-        return 1;
+    btw = btw > 0 ? 0xFF : 0x00;                /* Convert to 0 or 1 */
+    if (!ow->ll_drv->tx_rx(&btw, &b, 1, ow->arg)) {
+        return owERRTXRX;                       /* Transmit error */
     }
-    return 0;
+    b = b == 0xFF ? 1 : 0;                      /* Go to bit values */
+    SET_NOT_NULL(btr, b);                       /* Set new byte */
+    return owOK;
 }
 
 /**
@@ -169,9 +176,15 @@ ow_reset_raw(ow_t* const ow) {
 
     /* First send reset pulse */
     b = OW_RESET_BYTE;                          /* Set reset sequence byte = 0xF0 */
-    ow->ll_drv->set_baudrate(9600, ow->arg);    /* Set low baudrate */
-    ow->ll_drv->tx_rx(&b, &b, 1, ow->arg);      /* Exchange data over onewire */
-    ow->ll_drv->set_baudrate(115200, ow->arg);  /* Set high baudrate */
+    if (!ow->ll_drv->set_baudrate(9600, ow->arg)) {
+        return owERRBAUD;                       /* Error setting baudrate */
+    }
+    if (!ow->ll_drv->tx_rx(&b, &b, 1, ow->arg)) {
+        return owERRTXRX;                       /* Error with data exchange */
+    }
+    if (!ow->ll_drv->set_baudrate(115200, ow->arg)) {
+        return owERRBAUD;                       /* Error setting baudrate */
+    }
 
     /* Check if there is reply from any device */
     if (b == 0 || b == OW_RESET_BYTE) {
@@ -197,30 +210,18 @@ ow_reset(ow_t* const ow) {
 }
 
 /**
- * \brief           Write byte over 1-wire protocol
+ * \brief           Write byte over OW and read its response
  * \param[in,out]   ow: 1-Wire handle
- * \param[in]       b: Byte to write
- * \return          Received byte over 1-wire protocol
+ * \param[in]       btw: Byte to write
+ * \param[out]      br: Pointer to read value. Set to `NULL` if not used
+ * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
-uint8_t
-ow_write_byte_raw(ow_t* const ow, const uint8_t b) {
-    uint8_t r = 0, tr[8];
+owr_t
+ow_write_byte_ex_raw(ow_t* const ow, const uint8_t btw, uint8_t* const br) {
+    uint8_t tr[8];
 
-    OW_ASSERT0("ow != NULL", ow != NULL);
-
-    /*
-     * Each BIT on 1-wire level represents 1-byte on UART level at 115200 bauds.
-     *
-     * To transmit entire byte over 1-wire protocol, we have to send 8-bytes over UART
-     *
-     * Writing logical bit 1 over 1-Wire protocol starts by pulling line low for about 6us.
-     * After that, we should release line for at least 64us. Entire sequence takes about 70us in total.
-     *
-     * From UART point of view, we have to send 0xFF on TX line. Start bit will take care of initial 6us low pulse and 0xFF will take care of high pulse.
-     *
-     * Writing logical bit 0 over 1-Wire protocol is similar to bit 1, but here we only pull line low for 60us and then release it with STOP bit.
-     * To write logical bit 0, we have to send constant 0x00 over UART.
-     */
+    OW_ASSERT("ow != NULL", ow != NULL);
+    SET_NOT_NULL(br, 0);
 
     /* Prepare output data */
     for (uint8_t i = 0; i < 8; ++i) {
@@ -228,51 +229,60 @@ ow_write_byte_raw(ow_t* const ow, const uint8_t b) {
          * If we have to send high bit, set byte as 0xFF,
          * otherwise set it as low bit, 0x00
          */
-        tr[i] = (b & (1 << i)) ? 0xFF : 0x00;
+        tr[i] = (btw & (1 << i)) ? 0xFF : 0x00;
     }
 
     /*
      * Exchange data on UART level,
      * send single byte for each bit = 8 bytes
      */
-    ow->ll_drv->tx_rx(tr, tr, 8, ow->arg);      /* Exchange data over UART */
-
-    /*
-     * Check received data. If we read 0xFF,
-     * our logical write 1 was successful, otherwise it was 0.
-     */
-    for (uint8_t i = 0; i < 8; ++i) {
-        if (tr[i] == 0xFF) {
-            r |= 0x01 << i;
-        }
+    if (!ow->ll_drv->tx_rx(tr, tr, 8, ow->arg)) {
+        return owERRTXRX;
     }
-    return r;
+
+    /* Update output value */
+    if (br != NULL) {
+        uint8_t r = 0;
+        /*
+         * Check received data. If we read 0xFF,
+         * our logical write 1 was successful, otherwise it was 0.
+         */
+        for (uint8_t i = 0; i < 8; ++i) {
+            if (tr[i] == 0xFF) {
+                r |= 0x01 << i;
+            }
+        }
+        *br = r;
+    }
+    return owOK;
 }
 
 /**
- * \copydoc         ow_write_byte_raw
+ * \copydoc         ow_write_byte_ex_raw
  * \note            This function is thread-safe
  */
-uint8_t
-ow_write_byte(ow_t* const ow, const uint8_t b) {
-    uint8_t res;
+owr_t
+ow_write_byte_ex(ow_t* const ow, const uint8_t btw, uint8_t* const br) {
+    owr_t res;
 
-    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
-    res = ow_write_byte_raw(ow, b);
+    res = ow_write_byte_ex_raw(ow, btw, br);
     ow_unprotect(ow, 1);
     return res;
 }
 
 /**
- * \brief           Read next byte on 1-Wire
+ * \brief           Read byte from OW device
  * \param[in,out]   ow: 1-Wire handle
- * \return          Byte read over 1-Wire
+ * \param[out]      br: Pointer to save read value
+ * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
-uint8_t
-ow_read_byte_raw(ow_t* const ow) {
-    OW_ASSERT0("ow != NULL", ow != NULL);
+owr_t
+ow_read_byte_ex_raw(ow_t* const ow, uint8_t* const br) {
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("br != NULL", br != NULL);
 
     /*
      * When we want to read byte over 1-Wire,
@@ -280,47 +290,53 @@ ow_read_byte_raw(ow_t* const ow) {
      *
      * According to slave reactions, we can later construct received bytes
      */
-    return ow_write_byte_raw(ow, 0xFF);
+    return ow_write_byte_ex_raw(ow, 0xFF, br);
 }
 
 /**
- * \copydoc         ow_read_byte_raw
+ * \copydoc         ow_read_byte_ex_raw
  * \note            This function is thread-safe
  */
-uint8_t
-ow_read_byte(ow_t* const ow) {
-    uint8_t res;
+owr_t
+ow_read_byte_ex(ow_t* const ow, uint8_t* const br) {
+    owr_t res;
 
-    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("br != NULL", br != NULL);
 
     ow_protect(ow, 1);
-    res = ow_read_byte_raw(ow);
+    res = ow_read_byte_ex_raw(ow, br);
     ow_unprotect(ow, 1);
     return res;
 }
 
 /**
- * \brief           Read single bit on 1-Wire network
+ * \brief           Read sinle bit from OW device
  * \param[in,out]   ow: 1-Wire handle
- * \return          Bit value
+ * \param[out]      br: Pointer to save read value, either `1` or `0`
+ * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
-uint8_t
-ow_read_bit_raw(ow_t* const ow) {
-    return send_bit(ow, 1);                     /* Send bit as `1` and read the response */
+owr_t
+ow_read_bit_ex_raw(ow_t* const ow, uint8_t* const br) {
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("br != NULL", br != NULL);
+
+    return send_bit(ow, 1, br);                 /* Send bit as `1` and read the response */
 }
 
 /**
- * \copydoc         ow_read_bit_raw
+ * \copydoc         ow_write_byte_ex_raw
  * \note            This function is thread-safe
  */
-uint8_t
-ow_read_bit(ow_t* const ow) {
-    uint8_t res;
+owr_t
+ow_read_bit_ex(ow_t* const ow, uint8_t* const br) {
+    owr_t res;
 
-    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("br != NULL", br != NULL);
 
     ow_protect(ow, 1);
-    res = ow_read_bit_raw(ow);
+    res = ow_read_bit_ex_raw(ow, br);
     ow_unprotect(ow, 1);
     return res;
 }
@@ -413,14 +429,14 @@ ow_search_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const ro
     }
 
     /* Step 2: Send search rom command for all devices on 1-Wire */
-    ow_write_byte_raw(ow, cmd);                 /* Start with search ROM command */
+    ow_write_byte_ex_raw(ow, cmd, NULL);        /* Start with search ROM command */
     next_disrepancy = OW_LAST_DEV;              /* This is currently last device */
 
     for (id_bit_number = 64; id_bit_number > 0;) {
         uint8_t b, b_cpl;
         for (uint8_t j = 8; j > 0; --j, --id_bit_number) {
-            b       = send_bit(ow, 1);          /* Read first bit = next address bit */
-            b_cpl   = send_bit(ow, 1);          /* Read second bit = complementary bit of next address bit */
+            send_bit(ow, 1, &b);                /* Read first bit = next address bit */
+            send_bit(ow, 1, &b_cpl);            /* Read second bit = complementary bit of next address bit */
 
             /*
              * If we have connected many devices on 1-Wire port b and b_cpl are ANDed between all devices.
@@ -466,7 +482,7 @@ ow_search_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const ro
              * In case of "collision", we decide here which devices we will
              * continue to scan (binary tree)
              */
-            send_bit(ow, b);                    /* Send bit you want to continue with */
+            send_bit(ow, b, NULL);              /* Send bit you want to continue with */
 
             /*
              * Because we shift down *id each iteration, we have to position bit value to the MSB position
@@ -505,29 +521,32 @@ ow_search_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id
  * \param[in]       rom_id: 1-Wire device address to match device
  * \return          `1` on success, `0` otherwise
  */
-uint8_t
+owr_t
 ow_match_rom_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
-    OW_ASSERT0("ow != NULL", ow != NULL);
-    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("rom_id != NULL", rom_id != NULL);
 
-    ow_write_byte_raw(ow, OW_CMD_MATCHROM);     /* Write byte to match rom exactly */
+    /* Write byte to match rom exactly */
+    if (ow_write_byte_ex_raw(ow, OW_CMD_MATCHROM, NULL) != owOK) {
+        return owERR;
+    }
     for (uint8_t i = 0; i < 8; ++i) {           /* Send 8 bytes representing ROM address */
-        ow_write_byte_raw(ow, rom_id->rom[i]);  /* Send ROM bytes */
+        ow_write_byte_ex_raw(ow, rom_id->rom[i], NULL); /* Send ROM bytes */
     }
 
-    return 1;
+    return owOK;
 }
 
 /**
  * \copydoc         ow_match_rom_raw
  * \note            This function is thread-safe
  */
-uint8_t
+owr_t
 ow_match_rom(ow_t* const ow, const ow_rom_t* const rom_id) {
     uint8_t res;
 
-    OW_ASSERT0("ow != NULL", ow != NULL);
-    OW_ASSERT0("rom_id != NULL", rom_id != NULL);
+    OW_ASSERT("ow != NULL", ow != NULL);
+    OW_ASSERT("rom_id != NULL", rom_id != NULL);
 
     ow_protect(ow, 1);
     res = ow_match_rom_raw(ow, rom_id);
@@ -540,23 +559,22 @@ ow_match_rom(ow_t* const ow, const ow_rom_t* const rom_id) {
  * \param[in]       ow: 1-Wire handle
  * \return          `1` on success, `0` otherwise
  */
-uint8_t
+owr_t
 ow_skip_rom_raw(ow_t* const ow) {
-    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
-    ow_write_byte_raw(ow, OW_CMD_SKIPROM);      /* Write byte to match rom exactly */
-    return 1;
+    return ow_write_byte_ex_raw(ow, OW_CMD_SKIPROM, NULL);  /* Write byte to match rom exactly */
 }
 
 /**
  * \copydoc         ow_skip_rom_raw
  * \note            This function is thread-safe
  */
-uint8_t
+owr_t
 ow_skip_rom(ow_t* const ow) {
     uint8_t res;
 
-    OW_ASSERT0("ow != NULL", ow != NULL);
+    OW_ASSERT("ow != NULL", ow != NULL);
 
     ow_protect(ow, 1);
     res = ow_skip_rom_raw(ow);
@@ -740,4 +758,73 @@ ow_search_devices(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_l
     res = ow_search_devices_raw(ow, rom_id_arr, rom_len, roms_found);
     ow_unprotect(ow, 1);
     return res;
+}
+
+/* Deprecated functions list */
+
+/**
+ * \brief           Write byte over 1-wire protocol
+ * \deprecated      This function is deprecated. Use `_ex` functions instead
+ * \param[in,out]   ow: 1-Wire handle
+ * \param[in]       b: Byte to write
+ * \return          Received byte over 1-wire protocol
+ */
+uint8_t
+ow_write_byte_raw(ow_t* const ow, const uint8_t b) {
+    uint8_t r;
+    return ow_write_byte_ex_raw(ow, b, &r) == owOK ? r : 0x00;
+}
+
+/**
+ * \copydoc         ow_write_byte_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+ow_write_byte(ow_t* const ow, const uint8_t b) {
+    uint8_t r;
+    return ow_write_byte_ex(ow, b, &r) == owOK ? r : 0x00;
+}
+
+/**
+ * \brief           Read next byte on 1-Wire
+ * \deprecated      This function is deprecated. Use `_ex` functions instead
+ * \param[in,out]   ow: 1-Wire handle
+ * \return          Byte read over 1-Wire
+ */
+uint8_t
+ow_read_byte_raw(ow_t* const ow) {
+    uint8_t br;
+    return ow_read_byte_ex_raw(ow, &br) == owOK ? br : 0x00;
+}
+
+/**
+ * \copydoc         ow_read_byte_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+ow_read_byte(ow_t* const ow) {
+    uint8_t br;
+    return ow_read_byte_ex(ow, &br) == owOK ? br : 0x00;
+}
+
+/**
+ * \brief           Read single bit on 1-Wire network
+ * \deprecated      This function is deprecated. Use `_ex` functions instead
+ * \param[in,out]   ow: 1-Wire handle
+ * \return          Bit value
+ */
+uint8_t
+ow_read_bit_raw(ow_t* const ow) {
+    uint8_t br;
+    return ow_read_bit_ex_raw(ow, &br) == owOK ? br : 0x00;
+}
+
+/**
+ * \copydoc         ow_read_bit_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+ow_read_bit(ow_t* const ow) {
+    uint8_t br;
+    return ow_read_bit_ex(ow, &br) == owOK ? br : 0x00;
 }

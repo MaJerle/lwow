@@ -57,9 +57,11 @@ extern "C" {
  */
 typedef enum {
     owOK = 0x00,                                /*!< Device returned OK */
-    owERRPRESENCE = -1,                         /*!< Presence was not successful */
-    owERRNODEV = -2,                            /*!< No device connected, maybe device removed during scan? */
-    owPARERR = -3,                              /*!< Parameter error */
+    owERRPRESENCE,                              /*!< Presence was not successful */
+    owERRNODEV,                                 /*!< No device connected, maybe device removed during scan? */
+    owERRTXRX,                                  /*!< Error while exchanging data */
+    owERRBAUD,                                  /*!< Error setting baudrate */
+    owPARERR ,                                  /*!< Parameter error */
     owERR,                                      /*!< General-Purpose error */
 } owr_t;
 
@@ -224,19 +226,17 @@ void        ow_deinit(ow_t* const ow);
 owr_t       ow_protect(ow_t* const ow, const uint8_t protect);
 owr_t       ow_unprotect(ow_t* const ow, const uint8_t protect);
 
-
 owr_t       ow_reset_raw(ow_t* const ow);
 owr_t       ow_reset(ow_t* const ow);
 
-uint8_t     ow_write_byte_raw(ow_t* const ow, const uint8_t b);
-uint8_t     ow_write_byte(ow_t* const ow, const uint8_t b);
+owr_t       ow_write_byte_ex_raw(ow_t* const ow, const uint8_t btw, uint8_t* const br);
+owr_t       ow_write_byte_ex(ow_t* const ow, const uint8_t btw, uint8_t* const br);
 
-uint8_t     ow_read_byte_raw(ow_t* const ow);
-uint8_t     ow_read_byte(ow_t* const ow);
+owr_t       ow_read_byte_ex_raw(ow_t* const ow, uint8_t* const br);
+owr_t       ow_read_byte_ex(ow_t* const ow, uint8_t* const br);
 
-uint8_t     ow_read_bit_raw(ow_t* const ow);
-uint8_t     ow_read_bit(ow_t* const ow);
-
+owr_t       ow_read_bit_ex_raw(ow_t* const ow, uint8_t* const br);
+owr_t       ow_read_bit_ex(ow_t* const ow, uint8_t* const br);
 
 owr_t       ow_search_reset_raw(ow_t* const ow);
 owr_t       ow_search_reset(ow_t* const ow);
@@ -256,13 +256,21 @@ owr_t       ow_search_devices_with_command(ow_t* const ow, const uint8_t cmd, ow
 owr_t       ow_search_devices_raw(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
 owr_t       ow_search_devices(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found);
 
-uint8_t     ow_match_rom_raw(ow_t* const ow, const ow_rom_t* const rom_id);
-uint8_t     ow_match_rom(ow_t* const ow, const ow_rom_t* const rom_id);
+owr_t       ow_match_rom_raw(ow_t* const ow, const ow_rom_t* const rom_id);
+owr_t       ow_match_rom(ow_t* const ow, const ow_rom_t* const rom_id);
 
-uint8_t     ow_skip_rom_raw(ow_t* const ow);
-uint8_t     ow_skip_rom(ow_t* const ow);
+owr_t       ow_skip_rom_raw(ow_t* const ow);
+owr_t       ow_skip_rom(ow_t* const ow);
 
 uint8_t     ow_crc(const void* const in, const size_t len);
+
+/* Legacy functions, deprecated, to be removed in next major release */
+uint8_t     ow_write_byte_raw(ow_t* const ow, const uint8_t b);
+uint8_t     ow_write_byte(ow_t* const ow, const uint8_t b);
+uint8_t     ow_read_byte_raw(ow_t* const ow);
+uint8_t     ow_read_byte(ow_t* const ow);
+uint8_t     ow_read_bit_raw(ow_t* const ow);
+uint8_t     ow_read_bit(ow_t* const ow);
 
 /**
  * \}
