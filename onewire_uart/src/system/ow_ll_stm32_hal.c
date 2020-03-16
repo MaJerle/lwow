@@ -70,6 +70,8 @@ static uint8_t
 init(void* arg) {
     UART_HandleTypeDef* huart = arg;
 
+    OW_ASSERT0("arg != NULL", arg != NULL);
+
     /* Initialize UART */
     HAL_UART_DeInit(huart);
     return HAL_UART_Init(huart) == HAL_OK;
@@ -79,12 +81,16 @@ static uint8_t
 deinit(void* arg) {
     UART_HandleTypeDef* huart = arg;
 
+    OW_ASSERT0("arg != NULL", arg != NULL);
+
     return HAL_UART_DeInit(huart);
 }
 
 static uint8_t
 set_baudrate(uint32_t baud, void* arg) {
     UART_HandleTypeDef* huart = arg;
+
+    OW_ASSERT0("arg != NULL", arg != NULL);
 
     huart->Init.BaudRate = baud;
     return init(huart);
@@ -94,6 +100,8 @@ static uint8_t
 transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     UART_HandleTypeDef* huart = arg;
     uint32_t start;
+
+    OW_ASSERT0("arg != NULL", arg != NULL);
 
     /* Get current HAL tick */
     start = HAL_GetTick();
