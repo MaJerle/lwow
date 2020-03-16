@@ -171,6 +171,12 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* const ow, const ow_rom_t* const rom_id, 
 
 /**
  * \brief           Assert check function
+ *
+ * It returns \ref owPARERR if condition check fails
+ *
+ * \param[in]       msg: Optional message parameter to print on failure
+ * \param[in]       c: Condition to check for
+ * \hideinitializer
  */
 #define OW_ASSERT(msg, c)           do {    \
     if (!(c)) {                             \
@@ -180,6 +186,12 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* const ow, const ow_rom_t* const rom_id, 
 
 /**
  * \brief           Assert check function with return `0`
+ *
+ * It returns `0` if condition check fails
+ *
+ * \param[in]       msg: Optional message parameter to print on failure
+ * \param[in]       c: Condition to check for
+ * \hideinitializer
  */
 #define OW_ASSERT0(msg, c)          do {    \
     if (!(c)) {                             \
