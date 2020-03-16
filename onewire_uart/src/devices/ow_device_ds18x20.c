@@ -53,7 +53,7 @@ ow_ds18x20_start_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
         } else {
             ow_match_rom_raw(ow, rom_id);       /* Select exact device by ROM address */
         }
-        ow_write_byte_raw(ow, 0x44);            /* Start temperature conversion */
+        ow_write_byte_ex_raw(ow, 0x44, NULL);   /* Start temperature conversion */
         ret = 1;
     }
     return ret;
@@ -86,7 +86,7 @@ uint8_t
 ow_ds18x20_read_raw(ow_t* const ow, const ow_rom_t* const rom_id, float* const t) {
     float dec;
     uint16_t temp;
-    uint8_t ret = 0, data[9], crc, resolution, m = 0;
+    uint8_t ret = 0, data[9], crc, resolution, m = 0, bit_val;
     int8_t digit;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
@@ -97,17 +97,17 @@ ow_ds18x20_read_raw(ow_t* const ow, const ow_rom_t* const rom_id, float* const t
      * First read bit and check if all devices completed with conversion.
      * If everything ready, try to reset the network and continue
      */
-    if (ow_read_bit_raw(ow) && ow_reset_raw(ow) == owOK) {
+    if (ow_read_bit_ex_raw(ow, &bit_val) == owOK && bit_val != 0 && ow_reset_raw(ow) == owOK) {
         if (rom_id == NULL) {                   /* Check for ROM id */
             ow_skip_rom_raw(ow);                /* Skip ROM, send to all devices */
         } else {
             ow_match_rom_raw(ow, rom_id);       /* Select exact device by ROM address */
         }
-        ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);  /* Send command to read scratchpad */
+        ow_write_byte_ex_raw(ow, OW_CMD_RSCRATCHPAD, NULL); /* Send command to read scratchpad */
 
         /* Read plain data from device */
         for (uint8_t i = 0; i < 9; ++i) {
-            data[i] = ow_read_byte_raw(ow);     /* Read byte */
+            ow_read_byte_ex_raw(ow, &data[i]);  /* Read byte */
         }
         crc = ow_crc(data, 0x09);               /* Calculate CRC */
         if (crc == 0) {                         /* Result must be 0 to match the CRC */
@@ -163,7 +163,7 @@ ow_ds18x20_read(ow_t* const ow, const ow_rom_t* const rom_id, float* const t) {
  */
 uint8_t
 ow_ds18x20_get_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
-    uint8_t res = 0;
+    uint8_t res = 0, br;
 
     OW_ASSERT0("ow != NULL", ow != NULL);
     OW_ASSERT0("rom_id != NULL", rom_id != NULL);
@@ -171,15 +171,16 @@ ow_ds18x20_get_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
 
     if (ow_reset_raw(ow) == owOK) {             /* Reset bus */
         ow_match_rom_raw(ow, rom_id);           /* Select device */
-        ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);  /* Read scratchpad command */
+        ow_write_byte_ex_raw(ow, OW_CMD_RSCRATCHPAD, NULL); /* Send command to read scratchpad */
 
         /* Read and ignore bytes */
-        ow_read_byte_raw(ow);
-        ow_read_byte_raw(ow);
-        ow_read_byte_raw(ow);
-        ow_read_byte_raw(ow);
+        ow_read_byte_ex_raw(ow, &br);
+        ow_read_byte_ex_raw(ow, &br);
+        ow_read_byte_ex_raw(ow, &br);
+        ow_read_byte_ex_raw(ow, &br);
 
-        res = ((ow_read_byte_raw(ow) & 0x60) >> 0x05) + 9;  /* Read configuration byte and calculate bits */
+        ow_read_byte_ex_raw(ow, &br);
+        res = ((br & 0x60) >> 0x05) + 9;  /* Read configuration byte and calculate bits */
     }
 
     return res;
@@ -225,16 +226,17 @@ ow_ds18x20_set_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id, cons
         } else {
             ow_skip_rom_raw(ow);
         }
-        ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);
+        ow_write_byte_ex_raw(ow, OW_CMD_RSCRATCHPAD, NULL); /* Send command to read scratchpad */
 
         /* Read and ignore bytes */
-        ow_read_byte_raw(ow);
-        ow_read_byte_raw(ow);
+        ow_read_byte_ex_raw(ow, &th);
+        ow_read_byte_ex_raw(ow, &th);
 
         /* Read important data */
-        th = ow_read_byte_raw(ow);
-        tl = ow_read_byte_raw(ow);
-        conf = ow_read_byte_raw(ow) & ~0x60;    /* Remove configuration bits for temperature resolution */
+        ow_read_byte_ex_raw(ow, &th);
+        ow_read_byte_ex_raw(ow, &tl);
+        ow_read_byte_ex_raw(ow, &conf);
+        conf &= ~0x60;                          /* Remove configuration bits for temperature resolution */
 
         switch (bits) {                         /* Check bits configuration */
             case 10: conf |= 0x20; break;       /* 10-bits configuration */
@@ -246,16 +248,16 @@ ow_ds18x20_set_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id, cons
         /* Write data back to device */
         if (ow_reset_raw(ow) == owOK) {
             ow_match_rom_raw(ow, rom_id);
-            ow_write_byte_raw(ow, OW_CMD_WSCRATCHPAD);
+            ow_write_byte_ex_raw(ow, OW_CMD_WSCRATCHPAD, NULL);
 
-            ow_write_byte_raw(ow, th);
-            ow_write_byte_raw(ow, tl);
-            ow_write_byte_raw(ow, conf);
+            ow_write_byte_ex_raw(ow, th, NULL);
+            ow_write_byte_ex_raw(ow, tl, NULL);
+            ow_write_byte_ex_raw(ow, conf, NULL);
 
             /* Copy scratchpad to non-volatile memory */
             if (ow_reset_raw(ow) == owOK) {
                 ow_match_rom_raw(ow, rom_id);
-                ow_write_byte_raw(ow, OW_CMD_CPYSCRATCHPAD);
+                ow_write_byte_ex_raw(ow, OW_CMD_CPYSCRATCHPAD, NULL);
                 res = 1;
             }
         }
@@ -341,16 +343,16 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* const ow, const ow_rom_t* const rom_id, int8
         } else {
             ow_match_rom_raw(ow, rom_id);
         }
-        ow_write_byte_raw(ow, OW_CMD_RSCRATCHPAD);
+        ow_write_byte_ex_raw(ow, OW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore 2 bytes */
-        ow_read_byte_raw(ow);
-        ow_read_byte_raw(ow);
+        ow_read_byte_ex_raw(ow, &th);
+        ow_read_byte_ex_raw(ow, &th);
 
         /* Read important data */
-        th = ow_read_byte_raw(ow);
-        tl = ow_read_byte_raw(ow);
-        conf = ow_read_byte_raw(ow);
+        ow_read_byte_ex_raw(ow, &th);
+        ow_read_byte_ex_raw(ow, &tl);
+        ow_read_byte_ex_raw(ow, &conf);
 
         /* Fill new values */
         th = temp_h == OW_DS18X20_ALARM_NOCHANGE ? (uint8_t)th : (uint8_t)temp_h;
@@ -359,17 +361,17 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* const ow, const ow_rom_t* const rom_id, int8
         /* Write scratchpad */
         if (ow_reset_raw(ow) == owOK) {
             ow_match_rom_raw(ow, rom_id);
-            ow_write_byte_raw(ow, OW_CMD_WSCRATCHPAD);
+            ow_write_byte_ex_raw(ow, OW_CMD_WSCRATCHPAD, NULL);
 
             /* Write configuration register */
-            ow_write_byte_raw(ow, th);
-            ow_write_byte_raw(ow, tl);
-            ow_write_byte_raw(ow, conf);
+            ow_write_byte_ex_raw(ow, th, NULL);
+            ow_write_byte_ex_raw(ow, tl, NULL);
+            ow_write_byte_ex_raw(ow, conf, NULL);
 
             /* Copy scratchpad to memory */
             if (ow_reset_raw(ow) == owOK) {
                 ow_match_rom_raw(ow, rom_id);
-                ow_write_byte_raw(ow, OW_CMD_CPYSCRATCHPAD);
+                ow_write_byte_ex_raw(ow, OW_CMD_CPYSCRATCHPAD, NULL);
 
                 res = 1;
             }
