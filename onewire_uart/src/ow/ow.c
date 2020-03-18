@@ -764,8 +764,8 @@ ow_search_devices(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_l
 
 /**
  * \brief           Write byte over 1-wire protocol
- * \note            This function is deprecated. Use `_ex` functions instead
- * \deprecated      This function is deprecated. Use `_ex` functions instead
+ * \note            This function is deprecated. Use \ref ow_write_byte_ex_raw instead
+ * \deprecated      This function is deprecated. Use \ref ow_write_byte_ex_raw instead
  * \param[in,out]   ow: 1-Wire handle
  * \param[in]       b: Byte to write
  * \return          Received byte over 1-wire protocol
@@ -778,6 +778,8 @@ ow_write_byte_raw(ow_t* const ow, const uint8_t b) {
 
 /**
  * \copydoc         ow_write_byte_raw
+ * \note            This function is deprecated. Use \ref ow_write_byte_ex instead
+ * \deprecated      This function is deprecated. Use \ref ow_write_byte_ex instead
  * \note            This function is thread-safe
  */
 uint8_t
@@ -788,8 +790,8 @@ ow_write_byte(ow_t* const ow, const uint8_t b) {
 
 /**
  * \brief           Read next byte on 1-Wire
- * \note            This function is deprecated. Use `_ex` functions instead
- * \deprecated      This function is deprecated. Use `_ex` functions instead
+ * \note            This function is deprecated. Use \ref ow_read_byte_ex_raw instead
+ * \deprecated      This function is deprecated. Use \ref ow_read_byte_ex_raw instead
  * \param[in,out]   ow: 1-Wire handle
  * \return          Byte read over 1-Wire
  */
@@ -801,6 +803,8 @@ ow_read_byte_raw(ow_t* const ow) {
 
 /**
  * \copydoc         ow_read_byte_raw
+ * \note            This function is deprecated. Use \ref ow_read_byte_ex instead
+ * \deprecated      This function is deprecated. Use \ref ow_read_byte_ex instead
  * \note            This function is thread-safe
  */
 uint8_t
@@ -811,8 +815,8 @@ ow_read_byte(ow_t* const ow) {
 
 /**
  * \brief           Read single bit on 1-Wire network
- * \note            This function is deprecated. Use `_ex` functions instead
- * \deprecated      This function is deprecated. Use `_ex` functions instead
+ * \note            This function is deprecated. Use \ref ow_read_bit_ex_raw instead
+ * \deprecated      This function is deprecated. Use \ref ow_read_bit_ex_raw instead
  * \param[in,out]   ow: 1-Wire handle
  * \return          Bit value
  */
@@ -824,6 +828,8 @@ ow_read_bit_raw(ow_t* const ow) {
 
 /**
  * \copydoc         ow_read_bit_raw
+ * \note            This function is deprecated. Use \ref ow_read_bit_ex instead
+ * \deprecated      This function is deprecated. Use \ref ow_read_bit_ex instead
  * \note            This function is thread-safe
  */
 uint8_t
