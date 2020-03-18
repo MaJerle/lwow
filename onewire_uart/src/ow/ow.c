@@ -764,6 +764,7 @@ ow_search_devices(ow_t* const ow, ow_rom_t* const rom_id_arr, const size_t rom_l
 
 /**
  * \brief           Write byte over 1-wire protocol
+ * \note            This function is deprecated. Use `_ex` functions instead
  * \deprecated      This function is deprecated. Use `_ex` functions instead
  * \param[in,out]   ow: 1-Wire handle
  * \param[in]       b: Byte to write
@@ -787,6 +788,7 @@ ow_write_byte(ow_t* const ow, const uint8_t b) {
 
 /**
  * \brief           Read next byte on 1-Wire
+ * \note            This function is deprecated. Use `_ex` functions instead
  * \deprecated      This function is deprecated. Use `_ex` functions instead
  * \param[in,out]   ow: 1-Wire handle
  * \return          Byte read over 1-Wire
@@ -809,6 +811,7 @@ ow_read_byte(ow_t* const ow) {
 
 /**
  * \brief           Read single bit on 1-Wire network
+ * \note            This function is deprecated. Use `_ex` functions instead
  * \deprecated      This function is deprecated. Use `_ex` functions instead
  * \param[in,out]   ow: 1-Wire handle
  * \return          Bit value
