@@ -236,13 +236,13 @@ ow_ds18x20_set_resolution_raw(ow_t* const ow, const ow_rom_t* const rom_id, cons
         ow_read_byte_ex_raw(ow, &th);
         ow_read_byte_ex_raw(ow, &tl);
         ow_read_byte_ex_raw(ow, &conf);
-        conf &= ~0x60;                          /* Remove configuration bits for temperature resolution */
 
+        conf &= ~0x60;                          /* Remove configuration bits for temperature resolution */
         switch (bits) {                         /* Check bits configuration */
-            case 10: conf |= 0x20; break;       /* 10-bits configuration */
-            case 11: conf |= 0x40; break;       /* 11-bits configuration */
             case 12: conf |= 0x60; break;       /* 12-bits configuration */
-            default: conf |= 0x00; break;       /* 9-bits configuration */
+            case 11: conf |= 0x40; break;       /* 11-bits configuration */
+            case 10: conf |= 0x20; break;       /* 10-bits configuration */
+            default: break;                     /* 9-bits configuration */
         }
 
         /* Write data back to device */
