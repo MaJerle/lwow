@@ -435,11 +435,13 @@ ow_search_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const ro
     for (id_bit_number = 64; id_bit_number > 0;) {
         uint8_t b, b_cpl;
         for (uint8_t j = 8; j > 0; --j, --id_bit_number) {
-            send_bit(ow, 1, &b);                /* Read first bit = next address bit */
-            send_bit(ow, 1, &b_cpl);            /* Read second bit = complementary bit of next address bit */
+            /* Read first bit and its complimentary one */
+            if (send_bit(ow, 1, &b) != owOK || send_bit(ow, 1, &b_cpl) != owOK) {
+                return owERRTXRX;
+            }         
 
             /*
-             * If we have connected many devices on 1-Wire port b and b_cpl are ANDed between all devices.
+             * If we have connected many devices on 1-Wire port, b and b_cpl are ANDed between all devices.
              *
              * We have to react if b and b_cpl are the same:
              *
@@ -519,7 +521,7 @@ ow_search_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id
  * \brief           Select device on 1-wire network with exact ROM number
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to match device
- * \return          `1` on success, `0` otherwise
+ * \return          \ref owrOK on success, member of \ref owr_t otherwise
  */
 owr_t
 ow_match_rom_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
@@ -531,7 +533,9 @@ ow_match_rom_raw(ow_t* const ow, const ow_rom_t* const rom_id) {
         return owERR;
     }
     for (uint8_t i = 0; i < 8; ++i) {           /* Send 8 bytes representing ROM address */
-        ow_write_byte_ex_raw(ow, rom_id->rom[i], NULL); /* Send ROM bytes */
+        if (ow_write_byte_ex_raw(ow, rom_id->rom[i], NULL) != owOK) {   /* Send ROM bytes */
+            return owERR;
+        }
     }
 
     return owOK;
@@ -557,7 +561,7 @@ ow_match_rom(ow_t* const ow, const ow_rom_t* const rom_id) {
 /**
  * \brief           Skip ROM address and select all devices on the network
  * \param[in]       ow: 1-Wire handle
- * \return          `1` on success, `0` otherwise
+ * \return          \ref owrOK on success, member of \ref owr_t otherwise
  */
 owr_t
 ow_skip_rom_raw(ow_t* const ow) {
