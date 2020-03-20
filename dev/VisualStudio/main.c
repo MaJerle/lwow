@@ -45,7 +45,7 @@ main(void) {
                         float temp;
                         uint8_t resolution = ow_ds18x20_get_resolution_raw(&ow, &rom_ids[i]);
                         if (ow_ds18x20_read_raw(&ow, &rom_ids[i], &temp)) {
-                            printf("Sensor %u temperature is %d.%d degrees (%u bits resolution)\r\n",
+                            printf("Sensor %3u temperature is %d.%03d degrees (%u bits resolution)\r\n",
                                 (unsigned)i, (int)temp, (int)((temp * 1000.0f) - (((int)temp) * 1000)), (unsigned)resolution);
                         }
                     }
