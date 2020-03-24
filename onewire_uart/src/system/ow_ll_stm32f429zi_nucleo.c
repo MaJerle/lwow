@@ -1,6 +1,6 @@
 /**
  * \file            ow_ll_stm32f429zi_nucleo.c
- * \brief           UART implementation for STm32F429ZI-Nucleo
+ * \brief           UART implementation for STM32F429ZI-Nucleo
  */
 
 /*
