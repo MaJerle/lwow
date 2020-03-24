@@ -1,5 +1,5 @@
 /**
- * \file            ow_ll_stm32l0.c
+ * \file            ow_ll_stm32l0xx.c
  * \brief           UART implementation for STM32L0 series
  */
 
