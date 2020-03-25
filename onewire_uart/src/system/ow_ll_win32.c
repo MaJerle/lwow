@@ -31,9 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v2.0.0
  */
+#include <stdio.h>
 #include "ow/ow.h"
 #include "windows.h"
-#include <stdio.h>
 
 #if !__DOXYGEN__
 

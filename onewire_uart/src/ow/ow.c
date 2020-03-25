@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v2.0.0
  */
-#include "ow/ow.h"
 #include <string.h>
+#include "ow/ow.h"
 
 #if !__DOXYGEN__
 
@@ -438,7 +438,7 @@ ow_search_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const ro
             /* Read first bit and its complimentary one */
             if (send_bit(ow, 1, &b) != owOK || send_bit(ow, 1, &b_cpl) != owOK) {
                 return owERRTXRX;
-            }         
+            }
 
             /*
              * If we have connected many devices on 1-Wire port, b and b_cpl are ANDed between all devices.

@@ -34,14 +34,13 @@
 #ifndef OW_HDR_H
 #define OW_HDR_H
 
+#include <stdint.h>
+#include <stddef.h>
+#include "ow_config.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include <stdint.h>
-#include <stddef.h>
-
-#include "ow_config.h"
 
 /**
  * \defgroup        OW API functions

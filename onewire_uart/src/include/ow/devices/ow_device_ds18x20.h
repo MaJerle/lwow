@@ -34,11 +34,11 @@
 #ifndef OW_HDR_DEVICE_DS18x20_H
 #define OW_HDR_DEVICE_DS18x20_H
 
+#include "ow/ow.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "ow/ow.h"
 
 /**
  * \ingroup         OW_DEVICES

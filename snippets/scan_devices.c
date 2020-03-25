@@ -1,6 +1,6 @@
+#include <stdio.h>
 #include "scan_devices.h"
 #include "ow/ow.h"
-#include <stdio.h>
 
 /**
  * \brief           Scan for 1-Wire devices on specific 1-Wire port
