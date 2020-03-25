@@ -89,11 +89,6 @@
 			<locationURI>PARENT-4-PROJECT_LOC/onewire_uart/src/system/ow_ll_stm32l496g_discovery.c</locationURI>
 		</link>
 		<link>
-			<name>OW LL/ow_sys_cmsis_os.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/onewire_uart/src/system/ow_sys_cmsis_os.c</locationURI>
-		</link>
-		<link>
 			<name>OW SNIPPETS/scan_devices.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/snippets/scan_devices.c</locationURI>

@@ -34,8 +34,6 @@
 #ifndef OW_HDR_CONFIG_H
 #define OW_HDR_CONFIG_H
 
-#include "cmsis_os.h"
-
 /*
  * User specific config which overwrites setup from ow_config_default.h file
  */
