@@ -1,5 +1,5 @@
-#ifndef __SCAN_DEVICES_H
-#define __SCAN_DEVICES_H
+#ifndef SNIPPET_HDR_SCAN_DEVICES_H
+#define SNIPPET_HDR_SCAN_DEVICES_H
 
 #include "ow/ow.h"
 
@@ -13,4 +13,4 @@ owr_t	scan_onewire_devices(ow_t* ow, ow_rom_t* rom_ids, size_t rtf, size_t* rf);
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_SCAN_DEVICES_H */
