@@ -37,7 +37,7 @@
 /* Rename this file to "ow_opts.h" for your application */
 
 /*
- * Open "include/ow/ow_config_default.h" and
+ * Open "include/ow/ow_opt.h" and
  * copy & replace here settings you want to change values
  */
 
