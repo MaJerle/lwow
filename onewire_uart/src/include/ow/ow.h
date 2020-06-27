@@ -36,7 +36,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "ow_config.h"
+#include "ow/ow_opt.h"
 
 #ifdef __cplusplus
 extern "C" {

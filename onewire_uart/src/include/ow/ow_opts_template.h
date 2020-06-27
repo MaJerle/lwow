@@ -1,6 +1,6 @@
 /**
- * \file            ow.h
- * \brief           OneWire-UART main include file
+ * \file            ow_opts_template.h
+ * \brief           OneWire configuration file
  */
 
 /*
@@ -26,24 +26,19 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of OneWire library.
+ * This file is part of OneWire-UART library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v2.0.0
  */
-#ifndef OW_HDR_CONFIG_H
-#define OW_HDR_CONFIG_H
+#ifndef OW_HDR_OPTS_H
+#define OW_HDR_OPTS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+/* Rename this file to "ow_opts.h" for your application */
 
-#define OW_CFG_OS               1
+/*
+ * Open "include/ow/ow_config_default.h" and
+ * copy & replace here settings you want to change values
+ */
 
-#include "ow/ow_config_default.h"
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-#endif /* OW_HDR_CONFIG_H */
+#endif /* OW_HDR_OPTS_H */

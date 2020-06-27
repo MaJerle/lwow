@@ -1,6 +1,6 @@
 /**
- * \file            ow_config.h
- * \brief           Configuration for OW
+ * \file            ow_opts.h
+ * \brief           OW application options
  */
 
 /*
@@ -31,15 +31,18 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v2.0.0
  */
-#ifndef OW_HDR_CONFIG_H
-#define OW_HDR_CONFIG_H
+#ifndef OW_HDR_OPTS_H
+#define OW_HDR_OPTS_H
+
+/* Rename this file to "ow_opts.h" for your application */
+
+#include "cmsis_os.h"
 
 /*
- * User specific config which overwrites setup from ow_config_default.h file
+ * Open "include/ow/ow_opt.h" and
+ * copy & replace here settings you want to change values
  */
-#define OW_CFG_OS                               0
+#define OW_CFG_OS                               1
+#define OW_CFG_OS_MUTEX_HANDLE                  osMutexId_t
 
-/* Include default configuration setup */
-#include "ow/ow_config_default.h"
-
-#endif /* OW_HDR_CONFIG_H */
+#endif /* OW_HDR_OPTS_H */

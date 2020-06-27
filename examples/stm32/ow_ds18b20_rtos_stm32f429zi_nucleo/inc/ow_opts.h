@@ -1,6 +1,6 @@
 /**
- * \file            ow_config_default.h
- * \brief           OneWire default config
+ * \file            ow_opts.h
+ * \brief           OW application options
  */
 
 /*
@@ -26,50 +26,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of OneWire-UART library.
+ * This file is part of OneWire-UART.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v2.0.0
  */
-#ifndef OW_HDR_CONFIG_DEFAULT_H
-#define OW_HDR_CONFIG_DEFAULT_H
+#ifndef OW_HDR_OPTS_H
+#define OW_HDR_OPTS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+/* Rename this file to "ow_opts.h" for your application */
 
-/**
- * \defgroup        OW_CONFIG Configuration
- * \brief           Configuration for OneWire library
- * \{
+#include "cmsis_os.h"
+
+/*
+ * Open "include/ow/ow_opt.h" and
+ * copy & replace here settings you want to change values
  */
+#define OW_CFG_OS                               1
+#define OW_CFG_OS_MUTEX_HANDLE                  osMutexId_t
 
-/**
- * \brief           Enables `1` or disables `0` operating system support in the library
- *
- * \note            When `OW_CFG_OS` is enabled, user must implement functions in \ref OW_SYS group.
- */
-#ifndef OW_CFG_OS
-#define OW_CFG_OS                               0
-#endif
-
-/**
- * \brief           Mutex handle type
- *
- * \note            This value must be set in case \ref OW_CFG_OS is set to `1`.
- *                  If data type is not known to compiler, include header file with
- *                  definition before you define handle type
- */
-#ifndef OW_CFG_OS_MUTEX_HANDLE
-#define OW_CFG_OS_MUTEX_HANDLE                  void *
-#endif
-
-/**
- * \}
- */
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-#endif /* OW_HDR_CONFIG_DEFAULT_H */
+#endif /* OW_HDR_OPTS_H */

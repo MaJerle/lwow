@@ -53,7 +53,7 @@ At this point it is assumed that you have successfully download library, either 
 * Copy ``onewire_uart`` folder to your project
 * Add ``onewire_uart/src/include`` folder to `include path` of your toolchain
 * Add source files from ``onewire_uart/src/`` folder to toolchain build
-* Copy ``onewire_uart/src/include/ow/ow_config_template.h`` to project folder and rename it to ``ow_config.h``
+* Copy ``onewire_uart/src/include/ow/ow_opts_template.h`` to project folder and rename it to ``ow_opts.h``
 * Implement device drivers for UART hardware
 * Build the project
 
@@ -61,12 +61,12 @@ Configuration file
 ^^^^^^^^^^^^^^^^^^
 
 Library comes with template config file, which can be modified according to needs.
-This file shall be named ``ow_config.h`` and its default template looks like the one below:
+This file shall be named ``ow_opts.h`` and its default template looks like the one below:
 
 .. tip::
-    Check :ref:`api_ow_config` section for possible configuration settings
+    Check :ref:`api_ow_opt` section for possible configuration settings
 
-.. literalinclude:: ../../onewire_uart/src/include/ow/ow_config_template.h
+.. literalinclude:: ../../onewire_uart/src/include/ow/ow_opts_template.h
     :language: c
     :linenos:
     :caption: Config template file

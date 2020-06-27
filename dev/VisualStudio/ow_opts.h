@@ -1,6 +1,6 @@
 /**
- * \file            ow_config.h
- * \brief           Configuration for OW
+ * \file            ow_opts.h
+ * \brief           OW application options
  */
 
 /*
@@ -26,21 +26,20 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * This file is part of OneWire-UART.
+ * This file is part of OneWire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v2.0.0
  */
-#ifndef OW_HDR_CONFIG_H
-#define OW_HDR_CONFIG_H
+#ifndef OW_HDR_OPTS_H
+#define OW_HDR_OPTS_H
 
-#include "cmsis_os.h"
+/* Rename this file to "ow_opts.h" for your application */
 
-/* User specific config which overwrites setup from ow_config_default.h file */
-#define OW_CFG_OS                               1
-#define OW_CFG_OS_MUTEX_HANDLE                  osMutexId_t
+/*
+ * Open "include/ow/ow_opt.h" and
+ * copy & replace here settings you want to change values
+ */
+#define OW_CFG_OS               1
 
-/* Include default configuration setup */
-#include "ow/ow_config_default.h"
-
-#endif /* OW_HDR_CONFIG_H */
+#endif /* OW_HDR_OPTS_H */

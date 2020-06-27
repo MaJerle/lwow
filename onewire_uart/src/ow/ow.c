@@ -595,18 +595,17 @@ ow_skip_rom(ow_t* const ow) {
  */
 uint8_t
 ow_crc(const void* in, const size_t len) {
-    size_t i;
-    uint8_t crc = 0, inbyte, mix;
+    uint8_t crc = 0;
     const uint8_t* d = in;
 
     if (in == NULL || len == 0) {
         return 0;
     }
 
-    for (i = 0; i < len; ++i, ++d) {
-        inbyte = *d;
-        for (uint8_t i = 8; i > 0; --i) {
-            mix = (crc ^ inbyte) & 0x01;
+    for (size_t i = 0; i < len; ++i, ++d) {
+        uint8_t inbyte = *d;
+        for (uint8_t j = 8; j > 0; --j) {
+            uint8_t mix = (crc ^ inbyte) & 0x01;
             crc >>= 1;
             if (mix > 0) {
                 crc ^= 0x8C;

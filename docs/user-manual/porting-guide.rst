@@ -40,7 +40,7 @@ System function must only support OS mutex management and has to provide:
 
 .. warning::
 	Application must define :c:macro:`OW_CFG_OS_MUTEX_HANDLE` for mutex type.
-	This shall be done in ``ow_config.h`` file.
+	This shall be done in ``ow_opts.h`` file.
 
 .. tip::
 	Check :ref:`api_ow_sys` for function prototypes.
