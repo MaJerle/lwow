@@ -61,13 +61,13 @@ init(void* arg) {
 
     /* Open virtual file as read/write */
     com_port = CreateFile(L"\\\\.\\COM4",
-        GENERIC_READ | GENERIC_WRITE,
-        0,
-        0,
-        OPEN_EXISTING,
-        0,
-        NULL
-    );
+                          GENERIC_READ | GENERIC_WRITE,
+                          0,
+                          0,
+                          OPEN_EXISTING,
+                          0,
+                          NULL
+                         );
 
     /* First read current values */
     if (GetCommState(com_port, &dcb)) {

@@ -60,7 +60,7 @@ typedef enum {
     owERRNODEV,                                 /*!< No device connected, maybe device removed during scan? */
     owERRTXRX,                                  /*!< Error while exchanging data */
     owERRBAUD,                                  /*!< Error setting baudrate */
-    owPARERR ,                                  /*!< Parameter error */
+    owPARERR,                                   /*!< Parameter error */
     owERR,                                      /*!< General-Purpose error */
 } owr_t;
 
@@ -180,10 +180,10 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* const ow, const ow_rom_t* const rom_id, 
  * \hideinitializer
  */
 #define OW_ASSERT(msg, c)           do {    \
-    if (!(c)) {                             \
-        return owPARERR;                    \
-    }                                       \
-} while (0)
+        if (!(c)) {                             \
+            return owPARERR;                    \
+        }                                       \
+    } while (0)
 
 /**
  * \brief           Assert check function with return `0`
@@ -195,10 +195,10 @@ typedef owr_t (*ow_search_cb_fn) (ow_t* const ow, const ow_rom_t* const rom_id, 
  * \hideinitializer
  */
 #define OW_ASSERT0(msg, c)          do {    \
-    if (!(c)) {                             \
-        return 0;                           \
-    }                                       \
-} while (0)
+        if (!(c)) {                             \
+            return 0;                           \
+        }                                       \
+    } while (0)
 
 /**
  * \brief           Get size of statically declared array

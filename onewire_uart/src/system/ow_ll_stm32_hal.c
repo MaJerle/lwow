@@ -110,7 +110,7 @@ transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     HAL_UART_Receive_IT(huart, rx, len);
 
     /* Process TX in polling mode */
-    HAL_UART_Transmit(huart, (void *)tx, len, 100);
+    HAL_UART_Transmit(huart, (void*)tx, len, 100);
 
     /* Wait RX to finish */
     while (huart->RxState != HAL_UART_STATE_READY) {

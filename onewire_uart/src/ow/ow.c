@@ -631,7 +631,7 @@ ow_crc(const void* in, const size_t len) {
  */
 owr_t
 ow_search_with_command_callback(ow_t* const ow, const uint8_t cmd, size_t* const roms_found,
-                                    const ow_search_cb_fn func, void* arg) {
+                                const ow_search_cb_fn func, void* arg) {
     owr_t res;
     ow_rom_t rom_id;
     size_t i;
@@ -642,7 +642,7 @@ ow_search_with_command_callback(ow_t* const ow, const uint8_t cmd, size_t* const
     ow_protect(ow, 1);
     /* Search device-by-device until all found */
     for (i = 0, res = ow_search_reset_raw(ow);
-        res == owOK && (res = ow_search_with_command_raw(ow, cmd, &rom_id)) == owOK; ++i) {
+         res == owOK && (res = ow_search_with_command_raw(ow, cmd, &rom_id)) == owOK; ++i) {
         if ((res = func(ow, &rom_id, i, arg)) != owOK) {
             break;
         }
@@ -687,7 +687,7 @@ ow_search_with_callback(ow_t* const ow, size_t* const roms_found, const ow_searc
  */
 owr_t
 ow_search_devices_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr,
-                                    const size_t rom_len, size_t* const roms_found) {
+                                   const size_t rom_len, size_t* const roms_found) {
     owr_t res;
     size_t cnt = 0;
 
@@ -715,7 +715,7 @@ ow_search_devices_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* 
  */
 owr_t
 ow_search_devices_with_command(ow_t* const ow, const uint8_t cmd, ow_rom_t* const rom_id_arr,
-                                const size_t rom_len, size_t* const roms_found) {
+                               const size_t rom_len, size_t* const roms_found) {
     owr_t res;
 
     OW_ASSERT("ow != NULL", ow != NULL);
