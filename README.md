@@ -1,10 +1,13 @@
-# 1-Wire over UART
+# Lightweight onewire library
+
+LwOW is lightweight, platform independent library for Onewire protocol for embedded systems.
+Its primary focus is UART hardware for physical communication for sensors and other slaves.
 
 More about 1-Wire over UART can be found on link below.
 
 https://www.maximintegrated.com/en/app-notes/index.mvp/id/214
 
-<h3>Read first: <a href="http://docs.majerle.eu/projects/onewire-uart/">Documentation</a></h3>
+<h3>Read first: <a href="http://docs.majerle.eu/projects/lwow/">Documentation</a></h3>
 
 ## Features
 

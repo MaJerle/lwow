@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>OW_STM32L496G_Discovery_DS18B20</name>
+	<name>LwOW_STM32L496G_Discovery_DS18B20</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -74,26 +74,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>OW/ow.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/onewire_uart/src/ow/ow.c</locationURI>
-		</link>
-		<link>
-			<name>OW DEVICES/ow_device_ds18x20.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/onewire_uart/src/devices/ow_device_ds18x20.c</locationURI>
-		</link>
-		<link>
-			<name>OW LL/ow_ll_stm32l496g_discovery.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/onewire_uart/src/system/ow_ll_stm32l496g_discovery.c</locationURI>
-		</link>
-		<link>
-			<name>OW SNIPPETS/scan_devices.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/snippets/scan_devices.c</locationURI>
-		</link>
-		<link>
 			<name>STM32L4xx_HAL_Drivers/stm32l4xx_ll_dma.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/third_party/embedded-libs/st_hal/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_dma.c</locationURI>
@@ -147,6 +127,26 @@
 			<name>User/system_stm32l4xx.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/src/system_stm32l4xx.c</locationURI>
+		</link>
+		<link>
+			<name>lwow/lwow.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/lwow/src/lwow/lwow.c</locationURI>
+		</link>
+		<link>
+			<name>lwow/lwow_device_ds18x20.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/lwow/src/devices/lwow_device_ds18x20.c</locationURI>
+		</link>
+		<link>
+			<name>lwow/lwow_ll_stm32l496g_discovery.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/lwow/src/system/lwow_ll_stm32l496g_discovery.c</locationURI>
+		</link>
+		<link>
+			<name>lwow/scan_devices.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/snippets/scan_devices.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

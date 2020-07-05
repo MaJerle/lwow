@@ -1,4 +1,4 @@
-.. _api_ow_sys:
+.. _api_lwow_sys:
 
 System functions
 ================
@@ -12,4 +12,4 @@ want to access to the same OneWire instance.
 
 Below is a list of function prototypes and its implementation details.
 
-.. doxygengroup:: OW_SYS
+.. doxygengroup:: LWOW_SYS

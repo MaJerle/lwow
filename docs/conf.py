@@ -22,7 +22,7 @@ import subprocess, os
 subprocess.call('doxygen doxyfile.doxy', shell=True)
 # -- Project information -----------------------------------------------------
 
-project = 'OneWire UART'
+project = 'LwOW'
 copyright = '2020, Tilen MAJERLE'
 author = 'Tilen MAJERLE'
 
@@ -38,7 +38,7 @@ for line in res.split("\n"):
         git_branch = line[1:].strip()
 
 # Decision for display version
-try: 
+try:
     if git_branch.index('develop') >= 0:
         version = "latest-develop"
 except Exception:
@@ -89,7 +89,7 @@ html_theme_options = {
     'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
-    
+
     'logo_only': False,
 
     # Toc options
@@ -100,8 +100,8 @@ html_theme_options = {
     'titles_only': False
 }
 html_logo = 'static/images/logo.svg'
-github_url = 'https://github.com/MaJerle/onewire-uart'
-html_baseurl = 'https://docs.majerle.eu/projects/onewire-uart/'
+github_url = 'https://github.com/MaJerle/lwow'
+html_baseurl = 'https://docs.majerle.eu/projects/lwow/'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -123,7 +123,7 @@ master_doc = 'index'
 #
 #
 breathe_projects = {
-	"onewire_uart": "_build/xml/"
+	"lwow": "_build/xml/"
 }
-breathe_default_project = "onewire_uart"
+breathe_default_project = "lwow"
 breathe_default_members = ('members', 'undoc-members')

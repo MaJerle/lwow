@@ -17,16 +17,16 @@ Its implementation must provide ``4`` functions:
 * To close/de-init UART hardware
 
 After these functions have been implemented (check below for references),
-driver must link these functions to single driver structure of type :cpp:type:`ow_ll_drv_t`,
+driver must link these functions to single driver structure of type :cpp:type:`lwow_ll_drv_t`,
 later used during instance initialization.
 
 .. tip::
-	Check :ref:`api_ow_ll` for function prototypes.
+	Check :ref:`api_lwow_ll` for function prototypes.
 
 Implement system functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-System functions are required only if operating system mode is enabled, with :c:macro:`OW_CFG_OS`.
+System functions are required only if operating system mode is enabled, with :c:macro:`LWOW_CFG_OS`.
 
 Its implementation structure is not the same as for low-level driver,
 customer needs to implement fixed functions, with pre-defined name, starting with ``ow_sys_`` name.
@@ -39,11 +39,11 @@ System function must only support OS mutex management and has to provide:
 * :cpp:func:`ow_sys_mutex_release` function to release (give) mutex back
 
 .. warning::
-	Application must define :c:macro:`OW_CFG_OS_MUTEX_HANDLE` for mutex type.
-	This shall be done in ``ow_opts.h`` file.
+	Application must define :c:macro:`LWOW_CFG_OS_MUTEX_HANDLE` for mutex type.
+	This shall be done in ``lwow_opts.h`` file.
 
 .. tip::
-	Check :ref:`api_ow_sys` for function prototypes.
+	Check :ref:`api_lwow_sys` for function prototypes.
 
 Example: Low-level driver for WIN32
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -51,7 +51,7 @@ Example: Low-level driver for WIN32
 Example code for low-level porting on `WIN32` platform.
 It uses native *Windows* features to open *COM* port and read/write from/to it.
 
-.. literalinclude:: ../../onewire_uart/src/system/ow_ll_win32.c
+.. literalinclude:: ../../lwow/src/system/lwow_ll_win32.c
     :language: c
     :linenos:
     :caption: Actual implementation of low-level driver for WIN32
@@ -61,7 +61,7 @@ Example: Low-level driver for STM32
 
 Example code for low-level porting on `STM32` platform.
 
-.. literalinclude:: ../../onewire_uart/src/system/ow_ll_stm32.c
+.. literalinclude:: ../../lwow/src/system/lwow_ll_stm32.c
     :language: c
     :linenos:
     :caption: Actual implementation of low-level driver for STM32
@@ -69,7 +69,7 @@ Example code for low-level porting on `STM32` platform.
 Example: System functions for WIN32
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../onewire_uart/src/system/ow_sys_win32.c
+.. literalinclude:: ../../lwow/src/system/lwow_sys_win32.c
     :language: c
     :linenos:
     :caption: Actual implementation of system functions for WIN32
@@ -77,7 +77,7 @@ Example: System functions for WIN32
 Example: System functions for CMSIS-OS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../onewire_uart/src/system/ow_sys_cmsis_os.c
+.. literalinclude:: ../../lwow/src/system/lwow_sys_cmsis_os.c
     :language: c
     :linenos:
     :caption: Actual implementation of system functions for CMSIS-OS
@@ -86,7 +86,7 @@ Low-Level driver for STM32 with STM32CubeMX
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Specific low-level driver has been implemented for STM32 series of microcontrollers,
-to allow easy and simple link of OneWire-UART library with projects generated with STM32CubeMX or STm32CubeIDE development tools.
+to allow easy and simple link of LwOW library with projects generated with STM32CubeMX or STm32CubeIDE development tools.
 
 Driver is based on HAL (Hardware Abstraction Layer) and it uses interrupt configuration to transmit/receive data.
 When customer starts a new project using CubeMX, it must:
@@ -101,7 +101,7 @@ When customer starts a new project using CubeMX, it must:
 	It uses custom argument to determine which UART handle shall be used for data transmit.
 	Check ``/examples/stm32/`` folder for actual implementation.
 
-.. literalinclude:: ../../onewire_uart/src/system/ow_ll_stm32_hal.c
+.. literalinclude:: ../../lwow/src/system/lwow_ll_stm32_hal.c
     :language: c
     :linenos:
     :caption: Actual implementation of low-level driver for STM32 with HAL drivers

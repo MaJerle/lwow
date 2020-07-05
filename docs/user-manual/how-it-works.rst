@@ -3,7 +3,7 @@
 How it works
 ============
 
-OneWire-UART library tends to use *UART* hardware of any microcontroller/embedded system,
+LwOW library tends to use *UART* hardware of any microcontroller/embedded system,
 to generate timing clock for OneWire signals.
 
 Nowaways embedded systems allow many UART ports, usually many more vs requirements for the final application.

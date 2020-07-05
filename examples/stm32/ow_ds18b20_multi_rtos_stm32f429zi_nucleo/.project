@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>OW_STM32F429ZI_Nucleo_DS18B20_Multi_RTOS</name>
+	<name>LwOW_STM32F429ZI_Nucleo_DS18B20_Multi_RTOS</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -32,27 +32,27 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>OW/ow.c</name>
+			<name>lwow/lwow.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/onewire_uart/src/ow/ow.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lwow/src/lwow/lwow.c</locationURI>
 		</link>
 		<link>
-			<name>OW/ow_device_ds18x20.c</name>
+			<name>lwow/lwow_device_ds18x20.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/onewire_uart/src/devices/ow_device_ds18x20.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lwow/src/devices/lwow_device_ds18x20.c</locationURI>
 		</link>
 		<link>
-			<name>OW/ow_ll_stm32_hal.c</name>
+			<name>lwow/lwow_ll_stm32_hal.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/onewire_uart/src/system/ow_ll_stm32_hal.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lwow/src/system/lwow_ll_stm32_hal.c</locationURI>
 		</link>
 		<link>
-			<name>OW/ow_sys_cmsis_os.c</name>
+			<name>lwow/lwow_sys_cmsis_os.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/onewire_uart/src/system/ow_sys_cmsis_os.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lwow/src/system/lwow_sys_cmsis_os.c</locationURI>
 		</link>
 		<link>
-			<name>OW/scan_devices.c</name>
+			<name>lwow/scan_devices.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/snippets/scan_devices.c</locationURI>
 		</link>

@@ -31,8 +31,8 @@
  */
 #include "main.h"
 #include "cmsis_os.h"
-#include "ow/ow.h"
-#include "ow/devices/ow_device_ds18x20.h"
+#include "lwow/lwow.h"
+#include "lwow/devices/lwow_device_ds18x20.h"
 #include "scan_devices.h"
 
 static void LL_Init(void);
@@ -42,9 +42,9 @@ static void USART_Printf_Init(void);
 static void app_thread(void* arg);
 
 /* Create new 1-Wire instance */
-extern const ow_ll_drv_t ow_ll_drv_stm32;
-ow_t ow;
-ow_rom_t rom_ids[20];
+extern const lwow_ll_drv_t lwow_ll_drv_stm32;
+lwow_t ow;
+lwow_rom_t rom_ids[20];
 size_t rom_found;
 
 /**
@@ -78,11 +78,12 @@ app_thread(void* arg) {
     float avg_temp;
     size_t avg_temp_count;
 
-    ow_init(&ow, &ow_ll_drv_stm32, NULL);       /* Initialize 1-Wire library and set user argument to NULL */
+    /* Initialize 1-Wire library and set user argument to NULL */
+    lwow_init(&ow, &lwow_ll_drv_stm32, NULL);
 
     /* Get onewire devices connected on 1-wire port */
     do {
-        if (scan_onewire_devices(&ow, rom_ids, OW_ARRAYSIZE(rom_ids), &rom_found) == owOK) {
+        if (scan_onewire_devices(&ow, rom_ids, LWOW_ARRAYSIZE(rom_ids), &rom_found) == lwowOK) {
             printf("Devices scanned, found %d devices!\r\n", (int)rom_found);
         } else {
             printf("Device scan error\r\n");
@@ -96,17 +97,17 @@ app_thread(void* arg) {
         /* Infinite loop */
         while (1) {
             printf("Start temperature conversion\r\n");
-            ow_ds18x20_start(&ow, NULL);        /* Start conversion on all devices, use protected API */
+            lwow_ds18x20_start(&ow, NULL);      /* Start conversion on all devices, use protected API */
             osDelay(1000);                      /* Release thread for 1 second */
 
             /* Read temperature on all devices */
             avg_temp = 0;
             avg_temp_count = 0;
             for (size_t i = 0; i < rom_found; i++) {
-                if (ow_ds18x20_is_b(&ow, &rom_ids[i])) {
+                if (lwow_ds18x20_is_b(&ow, &rom_ids[i])) {
                     float temp;
-                    uint8_t resolution = ow_ds18x20_get_resolution(&ow, &rom_ids[i]);
-                    if (ow_ds18x20_read(&ow, &rom_ids[i], &temp)) {
+                    uint8_t resolution = lwow_ds18x20_get_resolution(&ow, &rom_ids[i]);
+                    if (lwow_ds18x20_read(&ow, &rom_ids[i], &temp)) {
                         printf("Sensor %02u temperature is %d.%d degrees (%u bits resolution)\r\n",
                             (unsigned)i, (int)temp, (int)((temp * 1000.0f) - (((int)temp) * 1000)), (unsigned)resolution);
 
