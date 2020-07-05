@@ -29,7 +29,7 @@
  * This file is part of LwOW.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v2.0.0
+ * Version:         v3.0.0
  */
 #ifndef LWOW_HDR_OPTS_H
 #define LWOW_HDR_OPTS_H
