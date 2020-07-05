@@ -4,35 +4,35 @@
  */
 
 /*
- * Copyright (c) 2018 Tilen Majerle
- *  
+ * Copyright (c) 2020 Tilen MAJERLE
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, 
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
  * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v2.0.0
+ * Version:         v3.0.0
  */
 #include "main.h"
 #include "cmsis_os.h"
-#include "ow/ow.h"
-#include "ow/devices/ow_device_ds18x20.h"
+#include "lwow/lwow.h"
+#include "lwow/devices/lwow_device_ds18x20.h"
 #include "scan_devices.h"
 
 static void LL_Init(void);
@@ -42,9 +42,9 @@ static void USART_Printf_Init(void);
 static void app_thread(void* arg);
 
 /* Create new 1-Wire instance */
-extern const ow_ll_drv_t ow_ll_drv_stm32;
-ow_t ow;
-ow_rom_t rom_ids[20];
+extern const lwow_ll_drv_t lwow_ll_drv_stm32;
+lwow_t ow;
+lwow_rom_t rom_ids[20];
 size_t rom_found;
 
 /**
@@ -55,9 +55,9 @@ main(void) {
     LL_Init();                                  /* Reset of all peripherals, initializes the Flash interface and the Systick. */
     SystemClock_Config();                       /* Configure the system clock */
     USART_Printf_Init();                        /* Init USART for printf */
-    
+
     printf("Application running on STM32F429ZI-Nucleo!\r\n");
-    
+
     osKernelInitialize();
     const osThreadAttr_t app_thread_attr = {
             .priority = osPriorityNormal,
@@ -65,7 +65,7 @@ main(void) {
     };
     osThreadNew(app_thread, NULL, &app_thread_attr);/* Create application thread */
     osKernelStart();                            /* Start kernel */
-    
+
     while (1) {}
 }
 
@@ -78,11 +78,12 @@ app_thread(void* arg) {
     float avg_temp;
     size_t avg_temp_count;
 
-    ow_init(&ow, &ow_ll_drv_stm32, NULL);       /* Initialize 1-Wire library and set user argument to NULL */
+    /* Initialize 1-Wire library and set user argument to NULL */
+    lwow_init(&ow, &lwow_ll_drv_stm32, NULL);
 
     /* Get onewire devices connected on 1-wire port */
     do {
-        if (scan_onewire_devices(&ow, rom_ids, OW_ARRAYSIZE(rom_ids), &rom_found) == owOK) {
+        if (scan_onewire_devices(&ow, rom_ids, LWOW_ARRAYSIZE(rom_ids), &rom_found) == lwowOK) {
             printf("Devices scanned, found %d devices!\r\n", (int)rom_found);
         } else {
             printf("Device scan error\r\n");
@@ -92,22 +93,21 @@ app_thread(void* arg) {
         }
     } while (rom_found == 0);
 
-
-    if (rom_found) {
+    if (rom_found > 0) {
         /* Infinite loop */
         while (1) {
             printf("Start temperature conversion\r\n");
-            ow_ds18x20_start(&ow, NULL);        /* Start conversion on all devices, use protected API */
+            lwow_ds18x20_start(&ow, NULL);      /* Start conversion on all devices, use protected API */
             osDelay(1000);                      /* Release thread for 1 second */
 
             /* Read temperature on all devices */
             avg_temp = 0;
             avg_temp_count = 0;
             for (size_t i = 0; i < rom_found; i++) {
-                if (ow_ds18x20_is_b(&ow, &rom_ids[i])) {
+                if (lwow_ds18x20_is_b(&ow, &rom_ids[i])) {
                     float temp;
-                    uint8_t resolution = ow_ds18x20_get_resolution(&ow, &rom_ids[i]);
-                    if (ow_ds18x20_read(&ow, &rom_ids[i], &temp)) {
+                    uint8_t resolution = lwow_ds18x20_get_resolution(&ow, &rom_ids[i]);
+                    if (lwow_ds18x20_read(&ow, &rom_ids[i], &temp)) {
                         printf("Sensor %02u temperature is %d.%d degrees (%u bits resolution)\r\n",
                             (unsigned)i, (int)temp, (int)((temp * 1000.0f) - (((int)temp) * 1000)), (unsigned)resolution);
 
@@ -156,30 +156,30 @@ SystemClock_Config(void) {
     if (LL_FLASH_GetLatency() != LL_FLASH_LATENCY_5) {
         while (1) {}
     }
-    
+
     /* Set voltage scaling */
     LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
     LL_PWR_DisableOverDriveMode();
-    
+
     /* Enable HSE */
     LL_RCC_HSE_EnableBypass();
     LL_RCC_HSE_Enable();
     while (LL_RCC_HSE_IsReady() != 1) {}
-        
+
     /* Enable PLL */
     LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_4, 168, LL_RCC_PLLP_DIV_2);
     LL_RCC_PLL_Enable();
     while (LL_RCC_PLL_IsReady() != 1) {}
-        
+
     /* Set prescalers */
     LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
     LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_4);
     LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_2);
-        
+
     /* Configure system clock to PLL */
     LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
     while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL) {}
-        
+
     /* Configure systick */
     LL_Init1msTick(168000000);
     LL_SYSTICK_SetClkSource(LL_SYSTICK_CLKSOURCE_HCLK);

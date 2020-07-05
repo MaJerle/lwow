@@ -1,22 +1,22 @@
-.. _get_started:
+.. _getting_started:
 
-Get started
-===========
+Getting started
+===============
 
 .. _download_library:
 
 Download library
 ^^^^^^^^^^^^^^^^
 
-Library is primarly hosted on `Github <https://github.com/MaJerle/onewire-uart>`_.
+Library is primarly hosted on `Github <https://github.com/MaJerle/lwow>`_.
 
-* Download latest release from `releases area <https://github.com/MaJerle/onewire-uart/releases>`_ on Github
+* Download latest release from `releases area <https://github.com/MaJerle/lwow/releases>`_ on Github
 * Clone `develop` branch for latest development
 
 Download from releases
 **********************
 
-All releases are available on Github releases `releases area <https://github.com/MaJerle/onewire-uart/releases>`_.
+All releases are available on Github `releases area <https://github.com/MaJerle/lwow/releases>`_.
 
 Clone from Github
 *****************
@@ -28,9 +28,9 @@ First-time clone
 * Open console and navigate to path in the system to clone repository to. Use command ``cd your_path``
 * Clone repository with one of available ``3`` options
 
-  * Run ``git clone --recurse-submodules https://github.com/MaJerle/onewire-uart`` command to clone entire repository, including submodules
-  * Run ``git clone --recurse-submodules --branch develop https://github.com/MaJerle/onewire-uart`` to clone `development` branch, including submodules
-  * Run ``git clone --recurse-submodules --branch master https://github.com/MaJerle/onewire-uart`` to clone `latest stable` branch, including submodules
+  * Run ``git clone --recurse-submodules https://github.com/MaJerle/lwow`` command to clone entire repository, including submodules
+  * Run ``git clone --recurse-submodules --branch develop https://github.com/MaJerle/lwow`` to clone `development` branch, including submodules
+  * Run ``git clone --recurse-submodules --branch master https://github.com/MaJerle/lwow`` to clone `latest stable` branch, including submodules
 
 * Navigate to ``examples`` directory and run favourite example
 
@@ -50,10 +50,10 @@ Add library to project
 
 At this point it is assumed that you have successfully download library, either cloned it or from releases page.
 
-* Copy ``onewire_uart`` folder to your project
-* Add ``onewire_uart/src/include`` folder to `include path` of your toolchain
-* Add source files from ``onewire_uart/src/`` folder to toolchain build
-* Copy ``onewire_uart/src/include/ow/ow_config_template.h`` to project folder and rename it to ``ow_config.h``
+* Copy ``lwow`` folder to your project
+* Add ``lwow/src/include`` folder to `include path` of your toolchain
+* Add source files from ``lwow/src/`` folder to toolchain build
+* Copy ``lwow/src/include/lwow/lwow_opts_template.h`` to project folder and rename it to ``lwow_opts.h``
 * Implement device drivers for UART hardware
 * Build the project
 
@@ -61,10 +61,12 @@ Configuration file
 ^^^^^^^^^^^^^^^^^^
 
 Library comes with template config file, which can be modified according to needs.
-This file shall be named ``ow_config.h`` and its default template looks like the one below:
+This file shall be named ``lwow_opts.h`` and its default template looks like the one below:
 
 .. tip::
-    Check :ref:`api_ow_config` section for possible configuration settings
+    Check :ref:`api_lwow_opt` section for possible configuration settings
 
-.. literalinclude:: ../../onewire_uart/src/include/ow/ow_config_template.h
+.. literalinclude:: ../../lwow/src/include/lwow/lwow_opts_template.h
     :language: c
+    :linenos:
+    :caption: Config template file

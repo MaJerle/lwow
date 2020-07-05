@@ -1,16 +1,16 @@
-#ifndef __SCAN_DEVICES_H
-#define __SCAN_DEVICES_H
+#ifndef SNIPPET_HDR_SCAN_DEVICES_H
+#define SNIPPET_HDR_SCAN_DEVICES_H
+
+#include "lwow/lwow.h"
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
-#include "ow/ow.h"
-
-owr_t	scan_onewire_devices(ow_t* ow, ow_rom_t* rom_ids, size_t rtf, size_t* rf);
+lwowr_t   scan_onewire_devices(lwow_t* ow, lwow_rom_t* rom_ids, size_t rtf, size_t* rf);
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif
+#endif /* SNIPPET_HDR_SCAN_DEVICES_H */

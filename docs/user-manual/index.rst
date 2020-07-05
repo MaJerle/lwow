@@ -1,4 +1,4 @@
-.. _user_manual:
+.. _um:
 
 User manual
 ===========
@@ -8,5 +8,6 @@ User manual
 
     how-it-works
     thread-safety
-    hw_connection
-    uart_timing
+    hw-connection
+    uart-timing
+    porting-guide

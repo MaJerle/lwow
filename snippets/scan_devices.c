@@ -1,21 +1,21 @@
-#include "scan_devices.h"
-#include "ow/ow.h"
 #include <stdio.h>
+#include "scan_devices.h"
+#include "lwow/lwow.h"
 
 /**
  * \brief           Scan for 1-Wire devices on specific 1-Wire port
  * \param[in]       ow: 1-Wire handle
- * \param[in]       rom_ids: pointer to array of \ref ow_rom_t structures
+ * \param[in]       rom_ids: pointer to array of \ref lwow_rom_t structures
  * \param[in]       rtf: Number of roms to find
  * \param[out]      rf: Number of roms found after scan
  */
-owr_t
-scan_onewire_devices(ow_t* ow, ow_rom_t* rom_ids, size_t rtf, size_t* rf) {
-    owr_t res;
+lwowr_t
+scan_onewire_devices(lwow_t* ow, lwow_rom_t* rom_ids, size_t rtf, size_t* rf) {
+    lwowr_t res;
     size_t found;
-    
+
     /* Search for devices and save it to array */
-    res = ow_search_devices(ow, rom_ids, rtf, &found);
+    res = lwow_search_devices(ow, rom_ids, rtf, &found);
 
     /* Print all devices */
     for (size_t i = 0; i < found; ++i) {
