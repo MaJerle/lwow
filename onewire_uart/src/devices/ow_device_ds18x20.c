@@ -341,14 +341,14 @@ ow_ds18x20_set_alarm_temp_raw(ow_t* const ow, const ow_rom_t* const rom_id, int8
     /* Check valid temp range for temperatures */
     if (temp_l != OW_DS18X20_ALARM_NOCHANGE) {
         if (temp_l == OW_DS18X20_ALARM_DISABLE || temp_l < OW_DS18X20_TEMP_MIN) {
-            temp_l = OW_DS18X20_TEMP_MIN;       /* Set alarm to minumum vlaue */
+            temp_l = OW_DS18X20_TEMP_MIN;
         } else if (temp_l > OW_DS18X20_TEMP_MAX) {
             temp_l = OW_DS18X20_TEMP_MAX;
         }
     }
     if (temp_h != OW_DS18X20_ALARM_NOCHANGE) {
         if (temp_h == OW_DS18X20_ALARM_DISABLE || temp_h > OW_DS18X20_TEMP_MAX) {
-            temp_h = OW_DS18X20_TEMP_MAX;       /* Set alarm to maximal value */
+            temp_h = OW_DS18X20_TEMP_MAX;
         } else if (temp_h < OW_DS18X20_TEMP_MIN) {
             temp_h = OW_DS18X20_TEMP_MIN;
         }
@@ -455,7 +455,7 @@ ow_ds18x20_is_b(ow_t* const ow, const ow_rom_t* const rom_id) {
     OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     OW_UNUSED(ow);
-    return rom_id->rom[0] == 0x28;          /* Check for correct ROM family code */
+    return rom_id->rom[0] == 0x28;
 }
 
 /**
@@ -471,5 +471,5 @@ ow_ds18x20_is_s(ow_t* const ow, const ow_rom_t* const rom_id) {
     OW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     OW_UNUSED(ow);
-    return rom_id->rom[0] == 0x10;/* Check for correct ROM family code */
+    return rom_id->rom[0] == 0x10;
 }
