@@ -55,7 +55,7 @@
  * \return          \ref owOK on success, member of \ref owr_t otherwise
  */
 static owr_t
-send_bit(ow_t* const ow, uint8_t btw, uint8_t* btr) {
+prv_send_bit(ow_t* const ow, uint8_t btw, uint8_t* btr) {
     uint8_t b;
 
     SET_NOT_NULL(btr, 0);
@@ -321,7 +321,7 @@ ow_read_bit_ex_raw(ow_t* const ow, uint8_t* const br) {
     OW_ASSERT("ow != NULL", ow != NULL);
     OW_ASSERT("br != NULL", br != NULL);
 
-    return send_bit(ow, 1, br);                 /* Send bit as `1` and read the response */
+    return prv_send_bit(ow, 1, br);             /* Send bit as `1` and read the response */
 }
 
 /**
@@ -436,7 +436,7 @@ ow_search_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const ro
         uint8_t b, b_cpl;
         for (uint8_t j = 8; j > 0; --j, --id_bit_number) {
             /* Read first bit and its complimentary one */
-            if (send_bit(ow, 1, &b) != owOK || send_bit(ow, 1, &b_cpl) != owOK) {
+            if (prv_send_bit(ow, 1, &b) != owOK || prv_send_bit(ow, 1, &b_cpl) != owOK) {
                 return owERRTXRX;
             }
 
@@ -484,7 +484,7 @@ ow_search_with_command_raw(ow_t* const ow, const uint8_t cmd, ow_rom_t* const ro
              * In case of "collision", we decide here which devices we will
              * continue to scan (binary tree)
              */
-            send_bit(ow, b, NULL);              /* Send bit you want to continue with */
+            prv_send_bit(ow, b, NULL);
 
             /*
              * Because we shift down *id each iteration, we have to position bit value to the MSB position
