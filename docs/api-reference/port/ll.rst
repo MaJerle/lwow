@@ -1,6 +1,6 @@
-.. _api_ow_ll:
+.. _api_lwow_ll:
 
 Low-level driver
 ================
 
-.. doxygengroup:: OW_LL
+.. doxygengroup:: LWOW_LL

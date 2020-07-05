@@ -1,9 +1,10 @@
-OneWire-UART |version| documentation
-====================================
+LwOW |version| documentation
+============================
 
 Welcome to the documentation for version |version|.
 
-OneWire-UART is lightweight, platform independent library for Onewire protocol for embedded systems.
+LwOW is lightweight, platform independent library for Onewire protocol for embedded systems.
+Its primary focus is UART hardware for physical communication for sensors and other slaves.
 
 .. image:: static/images/logo.svg
     :align: center
@@ -11,7 +12,7 @@ OneWire-UART is lightweight, platform independent library for Onewire protocol f
 .. rst-class:: center
 .. rst-class:: index_links
 
-    :ref:`download_library` · :ref:`getting_started` · `Open Github <https://github.com/MaJerle/onewire-uart>`_
+    :ref:`download_library` · :ref:`getting_started` · `Open Github <https://github.com/MaJerle/lwow>`_
 
 Features
 ^^^^^^^^
@@ -30,7 +31,7 @@ Features
 * Works with operating system due to hardware timing management
 
   * Separate thread-safe API is available
-  
+
 * API for device scan, reading and writing single bits
 * User friendly MIT license
 

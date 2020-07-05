@@ -24,7 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ow/ow.h"
+#include "lwow/lwow.h"
 #include "scan_devices.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -56,10 +56,10 @@ DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart6_rx;
 DMA_HandleTypeDef hdma_usart6_tx;
 
-/* Definitions for ow_task */
-osThreadId_t ow_taskHandle;
-const osThreadAttr_t ow_task_attributes = {
-  .name = "ow_task",
+/* Definitions for lwow_task */
+osThreadId_t lwow_taskHandle;
+const osThreadAttr_t lwow_task_attributes = {
+  .name = "lwow_task",
   .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 256 * 4
 };
@@ -68,12 +68,12 @@ const osThreadAttr_t ow_task_attributes = {
 /* Custom structure for link between onewire and uarts */
 typedef struct {
     uint8_t id;
-    ow_t* ow;
+    lwow_t* ow;
     UART_HandleTypeDef* uart;
 } ow_uart_link_t;
 
 /* OneWire instances */
-ow_t ow1, ow2, ow3;
+lwow_t ow1, ow2, ow3;
 
 /* Make links between ow and uart */
 static ow_uart_link_t ow_uart_link_1 = { .id = 1, .ow = &ow1, .uart = &huart1 };
@@ -81,7 +81,7 @@ static ow_uart_link_t ow_uart_link_2 = { .id = 2, .ow = &ow2, .uart = &huart2 };
 static ow_uart_link_t ow_uart_link_3 = { .id = 3, .ow = &ow3, .uart = &huart6 };
 
 /* Use extern low-level for OW using HAL */
-extern const ow_ll_drv_t ow_ll_drv_stm32_hal;
+extern const lwow_ll_drv_t lwow_ll_drv_stm32_hal;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,7 +92,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_USART6_UART_Init(void);
-void start_ow_task(void *argument);
+void start_lwow_task(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -169,21 +169,21 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of ow_task */
-  ow_taskHandle = osThreadNew(start_ow_task, NULL, &ow_task_attributes);
+  /* creation of lwow_task */
+  lwow_taskHandle = osThreadNew(start_lwow_task, NULL, &lwow_task_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
 
   /* Handle OW on multiple instances */
-  osThreadNew(start_ow_task, &ow_uart_link_1, &ow_task_attributes);
-  osThreadNew(start_ow_task, &ow_uart_link_2, &ow_task_attributes);
-  osThreadNew(start_ow_task, &ow_uart_link_3, &ow_task_attributes);
+  osThreadNew(start_lwow_task, &ow_uart_link_1, &lwow_task_attributes);
+  osThreadNew(start_lwow_task, &ow_uart_link_2, &lwow_task_attributes);
+  osThreadNew(start_lwow_task, &ow_uart_link_3, &lwow_task_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
   osKernelStart();
- 
+
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -205,11 +205,11 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Configure the main internal regulator output voltage 
+  /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB busses clocks
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
@@ -223,13 +223,13 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Activate the Over-Drive mode 
+  /** Activate the Over-Drive mode
   */
   if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB busses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -376,10 +376,10 @@ static void MX_USART6_UART_Init(void)
 
 }
 
-/** 
+/**
   * Enable DMA controller clock
   */
-static void MX_DMA_Init(void) 
+static void MX_DMA_Init(void)
 {
 
   /* DMA controller clock enable */
@@ -442,21 +442,21 @@ int fputc(int ch, FILE* fil) {
 }
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_start_ow_task */
+/* USER CODE BEGIN Header_start_lwow_task */
 /**
-  * @brief  Function implementing the ow_task thread.
-  * @param  argument: Not used 
+  * @brief  Function implementing the lwow_task thread.
+  * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_start_ow_task */
-void start_ow_task(void *argument)
+/* USER CODE END Header_start_lwow_task */
+void start_lwow_task(void *argument)
 {
   /* USER CODE BEGIN 5 */
     #define ROM_IDS_SIZE                    10
     ow_uart_link_t* link = argument;
-    ow_rom_t* rom_ids;
+    lwow_rom_t* rom_ids;
     size_t rom_found;
-    owr_t res;
+    lwowr_t res;
 
     /* Disable default and unknown thread */
     if (link == NULL) {
@@ -474,21 +474,21 @@ void start_ow_task(void *argument)
     }
 
     /* Initialize OW instance */
-    res = ow_init(link->ow, &ow_ll_drv_stm32_hal, link->uart);
+    res = lwow_init(link->ow, &lwow_ll_drv_stm32_hal, link->uart);
 
     /* Initialize OW with UART instance as custom parameter */
     safeprintf("[OW %d] Init OW: %d\r\n", (int)link->id, (int)res);
 
     /* Scan device procedure */
     do {
-        if (scan_onewire_devices(link->ow, rom_ids, ROM_IDS_SIZE, &rom_found) == owOK) {
+        if (scan_onewire_devices(link->ow, rom_ids, ROM_IDS_SIZE, &rom_found) == lwowOK) {
             safeprintf("[OW %d] Devices scanned, found %d devices!\r\n", (int)link->id, (int)rom_found);
         } else {
             safeprintf("[OW %d] Device scan error\r\n", (int)link->id);
         }
         osDelay(3000);
     } while (1);
-  /* USER CODE END 5 */ 
+  /* USER CODE END 5 */
 }
 
  /**
@@ -533,7 +533,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

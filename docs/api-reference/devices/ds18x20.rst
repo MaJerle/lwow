@@ -3,4 +3,4 @@
 DS18x20 temperature sensor
 ==========================
 
-.. doxygengroup:: OW_DEVICE_DS18x20
+.. doxygengroup:: LWOW_DEVICE_DS18x20

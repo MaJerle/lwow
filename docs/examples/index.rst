@@ -56,7 +56,7 @@ Pins to connect to 1-Wire sensor:
 
 * *MTX*: MCU TX pin, connected to 1-Wire network data pin (together with MCU RX pin)
 * *MRX*: MCU RX pin, connected to 1-Wire network data pin (together with MCU TX pin)
-  
+
   * *TX* pin is configured as open-drain and can be safely connected directly with *RX* pin
 
 Other pins are for your information and are used for debugging purposes on board.
@@ -74,16 +74,16 @@ Here is a list of all examples coming with this library.
 	Examples are located in ``/examples/`` folder in downloaded package.
 	Check :ref:`download_library` section to get your package.
 
-OW bare-metal
-*************
+LwOW bare-metal
+***************
 
 Simple example, not using operating system, showing basic configuration of the library.
-It can be also called `bare-metal` implementation for simple applications
+It can be also called `bare-metal` implementation for simple applications.
 
-OW OS
-*****
+LwOW OS
+*******
 
-OW library as an example when multiple threads want to access to single OW core.
+LwOW library as an example when multiple threads want to access to single LwOW core.
 
 .. toctree::
 	:maxdepth: 2
