@@ -61,7 +61,12 @@ Configuration file
 ^^^^^^^^^^^^^^^^^^
 
 Library comes with template config file, which can be modified according to needs.
-This file shall be named ``lwow_opts.h`` and its default template looks like the one below:
+This file shall be named ``lwow_opts.h`` and its default template looks like the one below.
+
+.. note::
+    Default configuration template file location: ``lwow/src/include/lwow/lwow_opts_template.h``.
+    File must first be renamed to ``lwow_opts.h`` and then copied to the project directory (or simply renamed in-place) where compiler
+    include paths have access to it by using ``#include "lwow_opts.h"``.
 
 .. tip::
     Check :ref:`api_lwow_opt` section for possible configuration settings
