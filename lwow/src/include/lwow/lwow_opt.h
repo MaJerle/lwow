@@ -35,7 +35,9 @@
 #define LWOW_HDR_OPT_H
 
 /* Include application options */
+#ifndef LWOW_IGNORE_USER_OPTS
 #include "lwow_opts.h"
+#endif /* LWOW_IGNORE_USER_OPTS */
 
 #ifdef __cplusplus
 extern "C" {
