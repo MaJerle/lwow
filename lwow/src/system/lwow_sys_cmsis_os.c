@@ -39,38 +39,31 @@
 
 uint8_t
 lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    LWOW_UNUSED(arg);
     const osMutexAttr_t attr = {
         .attr_bits = osMutexRecursive
     };
 
-    *mutex = osMutexNew(&attr);                 /* Create new mutex */
-    LWOW_UNUSED(arg);
-    return 1;
+    *mutex = osMutexNew(&attr);
+    return *mutex != NULL;
 }
 
 uint8_t
 lwow_sys_mutex_delete(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
     LWOW_UNUSED(arg);
-    osMutexDelete(*mutex);                      /* Delete mutex */
-    return 1;
+    return osMutexDelete(*mutex) == osOK;
 }
 
 uint8_t
 lwow_sys_mutex_wait(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    if (osMutexAcquire(*mutex, osWaitForever) != osOK) {
-        return 0;
-    }
     LWOW_UNUSED(arg);
-    return 1;
+    return osMutexAcquire(*mutex, osWaitForever) == osOK;
 }
 
 uint8_t
 lwow_sys_mutex_release(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    if (osMutexRelease(*mutex) != osOK) {
-        return 0;
-    }
     LWOW_UNUSED(arg);
-    return 1;
+    return osMutexRelease(*mutex) == osOK;
 }
 
 #endif /* LWOW_CFG_OS && !__DOXYGEN__ */
