@@ -38,32 +38,32 @@
 #include "cmsis_os.h"
 
 uint8_t
-lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
     const osMutexAttr_t attr = {
         .attr_bits = osMutexRecursive
     };
 
-    *mutex = osMutexNew(&attr);
-    return *mutex != NULL;
+    *m = osMutexNew(&attr);
+    return *m != NULL;
 }
 
 uint8_t
-lwow_sys_mutex_delete(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+lwow_sys_mutex_delete(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
-    return osMutexDelete(*mutex) == osOK;
+    return osMutexDelete(*m) == osOK;
 }
 
 uint8_t
-lwow_sys_mutex_wait(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+lwow_sys_mutex_wait(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
-    return osMutexAcquire(*mutex, osWaitForever) == osOK;
+    return osMutexAcquire(*m, osWaitForever) == osOK;
 }
 
 uint8_t
-lwow_sys_mutex_release(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+lwow_sys_mutex_release(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
-    return osMutexRelease(*mutex) == osOK;
+    return osMutexRelease(*m) == osOK;
 }
 
 #endif /* LWOW_CFG_OS && !__DOXYGEN__ */
