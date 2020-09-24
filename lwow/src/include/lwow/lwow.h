@@ -168,7 +168,7 @@ typedef struct {
  */
 typedef lwowr_t (*lwow_search_cb_fn) (lwow_t* const ow, const lwow_rom_t* const rom_id, size_t index, void* arg);
 
-#define LWOW_UNUSED(x)                ((void)(x)) /*!< Unused variable macro */
+#define LWOW_UNUSED(x)                ((void)(x))   /*!< Unused variable macro */
 
 /**
  * \brief           Assert check function

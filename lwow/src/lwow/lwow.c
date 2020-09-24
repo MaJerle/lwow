@@ -177,13 +177,13 @@ lwow_reset_raw(lwow_t* const ow) {
     /* First send reset pulse */
     b = OW_RESET_BYTE;                          /* Set reset sequence byte = 0xF0 */
     if (!ow->ll_drv->set_baudrate(9600, ow->arg)) {
-        return lwowERRBAUD;                       /* Error setting baudrate */
+        return lwowERRBAUD;                     /* Error setting baudrate */
     }
     if (!ow->ll_drv->tx_rx(&b, &b, 1, ow->arg)) {
-        return lwowERRTXRX;                       /* Error with data exchange */
+        return lwowERRTXRX;                     /* Error with data exchange */
     }
     if (!ow->ll_drv->set_baudrate(115200, ow->arg)) {
-        return lwowERRBAUD;                       /* Error setting baudrate */
+        return lwowERRBAUD;                     /* Error setting baudrate */
     }
 
     /* Check if there is reply from any device */
