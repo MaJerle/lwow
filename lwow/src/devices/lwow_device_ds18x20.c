@@ -29,7 +29,7 @@
  * This file is part of LwOW - Lightweight onewire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v3.0.0
+ * Version:         v3.0.1
  */
 #include "lwow/lwow.h"
 #include "lwow/devices/lwow_device_ds18x20.h"
@@ -189,7 +189,7 @@ lwow_ds18x20_get_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id
         lwow_read_byte_ex_raw(ow, &br);
 
         lwow_read_byte_ex_raw(ow, &br);
-        res = ((br & 0x60) >> 0x05) + 9;  /* Read configuration byte and calculate bits */
+        res = ((br & 0x60) >> 0x05) + 9;        /* Read configuration byte and calculate bits */
     }
 
     return res;

@@ -29,7 +29,7 @@
  * This file is part of LwOW - Lightweight onewire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v3.0.0
+ * Version:         v3.0.1
  */
 #include "lwow/lwow.h"
 
@@ -38,39 +38,32 @@
 #include "cmsis_os.h"
 
 uint8_t
-lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
+    LWOW_UNUSED(arg);
     const osMutexAttr_t attr = {
         .attr_bits = osMutexRecursive
     };
 
-    *mutex = osMutexNew(&attr);                 /* Create new mutex */
-    LWOW_UNUSED(arg);
-    return 1;
+    *m = osMutexNew(&attr);
+    return *m != NULL;
 }
 
 uint8_t
-lwow_sys_mutex_delete(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+lwow_sys_mutex_delete(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
-    osMutexDelete(*mutex);                      /* Delete mutex */
-    return 1;
+    return osMutexDelete(*m) == osOK;
 }
 
 uint8_t
-lwow_sys_mutex_wait(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    if (osMutexAcquire(*mutex, osWaitForever) != osOK) {
-        return 0;
-    }
+lwow_sys_mutex_wait(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
-    return 1;
+    return osMutexAcquire(*m, osWaitForever) == osOK;
 }
 
 uint8_t
-lwow_sys_mutex_release(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
-    if (osMutexRelease(*mutex) != osOK) {
-        return 0;
-    }
+lwow_sys_mutex_release(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
-    return 1;
+    return osMutexRelease(*m) == osOK;
 }
 
 #endif /* LWOW_CFG_OS && !__DOXYGEN__ */

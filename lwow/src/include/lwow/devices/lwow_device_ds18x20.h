@@ -29,7 +29,7 @@
  * This file is part of LwOW - Lightweight onewire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v3.0.0
+ * Version:         v3.0.1
  */
 #ifndef LWOW_HDR_DEVICE_DS18x20_H
 #define LWOW_HDR_DEVICE_DS18x20_H
@@ -50,10 +50,10 @@ extern "C" {
  *                  locking mechanism when using with operating system.
  */
 
-#define LWOW_DS18X20_ALARM_DISABLE                ((int8_t)-128)  /*!< Disable alarm temperature */
-#define LWOW_DS18X20_ALARM_NOCHANGE               ((int8_t)-127)  /*!< Do not modify current alarm settings */
-#define LWOW_DS18X20_TEMP_MIN                     ((int8_t)-55)   /*!< Minimum temperature */
-#define LWOW_DS18X20_TEMP_MAX                     ((int8_t)125)   /*!< Maximal temperature */
+#define LWOW_DS18X20_ALARM_DISABLE                ((int8_t)-128)/*!< Disable alarm temperature */
+#define LWOW_DS18X20_ALARM_NOCHANGE               ((int8_t)-127)/*!< Do not modify current alarm settings */
+#define LWOW_DS18X20_TEMP_MIN                     ((int8_t)-55) /*!< Minimum temperature */
+#define LWOW_DS18X20_TEMP_MAX                     ((int8_t)125) /*!< Maximal temperature */
 
 uint8_t     lwow_ds18x20_start_raw(lwow_t* const ow, const lwow_rom_t* const rom_id);
 uint8_t     lwow_ds18x20_start(lwow_t* const ow, const lwow_rom_t* const rom_id);

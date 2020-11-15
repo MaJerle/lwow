@@ -29,7 +29,7 @@
  * This file is part of LwOW - Lightweight onewire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v3.0.0
+ * Version:         v3.0.1
  */
 #ifndef LWOW_HDR_H
 #define LWOW_HDR_H
@@ -168,7 +168,7 @@ typedef struct {
  */
 typedef lwowr_t (*lwow_search_cb_fn) (lwow_t* const ow, const lwow_rom_t* const rom_id, size_t index, void* arg);
 
-#define LWOW_UNUSED(x)                ((void)(x)) /*!< Unused variable macro */
+#define LWOW_UNUSED(x)                ((void)(x))   /*!< Unused variable macro */
 
 /**
  * \brief           Assert check function
