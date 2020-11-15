@@ -29,7 +29,7 @@
  * This file is part of LwOW - Lightweight onewire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v3.0.0
+ * Version:         v3.0.1
  */
 #include "lwow/lwow.h"
 
