@@ -12,7 +12,7 @@ Its primary focus is UART hardware for physical communication for sensors and ot
 .. rst-class:: center
 .. rst-class:: index_links
 
-    :ref:`download_library` :ref:`getting_started` `Open Github <https://github.com/MaJerle/lwow>`_
+    :ref:`download_library` :ref:`getting_started` `Open Github <https://github.com/MaJerle/lwow>`_ `Donate <https://paypal.me/tilz0R>`_
 
 Features
 ^^^^^^^^
