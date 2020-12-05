@@ -9,6 +9,9 @@ Its primary focus is UART hardware for physical communication for sensors and ot
 .. image:: static/images/logo.svg
     :align: center
 
+.. image:: static/images/logo.svg
+    :align: center
+
 .. rst-class:: center
 .. rst-class:: index_links
 
