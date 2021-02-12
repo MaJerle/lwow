@@ -106,10 +106,10 @@ lwow_ds18x20_read_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, float* c
         lwow_write_byte_ex_raw(ow, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read plain data from device */
-        for (uint8_t i = 0; i < 9; ++i) {
+        for (uint8_t i = 0; i < LWOW_ARRAYSIZE(data); ++i) {
             lwow_read_byte_ex_raw(ow, &data[i]);
         }
-        crc = lwow_crc(data, 0x09);             /* Calculate CRC */
+        crc = lwow_crc(data, LWOW_ARRAYSIZE(data)); /* Calculate CRC */
         if (crc == 0) {                         /* Result must be 0 to match the CRC */
             temp = (data[1] << 0x08) | data[0]; /* Format data in integer format */
             resolution = ((data[4] & 0x60) >> 0x05) + 0x09; /* Set resolution in units of bits */
