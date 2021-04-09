@@ -1,5 +1,5 @@
 /**
- * \file            ow.h
+ * \file            lwow.h
  * \brief           LwOW library
  */
 

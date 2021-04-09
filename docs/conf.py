@@ -26,27 +26,25 @@ project = 'LwOW'
 copyright = '2020, Tilen MAJERLE'
 author = 'Tilen MAJERLE'
 
-# The full version, including alpha/beta/rc tags
-version = 'v3.0.1'
-
-# Try to get branch at which this is running
-# and try to determine which version to display in sphinx
-git_branch = ''
+# Get current branch
 res = os.popen('git branch').read().strip()
 for line in res.split("\n"):
     if line[0] == '*':
         git_branch = line[1:].strip()
 
 # Decision for display version
-try:
-    if git_branch.index('develop') >= 0:
-        version = "latest-develop"
-except Exception:
-    print("Exception for index check")
+if git_branch == 'master' or git_branch == 'main':
+    version = os.popen('git describe --tags --abbrev=0').read().strip()
+    if version == '':
+        version = 'v0.0.0'
+elif git_branch == 'develop':
+    version = 'latest-develop'
+else:
+    version = 'branch-' + git_branch
 
-# For debugging purpose
+# For debugging purpose only
 print("GIT BRANCH: " + git_branch)
-print("VERSION: " + version)
+print("GIT VERSION: " + version)
 
 # -- General configuration ---------------------------------------------------
 
