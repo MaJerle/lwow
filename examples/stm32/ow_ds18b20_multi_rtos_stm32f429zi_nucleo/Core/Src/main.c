@@ -67,18 +67,15 @@ const osThreadAttr_t lwow_task_attributes = {
 
 /* Custom structure for link between onewire and uarts */
 typedef struct {
+    lwow_t ow;
     uint8_t id;
-    lwow_t* ow;
     UART_HandleTypeDef* uart;
 } ow_uart_link_t;
 
-/* OneWire instances */
-lwow_t ow1, ow2, ow3;
-
 /* Make links between ow and uart */
-static ow_uart_link_t ow_uart_link_1 = { .id = 1, .ow = &ow1, .uart = &huart1 };
-static ow_uart_link_t ow_uart_link_2 = { .id = 2, .ow = &ow2, .uart = &huart2 };
-static ow_uart_link_t ow_uart_link_3 = { .id = 3, .ow = &ow3, .uart = &huart6 };
+static ow_uart_link_t ow_uart_link_1 = { .id = 1, .uart = &huart1 };
+static ow_uart_link_t ow_uart_link_2 = { .id = 2, .uart = &huart2 };
+static ow_uart_link_t ow_uart_link_3 = { .id = 3, .uart = &huart6 };
 
 /* Use extern low-level for OW using HAL */
 extern const lwow_ll_drv_t lwow_ll_drv_stm32_hal;
@@ -474,14 +471,14 @@ void start_lwow_task(void *argument)
     }
 
     /* Initialize OW instance */
-    res = lwow_init(link->ow, &lwow_ll_drv_stm32_hal, link->uart);
+    res = lwow_init(&link->ow, &lwow_ll_drv_stm32_hal, link->uart);
 
     /* Initialize OW with UART instance as custom parameter */
     safeprintf("[OW %d] Init OW: %d\r\n", (int)link->id, (int)res);
 
     /* Scan device procedure */
     do {
-        if (scan_onewire_devices(link->ow, rom_ids, ROM_IDS_SIZE, &rom_found) == lwowOK) {
+        if (scan_onewire_devices(&link->ow, rom_ids, ROM_IDS_SIZE, &rom_found) == lwowOK) {
             safeprintf("[OW %d] Devices scanned, found %d devices!\r\n", (int)link->id, (int)rom_found);
         } else {
             safeprintf("[OW %d] Device scan error\r\n", (int)link->id);

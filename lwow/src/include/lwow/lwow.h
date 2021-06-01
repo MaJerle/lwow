@@ -1,5 +1,5 @@
 /**
- * \file            ow.h
+ * \file            lwow.h
  * \brief           LwOW library
  */
 
@@ -29,7 +29,7 @@
  * This file is part of LwOW - Lightweight onewire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v3.0.1
+ * Version:         v3.0.2
  */
 #ifndef LWOW_HDR_H
 #define LWOW_HDR_H

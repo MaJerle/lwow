@@ -1,6 +1,6 @@
 /**
- * \file            lwow_ll_stm32f429zi_nucleo.c
- * \brief           UART implementation for STM32F429ZI-Nucleo
+ * \file            lwow_ll_stm32f401re_nucleo.c
+ * \brief           UART implementation for STM32F401RE-Nucleo
  */
 
 /*

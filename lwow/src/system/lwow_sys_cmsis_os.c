@@ -29,7 +29,7 @@
  * This file is part of LwOW - Lightweight onewire library.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v3.0.1
+ * Version:         v3.0.2
  */
 #include "lwow/lwow.h"
 
@@ -41,11 +41,10 @@ uint8_t
 lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
     const osMutexAttr_t attr = {
-        .attr_bits = osMutexRecursive
+        .attr_bits = osMutexRecursive,
+        .name = "lwow_mutex",
     };
-
-    *m = osMutexNew(&attr);
-    return *m != NULL;
+    return (*m = osMutexNew(&attr)) != NULL;
 }
 
 uint8_t
