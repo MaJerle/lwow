@@ -27,7 +27,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  *
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
- * Version:         v3.0.1
+ * Version:         v3.0.2
  */
 #include "main.h"
 #include "lwow/lwow.h"

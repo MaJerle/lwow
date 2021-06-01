@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.2
+
+- Update CMSIS OS driver to support FreeRTOS aware kernel
+
 ## v3.0.1
 
 - Change configuration options from _CONFIG_ to _OPT
