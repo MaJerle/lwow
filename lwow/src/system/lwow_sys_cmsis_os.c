@@ -41,11 +41,10 @@ uint8_t
 lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
     const osMutexAttr_t attr = {
-        .attr_bits = osMutexRecursive
+        .attr_bits = osMutexRecursive,
+        .name = "lwow_mutex",
     };
-
-    *m = osMutexNew(&attr);
-    return *m != NULL;
+    return (*m = osMutexNew(&attr)) != NULL;
 }
 
 uint8_t
