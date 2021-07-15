@@ -126,48 +126,6 @@ typedef struct {
  */
 
 /**
- * \defgroup        LWOW_SYS System functions
- * \brief           System functions when used with operating system
- * \{
- */
-
-/**
- * \brief           Create a new mutex and assign value to handle
- * \param[out]      mutex: Output variable to save mutex handle
- * \param[in]       arg: User argument passed on \ref lwow_init function
- * \return          `1` on success, `0` otherwise
- */
-uint8_t lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
-
-/**
- * \brief           Delete existing mutex and invalidate mutex variable
- * \param[in]       mutex: Mutex handle to remove and invalidate
- * \param[in]       arg: User argument passed on \ref lwow_init function
- * \return          `1` on success, `0` otherwise
- */
-uint8_t lwow_sys_mutex_delete(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
-
-/**
- * \brief           Wait for a mutex until ready (unlimited time)
- * \param[in]       mutex: Mutex handle to wait for
- * \param[in]       arg: User argument passed on \ref lwow_init function
- * \return          `1` on success, `0` otherwise
- */
-uint8_t lwow_sys_mutex_wait(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
-
-/**
- * \brief           Release already locked mutex
- * \param[in]       mutex: Mutex handle to release
- * \param[in]       arg: User argument passed on \ref lwow_init function
- * \return          `1` on success, `0` otherwise
- */
-uint8_t lwow_sys_mutex_release(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
-
-/**
- * \}
- */
-
-/**
  * \brief           1-Wire structure
  */
 typedef struct {

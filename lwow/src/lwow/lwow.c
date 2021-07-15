@@ -33,6 +33,7 @@
  */
 #include <string.h>
 #include "lwow/lwow.h"
+#include "system/lwow_sys.h"
 
 #if !__DOXYGEN__
 

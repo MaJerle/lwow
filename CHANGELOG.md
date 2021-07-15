@@ -1,5 +1,9 @@
 # Changelog
 
+## Develop
+
+- Move system functions to `system/lwow_sys.h` file
+
 ## v3.0.2
 
 - Update CMSIS OS driver to support FreeRTOS aware kernel

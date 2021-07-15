@@ -31,7 +31,7 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v3.0.2
  */
-#include "lwow/lwow.h"
+#include "system/lwow_sys.h"
 #include "windows.h"
 
 #if LWOW_CFG_OS && !__DOXYGEN__
