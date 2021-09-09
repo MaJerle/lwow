@@ -650,10 +650,7 @@ lwow_search_with_command_callback(lwow_t* const ow, const uint8_t cmd, size_t* c
     }
     func(ow, NULL, i, arg);                     /* Call with NULL rom_id parameter */
     lwow_unprotect(ow, 1);
-
-    if (roms_found != NULL) {
-        *roms_found = i;
-    }
+    SET_NOT_NULL(roms_found, i);                /* Set number of roms found */
     if (res == lwowERRNODEV) {                  /* `No device` might not be an error, but simply no devices on bus */
         res = lwowOK;
     }
@@ -701,9 +698,7 @@ lwow_search_devices_with_command_raw(lwow_t* const ow, const uint8_t cmd, lwow_r
             break;
         }
     }
-    if (roms_found != NULL) {
-        *roms_found = cnt;
-    }
+    SET_NOT_NULL(roms_found, cnt);                /* Set number of roms found */
     if (res == lwowERRNODEV && cnt > 0) {
         res = lwowOK;
     }
