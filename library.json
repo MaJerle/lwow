@@ -1,0 +1,32 @@
+{
+	"name": "LwOW",
+	"version": "3.0.2",
+	"description": "Lightweight one wire library optimized for embedded systems and UART transmission protocol",
+	"keywords": "lwow, one wire, one-wire, ow, 1-wire, uart, usart, ds18b20",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MaJerle/lwow.git"
+	},
+	"authors": [
+		{
+			"name": "Tilen Majerle",
+			"email": "tilen@majerle.eu",
+			"url": "https://majerle.eu"
+		}
+	],
+	"license": "MIT",
+	"homepage": "https://github.com/MaJerle/lwow",
+	"dependencies": {
+
+	},
+	"frameworks": "*",
+	"platforms": "*",
+	"export": {
+		"exclude": [
+			"docs",
+			"**/.vs",
+			"**/Debug",
+			"third_party/embedded-libs/st_hal/CMSIS/Lib/ARM"
+		]
+	}
+}
