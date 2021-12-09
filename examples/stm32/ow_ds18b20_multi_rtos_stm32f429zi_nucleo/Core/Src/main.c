@@ -68,14 +68,16 @@ const osThreadAttr_t lwow_task_attributes = {
 /* Custom structure for link between onewire and uarts */
 typedef struct {
     lwow_t ow;
-    uint8_t id;
     UART_HandleTypeDef* uart;
+    const char* label;
 } ow_uart_link_t;
 
 /* Make links between ow and uart */
-static ow_uart_link_t ow_uart_link_1 = { .id = 1, .uart = &huart1 };
-static ow_uart_link_t ow_uart_link_2 = { .id = 2, .uart = &huart2 };
-static ow_uart_link_t ow_uart_link_3 = { .id = 3, .uart = &huart6 };
+static ow_uart_link_t ow_uart_links[] = {
+        { .uart = &huart1, .label = "OW on UART1" },
+        { .uart = &huart2, .label = "OW on UART2" },
+        { .uart = &huart6, .label = "OW on UART6" },
+};
 
 /* Use extern low-level for OW using HAL */
 extern const lwow_ll_drv_t lwow_ll_drv_stm32_hal;
@@ -97,6 +99,8 @@ void start_lwow_task(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+/* Simple printf with kernel locking */
 void
 safeprintf(const char* fmt, ...) {
     va_list va;
@@ -172,10 +176,13 @@ int main(void)
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
 
-  /* Handle OW on multiple instances */
-  osThreadNew(start_lwow_task, &ow_uart_link_1, &lwow_task_attributes);
-  osThreadNew(start_lwow_task, &ow_uart_link_2, &lwow_task_attributes);
-  osThreadNew(start_lwow_task, &ow_uart_link_3, &lwow_task_attributes);
+  /*
+   * Start multiple thread context entries, for each of OW instances
+   */
+  for (size_t i = 0; i < sizeof(ow_uart_links) / sizeof(ow_uart_links[0]); ++i) {
+      osThreadNew(start_lwow_task, &ow_uart_links[i], &lwow_task_attributes);
+  }
+
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -461,12 +468,12 @@ void start_lwow_task(void *argument)
     }
 
     /* Print thread started status */
-    safeprintf("[OW %d] Task started\r\n", (int)link->id);
+    safeprintf("[OW %s] Task started\r\n", link->label);
 
     /* Allocate memory for roms */
     rom_ids = pvPortMalloc(sizeof(*rom_ids) * ROM_IDS_SIZE);
     if (rom_ids == NULL) {
-        safeprintf("[OW %d] Could not allocate rom_ids memory!\r\n", (int)link->id);
+        safeprintf("[OW %s] Could not allocate rom_ids memory!\r\n", link->label);
         osThreadExit();
     }
 
@@ -474,14 +481,14 @@ void start_lwow_task(void *argument)
     res = lwow_init(&link->ow, &lwow_ll_drv_stm32_hal, link->uart);
 
     /* Initialize OW with UART instance as custom parameter */
-    safeprintf("[OW %d] Init OW: %d\r\n", (int)link->id, (int)res);
+    safeprintf("[OW %s] Init OW: %d\r\n", link->label, (int)res);
 
     /* Scan device procedure */
     do {
         if (scan_onewire_devices(&link->ow, rom_ids, ROM_IDS_SIZE, &rom_found) == lwowOK) {
-            safeprintf("[OW %d] Devices scanned, found %d devices!\r\n", (int)link->id, (int)rom_found);
+            safeprintf("[OW %s] Devices scanned, found %d devices!\r\n", link->label, (int)rom_found);
         } else {
-            safeprintf("[OW %d] Device scan error\r\n", (int)link->id);
+            safeprintf("[OW %s] Device scan error\r\n", link->label);
         }
         osDelay(3000);
     } while (1);
