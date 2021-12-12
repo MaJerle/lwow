@@ -80,7 +80,7 @@ init(void* arg) {
 
         /* Try to set com port data */
         if (!SetCommState(com_port, &dcb)) {
-            printf("Cannot get COM port\r\n");
+            printf("Cannot get COM port..\r\n");
             return 0;
         }
 
@@ -90,12 +90,16 @@ init(void* arg) {
             timeouts.ReadTotalTimeoutConstant = 0;
             timeouts.ReadTotalTimeoutMultiplier = 0;
             if (!SetCommTimeouts(com_port, &timeouts)) {
-                printf("Cannot set COM PORT timeouts\r\n");
+                printf("Cannot set COM PORT timeouts..\r\n");
             }
             GetCommTimeouts(com_port, &timeouts);
+        } else {
+            printf("Cannot get communication timeouts..\r\n");
+            return 0;
         }
     } else {
-        printf("Cannot get COM port info\r\n");
+        printf("Cannot get COM port info..\r\n");
+        return 0;
     }
 
     return 1;

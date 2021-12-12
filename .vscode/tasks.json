@@ -12,9 +12,10 @@
         {
             "type": "cppbuild",
             "label": "Build project",
-            "command": "ninja",
+            "command": "cmake",
             "args": [
-                "-C \"build\""
+                "--build",
+                "\"build\""
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -30,13 +31,17 @@
         {
             "type": "shell",
             "label": "Clean project",
-            "command": "ninja",
+            "command": "cmake",
             "args": [
-                "-C \"build\" clean"
+                "--build",
+                "\"build\"",
+                "--target",
+                "clean"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
+            "problemMatcher": []
         },
         {
             "type": "shell",
