@@ -24,6 +24,7 @@
 *.i
 *.txt
 !docs/*.txt
+!CMakeLists.txt
 RTE/
 
 *debug
