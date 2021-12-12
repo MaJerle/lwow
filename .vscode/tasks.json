@@ -1,0 +1,49 @@
+{
+	"version": "2.0.0",
+    
+    /* For this builds, you need
+     *
+     * - Ninja build system
+     * - MSYS2 compiler with ninja support
+     * - C/C++ extension for VSCode
+     * - CMake-Tools extension for VSCode
+     */
+	"tasks": [
+        {
+            "type": "cppbuild",
+            "label": "Build project",
+            "command": "ninja",
+            "args": [
+                "-C \"build\""
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Clean project",
+            "command": "ninja",
+            "args": [
+                "-C \"build\" clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "type": "shell",
+            "label": "Run application",
+            "command": "${workspaceFolder}\\build\\LwOW.exe",
+            "args": [],
+            "problemMatcher": [],
+        },
+    ]
+}
