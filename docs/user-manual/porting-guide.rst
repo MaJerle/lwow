@@ -29,14 +29,14 @@ Implement system functions
 System functions are required only if operating system mode is enabled, with :c:macro:`LWOW_CFG_OS`.
 
 Its implementation structure is not the same as for low-level driver,
-customer needs to implement fixed functions, with pre-defined name, starting with ``ow_sys_`` name.
+customer needs to implement fixed functions, with pre-defined name, starting with ``lwow_sys_`` name.
 
 System function must only support OS mutex management and has to provide:
 
-* :cpp:func:`ow_sys_mutex_create` function to create new mutex
-* :cpp:func:`ow_sys_mutex_delete` function to delete existing mutex
-* :cpp:func:`ow_sys_mutex_wait` function to wait for mutex to be available
-* :cpp:func:`ow_sys_mutex_release` function to release (give) mutex back
+* :cpp:func:`lwow_sys_mutex_create` function to create new mutex
+* :cpp:func:`lwow_sys_mutex_delete` function to delete existing mutex
+* :cpp:func:`lwow_sys_mutex_wait` function to wait for mutex to be available
+* :cpp:func:`lwow_sys_mutex_release` function to release (give) mutex back
 
 .. warning::
 	Application must define :c:macro:`LWOW_CFG_OS_MUTEX_HANDLE` for mutex type.
@@ -86,14 +86,14 @@ Low-Level driver for STM32 with STM32CubeMX
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Specific low-level driver has been implemented for STM32 series of microcontrollers,
-to allow easy and simple link of LwOW library with projects generated with STM32CubeMX or STm32CubeIDE development tools.
+to allow easy and simple link of LwOW library with projects generated with STM32CubeMX or STM32CubeIDE development tools.
 
 Driver is based on HAL (Hardware Abstraction Layer) and it uses interrupt configuration to transmit/receive data.
 When customer starts a new project using CubeMX, it must:
 
 - Configure specific UART IP as async mode both directions
 - UART must have enabled global interrupts, to allow transmitting/receiving data using interrupts
-- Application must pass pointer to UART handle when calling ``ow_init`` function
+- Application must pass pointer to UART handle when calling ``lwow_init`` function
 
 .. tip::
 	Special example has been developed to demonstrate how can application use
