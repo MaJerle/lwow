@@ -4,7 +4,7 @@
 
 - Move system functions to `system/lwow_sys.h` file
 - Add support for Platform.IO
-- Add CMakeLists.txt file for develop in VSCode
+- Split CMakeLists.txt files between library and executable
 
 ## v3.0.2
 
