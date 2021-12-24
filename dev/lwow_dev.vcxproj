@@ -72,16 +72,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\..\snippets\include;..\..\lwow\src\include;..\inc;.;$(IncludePath)</IncludePath>
+    <IncludePath>..\snippets\include;..\lwow\src\include;.;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\snippets\include;..\lwow\src\include;.;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>..\snippets\include;..\lwow\src\include;.;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>..\snippets\include;..\lwow\src\include;.;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -136,11 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\snippets\scan_devices.c" />
-    <ClCompile Include="..\..\lwow\src\devices\lwow_device_ds18x20.c" />
-    <ClCompile Include="..\..\lwow\src\lwow\lwow.c" />
-    <ClCompile Include="..\..\lwow\src\system\lwow_ll_win32.c" />
-    <ClCompile Include="..\..\lwow\src\system\lwow_sys_win32.c" />
+    <ClCompile Include="..\snippets\scan_devices.c" />
+    <ClCompile Include="..\lwow\src\devices\lwow_device_ds18x20.c" />
+    <ClCompile Include="..\lwow\src\lwow\lwow.c" />
+    <ClCompile Include="..\lwow\src\system\lwow_ll_win32.c" />
+    <ClCompile Include="..\lwow\src\system\lwow_sys_win32.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

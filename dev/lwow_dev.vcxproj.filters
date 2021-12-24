@@ -10,19 +10,19 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snippets\scan_devices.c">
+    <ClCompile Include="..\snippets\scan_devices.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwow\src\devices\lwow_device_ds18x20.c">
+    <ClCompile Include="..\lwow\src\devices\lwow_device_ds18x20.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwow\src\lwow\lwow.c">
+    <ClCompile Include="..\lwow\src\lwow\lwow.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwow\src\system\lwow_ll_win32.c">
+    <ClCompile Include="..\lwow\src\system\lwow_ll_win32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lwow\src\system\lwow_sys_win32.c">
+    <ClCompile Include="..\lwow\src\system\lwow_sys_win32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
