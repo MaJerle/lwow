@@ -36,6 +36,10 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     )
 
 # Add subdir with lwow and link to the project
+set(LWOW_SYS_ADD_FILES ON)
+set(LWOW_SYS_ARCH "win32")
+set(LWOW_LL_ADD_FILES ON)
+set(LWOW_LL_ARCH "win32")
 add_subdirectory("lwow")
 target_link_libraries(${PROJECT_NAME} lwow)
 add_subdirectory("snippets")
