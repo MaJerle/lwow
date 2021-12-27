@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "lwow.h": "c",
+        "lwow_sys.h": "c"
+    }
+}
