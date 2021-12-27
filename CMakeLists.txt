@@ -19,6 +19,10 @@ add_executable(${PROJECT_NAME})
 # Add key executable block
 target_sources(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/dev/main.c
+
+    # Port files
+    ${CMAKE_CURRENT_LIST_DIR}/lwow/src/system/lwow_sys_win32.c
+    ${CMAKE_CURRENT_LIST_DIR}/lwow/src/system/lwow_ll_win32.c
     )
 
 # Add key include paths
@@ -36,12 +40,8 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     )
 
 # Add subdir with lwow and link to the project
-set(LWOW_SYS_ADD_FILES ON)
-set(LWOW_SYS_ARCH "win32")
-set(LWOW_LL_ADD_FILES ON)
-set(LWOW_LL_ARCH "win32")
-set(LWOW_DEV_ADD_DS18X20 ON)
 add_subdirectory("lwow")
 target_link_libraries(${PROJECT_NAME} lwow)
+target_link_libraries(${PROJECT_NAME} lwow_devices)
 add_subdirectory("snippets")
 target_link_libraries(${PROJECT_NAME} lwow_snippets)
