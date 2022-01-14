@@ -5,6 +5,7 @@
 - Move system functions to `system/lwow_sys.h` file
 - Add support for Platform.IO
 - Split CMakeLists.txt files between library and executable
+- Change license year to 2022
 
 ## v3.0.2
 
