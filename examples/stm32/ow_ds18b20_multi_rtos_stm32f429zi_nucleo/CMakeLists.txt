@@ -23,9 +23,11 @@ set(CMAKE_CXX_EXTENSIONS            ON)
 #
 set(CPU_PARAMETERS
     -mthumb
+    # Other parameters
+    # -mcpu, -mfloat, -mfloat-abi, ...
     -mcpu=cortex-m4
-    -mfpu=fpv4-sp-d16
-    -mfloat-abi=hard
+	-mfpu=fpv4-sp-d16
+	-mfloat-abi=hard
 )
 
 # Set linker script
@@ -35,14 +37,14 @@ set(EXECUTABLE                      ${CMAKE_PROJECT_NAME})
 #
 # Source files
 #
-set(linked_SRCS
-    ${PROJ_PATH}/../../../lwow/src/lwow/lwow.c
+set(src_lwow_SRCS 
+	${PROJ_PATH}/../../../lwow/src/lwow/lwow.c
 	${PROJ_PATH}/../../../lwow/src/devices/lwow_device_ds18x20.c
 	${PROJ_PATH}/../../../lwow/src/system/lwow_ll_stm32_hal.c
 	${PROJ_PATH}/../../../lwow/src/system/lwow_sys_cmsis_os.c
-	${PROJ_PATH}/../../../snippets/scan_devices.c
-)
-set(source_folder_Core_SRCS 
+	${PROJ_PATH}/../../../snippets/scan_devices.c)
+
+set(src_core_src_SRCS 
 	${PROJ_PATH}/Core/Src/freertos.c
 	${PROJ_PATH}/Core/Src/main.c
 	${PROJ_PATH}/Core/Src/stm32f4xx_hal_msp.c
@@ -50,10 +52,12 @@ set(source_folder_Core_SRCS
 	${PROJ_PATH}/Core/Src/stm32f4xx_it.c
 	${PROJ_PATH}/Core/Src/syscalls.c
 	${PROJ_PATH}/Core/Src/sysmem.c
-	${PROJ_PATH}/Core/Src/system_stm32f4xx.c
+	${PROJ_PATH}/Core/Src/system_stm32f4xx.c)
+
+set(src_core_startup_SRCS 
 	${PROJ_PATH}/Core/Startup/startup_stm32f429zitx.s)
 
-set(source_folder_Drivers_SRCS 
+set(src_drivers_stm32f4xx_hal_driver_src_SRCS 
 	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
 	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
 	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
@@ -71,25 +75,23 @@ set(source_folder_Drivers_SRCS
 	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
 	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c)
 
-set(source_folder_Middlewares_SRCS 
+set(src_middlewares_third_party_freertos_source_SRCS 
 	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/croutine.c
 	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
 	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/list.c
 	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/queue.c
 	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
 	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/tasks.c
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/timers.c
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
+	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/timers.c)
+
+set(src_middlewares_third_party_freertos_source_cmsis_rtos_v2_SRCS 
+	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c)
+
+set(src_middlewares_third_party_freertos_source_portable_gcc_arm_cm4f_SRCS 
+	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c)
+
+set(src_middlewares_third_party_freertos_source_portable_memmang_SRCS 
 	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c)
-
-set(source_folder_lwow_SRCS 
-	)
-
-# Source files in the same path as ".cproject/.project" but nowhere included in file descriptions
-set(all_project_dir_SRCS
-    
-)
 
 #
 # Include directories
@@ -140,13 +142,15 @@ link_directories(${EXECUTABLE} ${link_DIRS})
 #
 # Executable files
 #
-add_executable(${EXECUTABLE}
-    ${linked_SRCS}
-    ${all_project_dir_SRCS} 
-	${source_folder_Core_SRCS}
-	${source_folder_Drivers_SRCS}
-	${source_folder_Middlewares_SRCS}
-	${source_folder_lwow_SRCS})
+add_executable(${EXECUTABLE} 
+	${src_lwow_SRCS}
+	${src_core_src_SRCS}
+	${src_core_startup_SRCS}
+	${src_drivers_stm32f4xx_hal_driver_src_SRCS}
+	${src_middlewares_third_party_freertos_source_SRCS}
+	${src_middlewares_third_party_freertos_source_cmsis_rtos_v2_SRCS}
+	${src_middlewares_third_party_freertos_source_portable_gcc_arm_cm4f_SRCS}
+	${src_middlewares_third_party_freertos_source_portable_memmang_SRCS})
 
 #
 # Add linked libraries for linker
@@ -203,7 +207,9 @@ target_compile_options(${EXECUTABLE} PRIVATE
         #-Wsuggest-override
     >
     $<$<COMPILE_LANGUAGE:ASM>:
-
+        -x assembler-with-cpp
+        -MMD
+        -MP
     >
     $<$<CONFIG:Debug>:
         -Og -g3 -ggdb
