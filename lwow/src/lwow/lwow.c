@@ -632,7 +632,7 @@ lwow_crc(const void* in, const size_t len) {
  */
 lwowr_t
 lwow_search_with_command_callback(lwow_t* const ow, const uint8_t cmd, size_t* const roms_found,
-                                const lwow_search_cb_fn func, void* arg) {
+                                  const lwow_search_cb_fn func, void* arg) {
     lwowr_t res;
     lwow_rom_t rom_id;
     size_t i;
@@ -685,7 +685,7 @@ lwow_search_with_callback(lwow_t* const ow, size_t* const roms_found, const lwow
  */
 lwowr_t
 lwow_search_devices_with_command_raw(lwow_t* const ow, const uint8_t cmd, lwow_rom_t* const rom_id_arr,
-                                   const size_t rom_len, size_t* const roms_found) {
+                                     const size_t rom_len, size_t* const roms_found) {
     lwowr_t res;
     size_t cnt = 0;
 
@@ -711,7 +711,7 @@ lwow_search_devices_with_command_raw(lwow_t* const ow, const uint8_t cmd, lwow_r
  */
 lwowr_t
 lwow_search_devices_with_command(lwow_t* const ow, const uint8_t cmd, lwow_rom_t* const rom_id_arr,
-                               const size_t rom_len, size_t* const roms_found) {
+                                 const size_t rom_len, size_t* const roms_found) {
     lwowr_t res;
 
     LWOW_ASSERT("ow != NULL", ow != NULL);
