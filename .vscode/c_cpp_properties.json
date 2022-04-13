@@ -2,16 +2,6 @@
     "configurations": [
         {
             "name": "Win32",
-            "includePath": [
-                "${workspaceFolder}\\dev\\",
-                "${workspaceFolder}\\lwow\\src\\include\\"
-            ],
-            "defines": [
-                "WIN32",
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
             "compilerPath": "c:\\msys64\\mingw64\\bin\\gcc.exe",
             "cStandard": "gnu17",
             "cppStandard": "gnu++14",
