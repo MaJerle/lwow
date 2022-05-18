@@ -1,4 +1,5 @@
 {
+    "version": 4,
     "configurations": [
         {
             "name": "Win32",
@@ -8,6 +9,5 @@
             "intelliSenseMode": "windows-gcc-x86",
             "configurationProvider": "ms-vscode.cmake-tools"
         }
-    ],
-    "version": 4
+    ]
 }
