@@ -26,8 +26,8 @@ set(CPU_PARAMETERS
     # Other parameters
     # -mcpu, -mfloat, -mfloat-abi, ...
     -mcpu=cortex-m4
-	-mfpu=fpv4-sp-d16
-	-mfloat-abi=hard
+    -mfpu=fpv4-sp-d16
+    -mfloat-abi=hard
 )
 
 # Set linker script
@@ -38,75 +38,75 @@ set(EXECUTABLE                      ${CMAKE_PROJECT_NAME})
 # Source files
 #
 set(src_lwow_SRCS 
-	${PROJ_PATH}/../../../lwow/src/lwow/lwow.c
-	${PROJ_PATH}/../../../lwow/src/devices/lwow_device_ds18x20.c
-	${PROJ_PATH}/../../../lwow/src/system/lwow_ll_stm32_hal.c
-	${PROJ_PATH}/../../../lwow/src/system/lwow_sys_cmsis_os.c
-	${PROJ_PATH}/../../../snippets/scan_devices.c)
+    ${PROJ_PATH}/../../../lwow/src/lwow/lwow.c
+    ${PROJ_PATH}/../../../lwow/src/devices/lwow_device_ds18x20.c
+    ${PROJ_PATH}/../../../lwow/src/system/lwow_ll_stm32_hal.c
+    ${PROJ_PATH}/../../../lwow/src/system/lwow_sys_cmsis_os.c
+    ${PROJ_PATH}/../../../snippets/scan_devices.c)
 
 set(src_core_src_SRCS 
-	${PROJ_PATH}/Core/Src/freertos.c
-	${PROJ_PATH}/Core/Src/main.c
-	${PROJ_PATH}/Core/Src/stm32f4xx_hal_msp.c
-	${PROJ_PATH}/Core/Src/stm32f4xx_hal_timebase_tim.c
-	${PROJ_PATH}/Core/Src/stm32f4xx_it.c
-	${PROJ_PATH}/Core/Src/syscalls.c
-	${PROJ_PATH}/Core/Src/sysmem.c
-	${PROJ_PATH}/Core/Src/system_stm32f4xx.c)
+    ${PROJ_PATH}/Core/Src/freertos.c
+    ${PROJ_PATH}/Core/Src/main.c
+    ${PROJ_PATH}/Core/Src/stm32f4xx_hal_msp.c
+    ${PROJ_PATH}/Core/Src/stm32f4xx_hal_timebase_tim.c
+    ${PROJ_PATH}/Core/Src/stm32f4xx_it.c
+    ${PROJ_PATH}/Core/Src/syscalls.c
+    ${PROJ_PATH}/Core/Src/sysmem.c
+    ${PROJ_PATH}/Core/Src/system_stm32f4xx.c)
 
 set(src_core_startup_SRCS 
-	${PROJ_PATH}/Core/Startup/startup_stm32f429zitx.s)
+    ${PROJ_PATH}/Core/Startup/startup_stm32f429zitx.s)
 
 set(src_drivers_stm32f4xx_hal_driver_src_SRCS 
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c)
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c)
 
 set(src_middlewares_third_party_freertos_source_SRCS 
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/croutine.c
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/list.c
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/queue.c
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/tasks.c
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/timers.c)
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/croutine.c
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/list.c
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/queue.c
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/tasks.c
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/timers.c)
 
 set(src_middlewares_third_party_freertos_source_cmsis_rtos_v2_SRCS 
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c)
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c)
 
 set(src_middlewares_third_party_freertos_source_portable_gcc_arm_cm4f_SRCS 
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c)
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c)
 
 set(src_middlewares_third_party_freertos_source_portable_memmang_SRCS 
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c)
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c)
 
 #
 # Include directories
 #
 set(include_c_DIRS
     ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/include
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
-	${PROJ_PATH}/Drivers/CMSIS/Include
-	${PROJ_PATH}/../../../lwow/src/include
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Inc
-	${PROJ_PATH}/Core/Inc
-	${PROJ_PATH}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-	${PROJ_PATH}/../../../snippets/include
-	${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
-	${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+    ${PROJ_PATH}/Drivers/CMSIS/Include
+    ${PROJ_PATH}/../../../lwow/src/include
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Inc
+    ${PROJ_PATH}/Core/Inc
+    ${PROJ_PATH}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+    ${PROJ_PATH}/../../../snippets/include
+    ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
+    ${PROJ_PATH}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
 )
 set(include_cxx_DIRS
     
@@ -120,8 +120,8 @@ set(include_asm_DIRS
 #
 set(symbols_c_SYMB
     "USE_HAL_DRIVER"
-	"DEBUG"
-	"STM32F429xx"
+    "DEBUG"
+    "STM32F429xx"
 )
 set(symbols_cxx_SYMB
     
@@ -143,14 +143,14 @@ link_directories(${EXECUTABLE} ${link_DIRS})
 # Executable files
 #
 add_executable(${EXECUTABLE} 
-	${src_lwow_SRCS}
-	${src_core_src_SRCS}
-	${src_core_startup_SRCS}
-	${src_drivers_stm32f4xx_hal_driver_src_SRCS}
-	${src_middlewares_third_party_freertos_source_SRCS}
-	${src_middlewares_third_party_freertos_source_cmsis_rtos_v2_SRCS}
-	${src_middlewares_third_party_freertos_source_portable_gcc_arm_cm4f_SRCS}
-	${src_middlewares_third_party_freertos_source_portable_memmang_SRCS})
+    ${src_lwow_SRCS}
+    ${src_core_src_SRCS}
+    ${src_core_startup_SRCS}
+    ${src_drivers_stm32f4xx_hal_driver_src_SRCS}
+    ${src_middlewares_third_party_freertos_source_SRCS}
+    ${src_middlewares_third_party_freertos_source_cmsis_rtos_v2_SRCS}
+    ${src_middlewares_third_party_freertos_source_portable_gcc_arm_cm4f_SRCS}
+    ${src_middlewares_third_party_freertos_source_portable_memmang_SRCS})
 
 #
 # Add linked libraries for linker
@@ -221,7 +221,7 @@ target_compile_options(${EXECUTABLE} PRIVATE
 
 # Setup linker parameters
 target_link_options(${EXECUTABLE} PRIVATE
-    -T${MCU_LINKER_SCRIPT}${linker_script_SRC}
+    -T${linker_script_SRC}
     ${CPU_PARAMETERS}
     -Wl,-Map=${CMAKE_PROJECT_NAME}.map
     -u _printf_float              # STDIO float formatting support (remove if not used)
