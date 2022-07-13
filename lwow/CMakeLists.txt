@@ -8,6 +8,10 @@ set(lwow_core_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/lwow/lwow.c
     )
 
+if (DEFINED LWOW_SYS_PORT)
+set(lwow_core_SRCS ${lwow_core_SRCS} ${CMAKE_CURRENT_LIST_DIR}/src/system/lwow_sys_${LWOW_SYS_PORT}.c)
+endif()
+
 # Devices
 set(lwow_devices_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/devices/lwow_device_ds18x20.c
