@@ -42,6 +42,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#if LWOW_CFG_OS || __DOXYGEN__
+
 /**
  * \defgroup        LWOW_SYS System functions
  * \brief           System functions when used with operating system
@@ -83,6 +85,8 @@ uint8_t lwow_sys_mutex_release(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
 /**
  * \}
  */
+
+#endif /* LWOW_CFG_OS || __DOXYGEN__ */
 
 #ifdef __cplusplus
 }
