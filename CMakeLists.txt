@@ -23,13 +23,13 @@ target_sources(${PROJECT_NAME} PUBLIC
     # Port files
     ${CMAKE_CURRENT_LIST_DIR}/lwow/src/system/lwow_sys_win32.c
     ${CMAKE_CURRENT_LIST_DIR}/lwow/src/system/lwow_ll_win32.c
-    )
+)
 
 # Add key include paths
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/dev
-    )
+)
 
 # Compilation definition information
 target_compile_definitions(${PROJECT_NAME} PUBLIC
@@ -37,7 +37,14 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     _DEBUG
     CONSOLE
     LWOW_DEV
-    )
+)
+
+# Compiler options
+target_compile_options(${PROJECT_NAME} PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+)
 
 # Add subdir with lwow and link to the project
 add_subdirectory("lwow")

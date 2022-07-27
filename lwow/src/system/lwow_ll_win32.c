@@ -58,9 +58,10 @@ static DCB dcb = { 0 };
 static uint8_t
 init(void* arg) {
     dcb.DCBlength = sizeof(dcb);
+    LWOW_UNUSED(arg);
 
     /* Open virtual file as read/write */
-    com_port = CreateFile(L"\\\\.\\COM4",
+    com_port = CreateFileA("\\\\.\\COM4",
                           GENERIC_READ | GENERIC_WRITE,
                           0,
                           0,
@@ -108,12 +109,14 @@ init(void* arg) {
 uint8_t
 deinit(void* arg) {
     /* Disable UART peripheral */
+    LWOW_UNUSED(arg);
 
     return 1;
 }
 
 uint8_t
 set_baudrate(uint32_t baud, void* arg) {
+    LWOW_UNUSED(arg);
     /* Configure UART to selected baudrate */
     dcb.BaudRate = baud;
 
@@ -131,6 +134,7 @@ transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     /* Perform data exchange */
     size_t read = 0;
     DWORD br;
+    LWOW_UNUSED(arg);
 
     if (com_port != NULL) {
         /*

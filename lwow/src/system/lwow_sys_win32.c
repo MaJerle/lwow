@@ -38,12 +38,14 @@
 
 uint8_t
 lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    LWOW_UNUSED(arg);
     *mutex = CreateMutex(NULL, 0, NULL);
     return 1;
 }
 
 uint8_t
 lwow_sys_mutex_delete(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    LWOW_UNUSED(arg);
     CloseHandle(*mutex);
     *mutex = NULL;
     return 1;
@@ -51,11 +53,13 @@ lwow_sys_mutex_delete(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
 
 uint8_t
 lwow_sys_mutex_wait(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    LWOW_UNUSED(arg);
     return WaitForSingleObject(*mutex, INFINITE) == WAIT_OBJECT_0;
 }
 
 uint8_t
 lwow_sys_mutex_release(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg) {
+    LWOW_UNUSED(arg);
     return ReleaseMutex(*mutex);
 }
 
