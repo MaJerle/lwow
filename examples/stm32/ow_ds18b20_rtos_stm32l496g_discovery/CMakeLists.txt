@@ -6,7 +6,9 @@ message("Entering ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt")
 # Core project settings
 #
 set(PROJ_PATH                       ${CMAKE_CURRENT_SOURCE_DIR})
-project(lwow_stm32l496g_discovery_ds18b20_rtos)
+get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+string(REPLACE " " "_" PROJECT_NAME ${PROJECT_NAME})
+project(${PROJECT_NAME})
 enable_language(C CXX ASM)
 message("Build type: "              ${CMAKE_BUILD_TYPE})
 
