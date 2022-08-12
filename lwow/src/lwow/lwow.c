@@ -253,7 +253,7 @@ lwow_write_byte_ex_raw(lwow_t* const ow, const uint8_t btw, uint8_t* const br) {
                 r |= 0x01 << i;
             }
         }
-        *br = r;
+        SET_NOT_NULL(br, r);
     }
     return lwowOK;
 }
