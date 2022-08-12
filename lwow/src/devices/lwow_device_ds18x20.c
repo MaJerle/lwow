@@ -91,8 +91,10 @@ lwow_ds18x20_read_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, float* c
 
     LWOW_ASSERT0("ow != NULL", ow != NULL);
     LWOW_ASSERT0("t != NULL", t != NULL);
-    LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
-
+    if (rom_id != NULL) {
+        LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
+    }
+    
     /*
      * First read bit and check if all devices completed with conversion.
      * If everything ready, try to reset the network and continue
@@ -156,7 +158,9 @@ lwow_ds18x20_read(lwow_t* const ow, const lwow_rom_t* const rom_id, float* const
 
     LWOW_ASSERT0("ow != NULL", ow != NULL);
     LWOW_ASSERT0("t != NULL", t != NULL);
-    LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
+    if (rom_id != NULL) {
+        LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
+    }
 
     lwow_protect(ow, 1);
     res = lwow_ds18x20_read_raw(ow, rom_id, t);
