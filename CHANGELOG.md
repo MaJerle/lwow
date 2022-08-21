@@ -7,6 +7,7 @@
 - Split CMakeLists.txt files between library and executable
 - Change license year to 2022
 - Update code style with astyle
+- Add demo driver for manual GPIO toggle
 
 ## v3.0.2
 
