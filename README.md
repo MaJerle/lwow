@@ -14,10 +14,11 @@ https://www.maximintegrated.com/en/app-notes/index.mvp/id/214
 * Written in ANSI C99
 * Platform independent, uses custom low-level layer for device drivers
 * 1-Wire protocol fits UART specifications at ``9600`` and ``115200`` bauds
+* Allows standard one-wire single-gpio manual control (when UARTs are no more available by the system)
 * Hardware is responsible for timing characteristics
     * Allows DMA on the high-performance microcontrollers
 * Different device drivers included
-    * DS18x20 temperature sensor is natively supported
+    * DS18B20 temperature sensor is natively supported
 * Works with operating system due to hardware timing management
     * Separate thread-safe API is available
 * API for device scan, reading and writing single bits

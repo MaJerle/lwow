@@ -106,5 +106,16 @@ When customer starts a new project using CubeMX, it must:
     :linenos:
     :caption: Actual implementation of low-level driver for STM32 with HAL drivers
 
+Low-Level driver for manual GPIO control
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+it is possible to use LwOW library even without available UARTs in the device (or if UARTs are being used for something else).
+Demo driver, that manipulates GPIO toggling is available in the repository.
+
+.. literalinclude:: ../../lwow/src/system/lwow_ll_stm32_single_gpio_driver.c
+    :language: c
+    :linenos:
+    :caption: LwOW low-level driver for manual GPIO control without UART
+
 .. toctree::
     :maxdepth: 2

@@ -1,7 +1,7 @@
 .. _hw_connection:
 
-Hardware connection with sensor
-===============================
+Hardware UART connection with sensor
+====================================
 
 To be able to successfully use sensors and other devices with embedded systems, these needs to be physically wired with embedded system (or PC).
 
@@ -47,6 +47,14 @@ Let's take reset sequence as an example. By specifications, UART has to be confi
 
 .. note:: 
 	Please check `official document on Maxim website <https://www.maximintegrated.com/en/design/technical-documents/tutorials/2/214.html>`_ to understand why ``0xF0`` and ``9600`` bauds.
+
+Hardware connection with single pin
+===================================
+
+As the protocol name suggests, one-wire is a single wire protocol.
+When UART is not available in the system, and when timing constraints may not be a problem, it is possible to use library in classic mode with single GPIO manipulation.
+
+Pin shall be in open-drain mode (when available) and include external pull-up resistor.
 
 .. toctree::
     :maxdepth: 2
