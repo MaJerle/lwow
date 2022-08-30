@@ -8,6 +8,7 @@
 - Change license year to 2022
 - Update code style with astyle
 - Add demo driver for manual GPIO toggle
+- Add `.clang-format` draft
 
 ## v3.0.2
 
