@@ -47,16 +47,14 @@ static uint8_t set_baudrate(uint32_t baud, void* arg);
 static uint8_t transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
 
 /* STM32 LL driver for OW */
-const lwow_ll_drv_t
-lwow_ll_drv_stm32 = {
+const lwow_ll_drv_t lwow_ll_drv_stm32 = {
     .init = init,
     .deinit = deinit,
     .set_baudrate = set_baudrate,
     .tx_rx = transmit_receive,
 };
 
-static LL_USART_InitTypeDef
-usart_init;
+static LL_USART_InitTypeDef usart_init;
 
 static uint8_t
 init(void* arg) {
@@ -128,8 +126,12 @@ transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
     LL_USART_Enable(ONEWIRE_USART);
     for (; len > 0; --len, ++t, ++r) {
         LL_USART_TransmitData8(ONEWIRE_USART, *t);
-        while (!LL_USART_IsActiveFlag_TXE(ONEWIRE_USART));
-        while (!LL_USART_IsActiveFlag_RXNE(ONEWIRE_USART));
+        while (!LL_USART_IsActiveFlag_TXE(ONEWIRE_USART)) {
+            ;
+        }
+        while (!LL_USART_IsActiveFlag_RXNE(ONEWIRE_USART)) {
+            ;
+        }
         *r = LL_USART_ReceiveData8(ONEWIRE_USART);
     }
     while (!LL_USART_IsActiveFlag_TC(ONEWIRE_USART)) {}

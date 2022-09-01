@@ -44,8 +44,7 @@ static uint8_t set_baudrate(uint32_t baud, void* arg);
 static uint8_t transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
 
 /* Win 32 LL driver for OW */
-const lwow_ll_drv_t
-lwow_ll_drv_win32 = {
+const lwow_ll_drv_t lwow_ll_drv_win32 = {
     .init = init,
     .deinit = deinit,
     .set_baudrate = set_baudrate,
@@ -53,7 +52,7 @@ lwow_ll_drv_win32 = {
 };
 
 static HANDLE com_port;
-static DCB dcb = { 0 };
+static DCB dcb = {0};
 
 static uint8_t
 init(void* arg) {
@@ -61,14 +60,7 @@ init(void* arg) {
     LWOW_UNUSED(arg);
 
     /* Open virtual file as read/write */
-    com_port = CreateFileA("\\\\.\\COM4",
-                          GENERIC_READ | GENERIC_WRITE,
-                          0,
-                          0,
-                          OPEN_EXISTING,
-                          0,
-                          NULL
-                         );
+    com_port = CreateFileA("\\\\.\\COM4", GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, NULL);
 
     /* First read current values */
     if (GetCommState(com_port, &dcb)) {

@@ -34,8 +34,8 @@
 #ifndef LWOW_HDR_SYS_H
 #define LWOW_HDR_SYS_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 #include "lwow/lwow.h"
 
 #ifdef __cplusplus

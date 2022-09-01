@@ -58,7 +58,7 @@ extern "C" {
  * \note            When `LWOW_CFG_OS` is enabled, user must implement functions in \ref LWOW_SYS group.
  */
 #ifndef LWOW_CFG_OS
-#define LWOW_CFG_OS                               0
+#define LWOW_CFG_OS 0
 #endif
 
 /**
@@ -69,7 +69,7 @@ extern "C" {
  *                  definition before you define handle type
  */
 #ifndef LWOW_CFG_OS_MUTEX_HANDLE
-#define LWOW_CFG_OS_MUTEX_HANDLE                  void *
+#define LWOW_CFG_OS_MUTEX_HANDLE void*
 #endif
 
 /**

@@ -42,28 +42,28 @@
 
 #if !__DOXYGEN__
 
-#include "stm32f4xx_ll_usart.h"
 #include "stm32f4xx_ll_bus.h"
-#include "stm32f4xx_ll_rcc.h"
 #include "stm32f4xx_ll_dma.h"
 #include "stm32f4xx_ll_gpio.h"
 #include "stm32f4xx_ll_pwr.h"
+#include "stm32f4xx_ll_rcc.h"
+#include "stm32f4xx_ll_usart.h"
 
 /* USART */
-#define ONEWIRE_USART                           USART1
-#define ONEWIRE_USART_CLK_EN                    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
+#define ONEWIRE_USART          USART1
+#define ONEWIRE_USART_CLK_EN   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
 
 /* USART TX PIN */
-#define ONEWIRE_TX_PORT                         GPIOA
-#define ONEWIRE_TX_PORT_CLK_EN                  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
-#define ONEWIRE_TX_PIN                          LL_GPIO_PIN_9
-#define ONEWIRE_TX_PIN_AF                       LL_GPIO_AF_7
+#define ONEWIRE_TX_PORT        GPIOA
+#define ONEWIRE_TX_PORT_CLK_EN LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+#define ONEWIRE_TX_PIN         LL_GPIO_PIN_9
+#define ONEWIRE_TX_PIN_AF      LL_GPIO_AF_7
 
 /* USART RX PIN */
-#define ONEWIRE_RX_PORT                         GPIOA
-#define ONEWIRE_RX_PORT_CLK_EN                  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
-#define ONEWIRE_RX_PIN                          LL_GPIO_PIN_10
-#define ONEWIRE_RX_PIN_AF                       LL_GPIO_AF_7
+#define ONEWIRE_RX_PORT        GPIOA
+#define ONEWIRE_RX_PORT_CLK_EN LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+#define ONEWIRE_RX_PIN         LL_GPIO_PIN_10
+#define ONEWIRE_RX_PIN_AF      LL_GPIO_AF_7
 
 /* Include generic STM32 driver */
 #include "../system/lwow_ll_stm32.c"

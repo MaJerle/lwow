@@ -48,7 +48,7 @@
  * - Use pointer to UART handle when initializing ow with ow_init
  */
 #include "lwow/lwow.h"
-#include "main.h"                               /* Generated normally by CubeMX */
+#include "main.h" /* Generated normally by CubeMX */
 
 #if !__DOXYGEN__
 
@@ -58,8 +58,7 @@ static uint8_t set_baudrate(uint32_t baud, void* arg);
 static uint8_t transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
 
 /* STM32 LL driver for OW */
-const lwow_ll_drv_t
-lwow_ll_drv_stm32_hal = {
+const lwow_ll_drv_t lwow_ll_drv_stm32_hal = {
     .init = init,
     .deinit = deinit,
     .set_baudrate = set_baudrate,

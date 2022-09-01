@@ -37,18 +37,18 @@
 #if !__DOXYGEN__
 
 /* Pin setting */
-#define GPIO_CLK_EN                     LL_AHB2_GRP1_PERIPH_GPIOB
-#define GPIO_PORT                       GPIOB
-#define GPIO_PIN                        LL_GPIO_PIN_13
-#define OW_PIN_LOW                      LL_GPIO_ResetOutputPin(GPIO_PORT, GPIO_PIN)
-#define OW_PIN_HIGH                     LL_GPIO_SetOutputPin(GPIO_PORT, GPIO_PIN)
-#define OW_PIN_INPUT                    LL_GPIO_SetPinMode(GPIO_PORT, GPIO_PIN, LL_GPIO_MODE_INPUT)
-#define OW_PIN_OUTPUT                   LL_GPIO_SetPinMode(GPIO_PORT, GPIO_PIN, LL_GPIO_MODE_OUTPUT)
+#define GPIO_CLK_EN     LL_AHB2_GRP1_PERIPH_GPIOB
+#define GPIO_PORT       GPIOB
+#define GPIO_PIN        LL_GPIO_PIN_13
+#define OW_PIN_LOW      LL_GPIO_ResetOutputPin(GPIO_PORT, GPIO_PIN)
+#define OW_PIN_HIGH     LL_GPIO_SetOutputPin(GPIO_PORT, GPIO_PIN)
+#define OW_PIN_INPUT    LL_GPIO_SetPinMode(GPIO_PORT, GPIO_PIN, LL_GPIO_MODE_INPUT)
+#define OW_PIN_OUTPUT   LL_GPIO_SetPinMode(GPIO_PORT, GPIO_PIN, LL_GPIO_MODE_OUTPUT)
 
 /* Macros for irq lock */
-#define IRQ_LOCK_DEFINE                 uint32_t primask = __get_PRIMASK()
-#define IRQ_LOCK                        __disable_irq()
-#define IRQ_UNLOCK                      __set_PRIMASK(primask)
+#define IRQ_LOCK_DEFINE uint32_t primask = __get_PRIMASK()
+#define IRQ_LOCK        __disable_irq()
+#define IRQ_UNLOCK      __set_PRIMASK(primask)
 
 /* Function prototypes for driver */
 static uint8_t prv_init(void* arg);
@@ -57,14 +57,9 @@ static uint8_t prv_set_baudrate(uint32_t baud, void* arg);
 static uint8_t prv_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg);
 
 /* Global driver structure for application use */
-const
-lwow_ll_drv_t ow_driver_gpio = {
-    .init = prv_init,
-    .deinit = prv_deinit,
-    .set_baudrate = prv_set_baudrate,
-    .tx_rx = prv_transmit_receive
-};
-static uint32_t baudrate;               /* Expected baudrate set by the application */
+const lwow_ll_drv_t ow_driver_gpio = {
+    .init = prv_init, .deinit = prv_deinit, .set_baudrate = prv_set_baudrate, .tx_rx = prv_transmit_receive};
+static uint32_t baudrate; /* Expected baudrate set by the application */
 
 /**
  * \brief           Actual data exchange function
@@ -109,7 +104,7 @@ prv_exch(uint16_t low_init_pulse_time, uint16_t pre_sample_time, uint16_t post_s
     /* Wait remaining time */
     start_time = time;
     while ((uint16_t)((time = timebase_get_us_tick()) - start_time) < post_sample_time) {}
-    
+
     IRQ_UNLOCK;
 
     return b;
@@ -177,11 +172,7 @@ prv_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
          * according to the byte value to be transmitted
          */
         for (size_t i = 0; i < len; ++i, ++r, ++t) {
-            uint8_t v = prv_exch(
-                *t ? 6 : 60,
-                *t ? 9 : 0,
-                *t ? 55 : 10
-            );
+            uint8_t v = prv_exch(*t ? 6 : 60, *t ? 9 : 0, *t ? 55 : 10);
 
             /*
              * Set value as 0xFF in case of positive reading, 0x00 otherwise.

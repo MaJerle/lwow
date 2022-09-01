@@ -38,15 +38,18 @@
 #if !__DOXYGEN__
 
 /* Internal macros */
-#define OW_FIRST_DEV                    0xFF
-#define OW_LAST_DEV                     0x00
+#define OW_FIRST_DEV  0xFF
+#define OW_LAST_DEV   0x00
 
-#define OW_RESET_BYTE                   0xF0
+#define OW_RESET_BYTE 0xF0
 
 #endif /* !__DOXYGEN__ */
 
 /* Set value if not NULL */
-#define SET_NOT_NULL(p, v)          if ((p) != NULL) { *(p) = (v); }
+#define SET_NOT_NULL(p, v)                                                                                             \
+    if ((p) != NULL) {                                                                                                 \
+        *(p) = (v);                                                                                                    \
+    }
 
 /**
  * \brief           Send single bit to OneWire port
@@ -65,12 +68,12 @@ prv_send_bit(lwow_t* const ow, uint8_t btw, uint8_t* btr) {
      * To send logical 1 over 1-wire, send 0xFF over UART
      * To send logical 0 over 1-wire, send 0x00 over UART
      */
-    btw = btw > 0 ? 0xFF : 0x00;                /* Convert to 0 or 1 */
+    btw = btw > 0 ? 0xFF : 0x00; /* Convert to 0 or 1 */
     if (!ow->ll_drv->tx_rx(&btw, &b, 1, ow->arg)) {
-        return lwowERRTXRX;                     /* Transmit error */
+        return lwowERRTXRX; /* Transmit error */
     }
-    b = b == 0xFF ? 1 : 0;                      /* Go to bit values */
-    SET_NOT_NULL(btr, b);                       /* Set new byte */
+    b = b == 0xFF ? 1 : 0; /* Go to bit values */
+    SET_NOT_NULL(btr, b);  /* Set new byte */
     return lwowOK;
 }
 
@@ -91,13 +94,13 @@ lwow_init(lwow_t* const ow, const lwow_ll_drv_t* const ll_drv, void* arg) {
     LWOW_ASSERT("ll_drv->tx_rx != NULL", ll_drv->tx_rx != NULL);
 
     ow->arg = arg;
-    ow->ll_drv = ll_drv;                        /* Assign low-level driver */
-    if (!ow->ll_drv->init(ow->arg)) {           /* Init low-level directly */
+    ow->ll_drv = ll_drv;              /* Assign low-level driver */
+    if (!ow->ll_drv->init(ow->arg)) { /* Init low-level directly */
         return lwowERR;
     }
 #if LWOW_CFG_OS
     if (!lwow_sys_mutex_create(&ow->mutex, arg)) {
-        ow->ll_drv->deinit(ow->arg);            /* Deinit low-level */
+        ow->ll_drv->deinit(ow->arg); /* Deinit low-level */
         return lwowERR;
     }
 #endif /* LWOW_CFG_OS */
@@ -176,15 +179,15 @@ lwow_reset_raw(lwow_t* const ow) {
     LWOW_ASSERT("ow != NULL", ow != NULL);
 
     /* First send reset pulse */
-    b = OW_RESET_BYTE;                          /* Set reset sequence byte = 0xF0 */
+    b = OW_RESET_BYTE; /* Set reset sequence byte = 0xF0 */
     if (!ow->ll_drv->set_baudrate(9600, ow->arg)) {
-        return lwowERRBAUD;                     /* Error setting baudrate */
+        return lwowERRBAUD; /* Error setting baudrate */
     }
     if (!ow->ll_drv->tx_rx(&b, &b, 1, ow->arg)) {
-        return lwowERRTXRX;                     /* Error with data exchange */
+        return lwowERRTXRX; /* Error with data exchange */
     }
     if (!ow->ll_drv->set_baudrate(115200, ow->arg)) {
-        return lwowERRBAUD;                     /* Error setting baudrate */
+        return lwowERRBAUD; /* Error setting baudrate */
     }
 
     /* Check if there is reply from any device */
@@ -322,7 +325,7 @@ lwow_read_bit_ex_raw(lwow_t* const ow, uint8_t* const br) {
     LWOW_ASSERT("ow != NULL", ow != NULL);
     LWOW_ASSERT("br != NULL", br != NULL);
 
-    return prv_send_bit(ow, 1, br);             /* Send bit as `1` and read the response */
+    return prv_send_bit(ow, 1, br); /* Send bit as `1` and read the response */
 }
 
 /**
@@ -351,7 +354,7 @@ lwowr_t
 lwow_search_reset_raw(lwow_t* const ow) {
     LWOW_ASSERT("ow != NULL", ow != NULL);
 
-    ow->disrepancy = OW_FIRST_DEV;              /* Reset disrepancy to default value */
+    ow->disrepancy = OW_FIRST_DEV; /* Reset disrepancy to default value */
     return lwowOK;
 }
 
@@ -420,8 +423,8 @@ lwow_search_with_command_raw(lwow_t* const ow, const uint8_t cmd, lwow_rom_t* co
 
     /* Check for last device */
     if (ow->disrepancy == 0) {
-        lwow_search_reset_raw(ow);              /* Reset search for next search */
-        return lwowERRNODEV;                    /* No devices anymore */
+        lwow_search_reset_raw(ow); /* Reset search for next search */
+        return lwowERRNODEV;       /* No devices anymore */
     }
 
     /* Step 1: Reset all devices on 1-Wire line to be able to listen for new command */
@@ -430,8 +433,8 @@ lwow_search_with_command_raw(lwow_t* const ow, const uint8_t cmd, lwow_rom_t* co
     }
 
     /* Step 2: Send search rom command for all devices on 1-Wire */
-    lwow_write_byte_ex_raw(ow, cmd, NULL);      /* Start with search ROM command */
-    next_disrepancy = OW_LAST_DEV;              /* This is currently last device */
+    lwow_write_byte_ex_raw(ow, cmd, NULL); /* Start with search ROM command */
+    next_disrepancy = OW_LAST_DEV;         /* This is currently last device */
 
     for (id_bit_number = 64; id_bit_number > 0;) {
         uint8_t b, b_cpl;
@@ -458,7 +461,7 @@ lwow_search_with_command_raw(lwow_t* const ow, const uint8_t cmd, lwow_rom_t* co
              *      - In this case, we move to direction of b value
              */
             if (b && b_cpl) {
-                goto out;                       /* We do not have device connected */
+                goto out; /* We do not have device connected */
             } else if (!b && !b_cpl) {
                 /*
                  * Decide which way to go for next scan
@@ -491,14 +494,14 @@ lwow_search_with_command_raw(lwow_t* const ow, const uint8_t cmd, lwow_rom_t* co
              * Because we shift down *id each iteration, we have to position bit value to the MSB position
              * and it will be automatically positioned correct way.
              */
-            *id = (*id >> 0x01) | (b << 0x07);  /* Shift ROM byte down and add next, protocol is LSB first */
+            *id = (*id >> 0x01) | (b << 0x07); /* Shift ROM byte down and add next, protocol is LSB first */
         }
-        ++id;                                   /* Go to next byte */
+        ++id; /* Go to next byte */
     }
 out:
-    ow->disrepancy = next_disrepancy;           /* Save disrepancy value */
-    memcpy(rom_id->rom, ow->rom.rom, sizeof(ow->rom.rom));  /* Copy ROM to user memory */
-    return id_bit_number == 0 ? lwowOK : lwowERRNODEV;  /* Return search result status */
+    ow->disrepancy = next_disrepancy;                      /* Save disrepancy value */
+    memcpy(rom_id->rom, ow->rom.rom, sizeof(ow->rom.rom)); /* Copy ROM to user memory */
+    return id_bit_number == 0 ? lwowOK : lwowERRNODEV;     /* Return search result status */
 }
 
 /**
@@ -533,8 +536,8 @@ lwow_match_rom_raw(lwow_t* const ow, const lwow_rom_t* const rom_id) {
     if (lwow_write_byte_ex_raw(ow, LWOW_CMD_MATCHROM, NULL) != lwowOK) {
         return lwowERR;
     }
-    for (uint8_t i = 0; i < 8; ++i) {           /* Send 8 bytes representing ROM address */
-        if (lwow_write_byte_ex_raw(ow, rom_id->rom[i], NULL) != lwowOK) {   /* Send ROM bytes */
+    for (uint8_t i = 0; i < 8; ++i) {                                     /* Send 8 bytes representing ROM address */
+        if (lwow_write_byte_ex_raw(ow, rom_id->rom[i], NULL) != lwowOK) { /* Send ROM bytes */
             return lwowERR;
         }
     }
@@ -648,10 +651,10 @@ lwow_search_with_command_callback(lwow_t* const ow, const uint8_t cmd, size_t* c
             break;
         }
     }
-    func(ow, NULL, i, arg);                     /* Call with NULL rom_id parameter */
+    func(ow, NULL, i, arg); /* Call with NULL rom_id parameter */
     lwow_unprotect(ow, 1);
-    SET_NOT_NULL(roms_found, i);                /* Set number of roms found */
-    if (res == lwowERRNODEV) {                  /* `No device` might not be an error, but simply no devices on bus */
+    SET_NOT_NULL(roms_found, i); /* Set number of roms found */
+    if (res == lwowERRNODEV) {   /* `No device` might not be an error, but simply no devices on bus */
         res = lwowOK;
     }
     return res;
@@ -698,7 +701,7 @@ lwow_search_devices_with_command_raw(lwow_t* const ow, const uint8_t cmd, lwow_r
             break;
         }
     }
-    SET_NOT_NULL(roms_found, cnt);                /* Set number of roms found */
+    SET_NOT_NULL(roms_found, cnt); /* Set number of roms found */
     if (res == lwowERRNODEV && cnt > 0) {
         res = lwowOK;
     }
@@ -733,7 +736,8 @@ lwow_search_devices_with_command(lwow_t* const ow, const uint8_t cmd, lwow_rom_t
  * \return          \ref lwowOK on success, member of \ref lwowr_t otherwise
  */
 lwowr_t
-lwow_search_devices_raw(lwow_t* const ow, lwow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found) {
+lwow_search_devices_raw(lwow_t* const ow, lwow_rom_t* const rom_id_arr, const size_t rom_len,
+                        size_t* const roms_found) {
     LWOW_ASSERT("ow != NULL", ow != NULL);
     LWOW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
     LWOW_ASSERT("rom_len > 0", rom_len > 0);

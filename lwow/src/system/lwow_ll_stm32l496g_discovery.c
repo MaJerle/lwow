@@ -44,30 +44,34 @@
 
 #if !__DOXYGEN__
 
-#include "stm32l4xx_ll_usart.h"
-#include "stm32l4xx_ll_lpuart.h"
 #include "stm32l4xx_ll_bus.h"
-#include "stm32l4xx_ll_rcc.h"
 #include "stm32l4xx_ll_dma.h"
 #include "stm32l4xx_ll_gpio.h"
+#include "stm32l4xx_ll_lpuart.h"
 #include "stm32l4xx_ll_pwr.h"
+#include "stm32l4xx_ll_rcc.h"
+#include "stm32l4xx_ll_usart.h"
 
 /* USART */
-#define ONEWIRE_USART                           USART1
-#define ONEWIRE_USART_CLK_EN                    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
+#define ONEWIRE_USART          USART1
+#define ONEWIRE_USART_CLK_EN   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
 
 /* USART TX PIN */
-#define ONEWIRE_TX_PORT                         GPIOB
-#define ONEWIRE_TX_PORT_CLK_EN                  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB)
-#define ONEWIRE_TX_PIN                          LL_GPIO_PIN_6
-#define ONEWIRE_TX_PIN_AF                       LL_GPIO_AF_7
+#define ONEWIRE_TX_PORT        GPIOB
+#define ONEWIRE_TX_PORT_CLK_EN LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB)
+#define ONEWIRE_TX_PIN         LL_GPIO_PIN_6
+#define ONEWIRE_TX_PIN_AF      LL_GPIO_AF_7
 
 /* USART RX PIN */
 /* Since GPIOG.10 is on VDDIO2, VDDIO2 domain must be enabled aswell */
-#define ONEWIRE_RX_PORT                         GPIOG
-#define ONEWIRE_RX_PORT_CLK_EN                  do { LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOG); LL_PWR_EnableVddIO2(); } while (0)
-#define ONEWIRE_RX_PIN                          LL_GPIO_PIN_10
-#define ONEWIRE_RX_PIN_AF                       LL_GPIO_AF_7
+#define ONEWIRE_RX_PORT        GPIOG
+#define ONEWIRE_RX_PORT_CLK_EN                                                                                         \
+    do {                                                                                                               \
+        LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOG);                                                           \
+        LL_PWR_EnableVddIO2();                                                                                         \
+    } while (0)
+#define ONEWIRE_RX_PIN    LL_GPIO_PIN_10
+#define ONEWIRE_RX_PIN_AF LL_GPIO_AF_7
 
 /* Include generic STM32 driver */
 #include "../system/lwow_ll_stm32.c"

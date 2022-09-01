@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v3.0.2
  */
-#include "lwow/lwow.h"
 #include "lwow/devices/lwow_device_ds18x20.h"
+#include "lwow/lwow.h"
 
 /**
  * \brief           Start temperature conversion on specific (or all) devices
@@ -48,10 +48,10 @@ lwow_ds18x20_start_raw(lwow_t* const ow, const lwow_rom_t* const rom_id) {
     LWOW_ASSERT0("ow != NULL", ow != NULL);
 
     if (lwow_reset_raw(ow) == lwowOK) {
-        if (rom_id == NULL) {                   /* Check for ROM id */
-            lwow_skip_rom_raw(ow);              /* Skip ROM, send to all devices */
+        if (rom_id == NULL) {      /* Check for ROM id */
+            lwow_skip_rom_raw(ow); /* Skip ROM, send to all devices */
         } else {
-            lwow_match_rom_raw(ow, rom_id);     /* Select exact device by ROM address */
+            lwow_match_rom_raw(ow, rom_id); /* Select exact device by ROM address */
         }
         lwow_write_byte_ex_raw(ow, 0x44, NULL); /* Start temperature conversion */
         ret = 1;
@@ -92,9 +92,10 @@ lwow_ds18x20_read_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, float* c
     LWOW_ASSERT0("ow != NULL", ow != NULL);
     LWOW_ASSERT0("t != NULL", t != NULL);
     if (rom_id != NULL) {
-        LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
+        LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)",
+                     lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
     }
-    
+
     /*
      * First read bit and check if all devices completed with conversion.
      * If everything ready, try to reset the network and continue
@@ -111,16 +112,16 @@ lwow_ds18x20_read_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, float* c
         for (uint8_t i = 0; i < LWOW_ARRAYSIZE(data); ++i) {
             lwow_read_byte_ex_raw(ow, &data[i]);
         }
-        crc = lwow_crc(data, LWOW_ARRAYSIZE(data)); /* Calculate CRC */
-        if (crc == 0) {                         /* Result must be 0 to match the CRC */
-            temp = (data[1] << 0x08) | data[0]; /* Format data in integer format */
+        crc = lwow_crc(data, LWOW_ARRAYSIZE(data));         /* Calculate CRC */
+        if (crc == 0) {                                     /* Result must be 0 to match the CRC */
+            temp = (data[1] << 0x08) | data[0];             /* Format data in integer format */
             resolution = ((data[4] & 0x60) >> 0x05) + 0x09; /* Set resolution in units of bits */
-            if (temp & 0x8000) {                /* Check for negative temperature */
-                temp = ~temp + 1;               /* Perform two's complement */
+            if (temp & 0x8000) {                            /* Check for negative temperature */
+                temp = ~temp + 1;                           /* Perform two's complement */
                 m = 1;
             }
             digit = (temp >> 0x04) | (((temp >> 0x08) & 0x07) << 0x04);
-            switch (resolution) {               /* Check for resolution settings */
+            switch (resolution) { /* Check for resolution settings */
                 case 9:
                     dec = ((temp >> 0x03) & 0x01) * 0.5f;
                     break;
@@ -159,7 +160,8 @@ lwow_ds18x20_read(lwow_t* const ow, const lwow_rom_t* const rom_id, float* const
     LWOW_ASSERT0("ow != NULL", ow != NULL);
     LWOW_ASSERT0("t != NULL", t != NULL);
     if (rom_id != NULL) {
-        LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
+        LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)",
+                     lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
     }
 
     lwow_protect(ow, 1);
@@ -182,8 +184,8 @@ lwow_ds18x20_get_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id
     LWOW_ASSERT0("rom_id != NULL", rom_id != NULL);
     LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id));
 
-    if (lwow_reset_raw(ow) == lwowOK) {         /* Reset bus */
-        lwow_match_rom_raw(ow, rom_id);         /* Select device */
+    if (lwow_reset_raw(ow) == lwowOK) { /* Reset bus */
+        lwow_match_rom_raw(ow, rom_id); /* Select device */
         lwow_write_byte_ex_raw(ow, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore bytes */
@@ -193,7 +195,7 @@ lwow_ds18x20_get_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id
         lwow_read_byte_ex_raw(ow, &br);
 
         lwow_read_byte_ex_raw(ow, &br);
-        res = ((br & 0x60) >> 0x05) + 9;        /* Read configuration byte and calculate bits */
+        res = ((br & 0x60) >> 0x05) + 9; /* Read configuration byte and calculate bits */
     }
 
     return res;
@@ -250,7 +252,7 @@ lwow_ds18x20_set_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id
         lwow_read_byte_ex_raw(ow, &tl);
         lwow_read_byte_ex_raw(ow, &conf);
 
-        conf &= ~0x60;                          /* Remove configuration bits for temperature resolution */
+        conf &= ~0x60; /* Remove configuration bits for temperature resolution */
         switch (bits) {
             case 12:
                 conf |= 0x60;
