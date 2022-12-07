@@ -101,11 +101,12 @@ prv_exch(uint16_t low_init_pulse_time, uint16_t pre_sample_time, uint16_t post_s
     /* Read pin state */
     b = LL_GPIO_IsInputPinSet(GPIO_PORT, GPIO_PIN);
 
+    /* Interrupts can now be enabled from this point */
+    IRQ_UNLOCK;
+
     /* Wait remaining time */
     start_time = time;
     while ((uint16_t)((time = timebase_get_us_tick()) - start_time) < post_sample_time) {}
-
-    IRQ_UNLOCK;
 
     return b;
 }
