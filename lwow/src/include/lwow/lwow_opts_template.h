@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v3.0.2
  */
-#ifndef LWOW_HDR_OPTS_H
-#define LWOW_HDR_OPTS_H
+#ifndef LWOW_OPTS_HDR_H
+#define LWOW_OPTS_HDR_H
 
 /* Rename this file to "lwow_opts.h" for your application */
 
@@ -41,4 +41,4 @@
  * copy & replace here settings you want to change values
  */
 
-#endif /* LWOW_HDR_OPTS_H */
+#endif /* LWOW_OPTS_HDR_H */

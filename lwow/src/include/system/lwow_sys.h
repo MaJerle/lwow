@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v3.0.2
  */
-#ifndef LWOW_HDR_SYS_H
-#define LWOW_HDR_SYS_H
+#ifndef LWOW_SYS_HDR_H
+#define LWOW_SYS_HDR_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -92,4 +92,4 @@ uint8_t lwow_sys_mutex_release(LWOW_CFG_OS_MUTEX_HANDLE* mutex, void* arg);
 }
 #endif /* __cplusplus */
 
-#endif /* LWOW_HDR_SYS_H */
+#endif /* LWOW_SYS_HDR_H */

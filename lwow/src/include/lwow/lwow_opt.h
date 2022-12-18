@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v3.0.2
  */
-#ifndef LWOW_HDR_OPT_H
-#define LWOW_HDR_OPT_H
+#ifndef LWOW_OPT_HDR_H
+#define LWOW_OPT_HDR_H
 
 /* Uncomment to ignore user options (or set macro in compiler flags) */
 /* #define LWOW_IGNORE_USER_OPTS */
@@ -80,4 +80,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* LWOW_HDR_OPT_H */
+#endif /* LWOW_OPT_HDR_H */

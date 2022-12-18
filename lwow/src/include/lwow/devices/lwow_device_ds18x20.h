@@ -31,8 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v3.0.2
  */
-#ifndef LWOW_HDR_DEVICE_DS18x20_H
-#define LWOW_HDR_DEVICE_DS18x20_H
+#ifndef LWOW_DEVICE_DS18x20_HDR_H
+#define LWOW_DEVICE_DS18x20_HDR_H
 
 #include "lwow/lwow.h"
 
@@ -84,4 +84,4 @@ uint8_t lwow_ds18x20_is_s(lwow_t* const ow, const lwow_rom_t* const rom_id);
 }
 #endif /* __cplusplus */
 
-#endif /* LWOW_HDR_DEVICE_DS18x20_H */
+#endif /* LWOW_DEVICE_DS18x20_HDR_H */
