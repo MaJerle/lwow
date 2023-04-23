@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
 
-# Debug message
-message("Entering ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt")
-
 # Library core sources
 set(lwow_core_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/lwow/lwow.c)
@@ -30,6 +27,3 @@ target_include_directories(lwow INTERFACE ${lwow_include_DIRS})
 add_library(lwow_devices INTERFACE)
 target_sources(lwow_devices PUBLIC ${lwow_devices_SRCS})
 target_include_directories(lwow_devices INTERFACE ${lwow_include_DIRS})
-
-# Debug message
-message("Exiting ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt")
