@@ -122,20 +122,11 @@ lwow_ds18x20_read_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, float* c
             }
             digit = (temp >> 0x04) | (((temp >> 0x08) & 0x07) << 0x04);
             switch (resolution) { /* Check for resolution settings */
-                case 9:
-                    dec = ((temp >> 0x03) & 0x01) * 0.5f;
-                    break;
-                case 10:
-                    dec = ((temp >> 0x02) & 0x03) * 0.25f;
-                    break;
-                case 11:
-                    dec = ((temp >> 0x01) & 0x07) * 0.125f;
-                    break;
-                case 12:
-                    dec = (temp & 0x0F) * 0.0625f;
-                    break;
-                default:
-                    dec = 0xFF, digit = 0;
+                case 9: dec = ((temp >> 0x03) & 0x01) * 0.5f; break;
+                case 10: dec = ((temp >> 0x02) & 0x03) * 0.25f; break;
+                case 11: dec = ((temp >> 0x01) & 0x07) * 0.125f; break;
+                case 12: dec = (temp & 0x0F) * 0.0625f; break;
+                default: dec = 0xFF, digit = 0;
             }
             dec += digit;
             if (m) {
@@ -254,18 +245,11 @@ lwow_ds18x20_set_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id
 
         conf &= ~0x60; /* Remove configuration bits for temperature resolution */
         switch (bits) {
-            case 12:
-                conf |= 0x60;
-                break;
-            case 11:
-                conf |= 0x40;
-                break;
-            case 10:
-                conf |= 0x20;
-                break;
+            case 12: conf |= 0x60; break;
+            case 11: conf |= 0x40; break;
+            case 10: conf |= 0x20; break;
             case 9:
-            default:
-                break;
+            default: break;
         }
 
         /* Write data back to device */
