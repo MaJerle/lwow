@@ -11,7 +11,7 @@ https://www.maximintegrated.com/en/app-notes/index.mvp/id/214
 
 ## Features
 
-* Written in ANSI C99
+* Written in C (C11)
 * Platform independent, uses custom low-level layer for device drivers
 * 1-Wire protocol fits UART specifications at ``9600`` and ``115200`` bauds
 * Allows standard one-wire single-gpio manual control (when UARTs are no more available by the system)

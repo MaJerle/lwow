@@ -17,7 +17,7 @@ Its primary focus is UART hardware for physical communication for sensors and ot
 Features
 ^^^^^^^^
 
-* Written in ANSI C99
+* Written in C (C11)
 * Platform independent, uses custom low-level layer for device drivers
 * 1-Wire protocol fits UART specifications at ``9600`` and ``115200`` bauds
 * Allows standard one-wire single-gpio manual control (when UARTs are no more available by the system)
@@ -80,7 +80,7 @@ Table of contents
     LwESP - ESP-AT library <https://github.com/MaJerle/lwesp>
     LwEVT - Event manager <https://github.com/MaJerle/lwevt>
     LwGPS - GPS NMEA parser <https://github.com/MaJerle/lwgps>
-    LwGSM - GSM-AT library <https://github.com/MaJerle/lwgsm>
+    LwCELL - Cellular modem host AT library <https://github.com/MaJerle/lwcell>
     LwJSON - JSON parser <https://github.com/MaJerle/lwjson>
     LwMEM - Memory manager <https://github.com/MaJerle/lwmem>
     LwOW - OneWire with UART <https://github.com/MaJerle/lwow>
