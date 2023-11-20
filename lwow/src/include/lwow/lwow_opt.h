@@ -73,6 +73,24 @@ extern "C" {
 #endif
 
 /**
+ * \brief           Memory set function
+ * 
+ * \note            Function footprint is the same as \ref memset
+ */
+#ifndef LWOW_MEMSET
+#define LWOW_MEMSET(dst, val, len) memset((dst), (val), (len))
+#endif
+
+/**
+ * \brief           Memory copy function
+ * 
+ * \note            Function footprint is the same as \ref memcpy
+ */
+#ifndef LWOW_MEMCPY
+#define LWOW_MEMCPY(dst, src, len) memcpy((dst), (src), (len))
+#endif
+
+/**
  * \}
  */
 
