@@ -47,7 +47,7 @@ extern "C" {
  * \{
  *
  * \note            Functions with `_raw` suffix do no implement
- *                  locking mechanism when using with operating system.
+ *                  locking mechanism when used with operating system.
  */
 
 #define LWOW_DS18X20_ALARM_DISABLE  ((int8_t)-128) /*!< Disable alarm temperature */
