@@ -31,6 +31,8 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v3.0.2
  */
+#include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include "lwow/lwow.h"
 #include "system/lwow_sys.h"
@@ -60,7 +62,7 @@
  */
 static lwowr_t
 prv_send_bit(lwow_t* const owobj, uint8_t btw, uint8_t* btr) {
-    uint8_t byt;
+    uint8_t byt = 0;
 
     SET_NOT_NULL(btr, 0);
 
@@ -174,7 +176,7 @@ lwow_unprotect(lwow_t* const owobj, const uint8_t protect) {
  */
 lwowr_t
 lwow_reset_raw(lwow_t* const owobj) {
-    uint8_t byt;
+    uint8_t byt = 0;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
 
@@ -203,7 +205,7 @@ lwow_reset_raw(lwow_t* const owobj) {
  */
 lwowr_t
 lwow_reset(lwow_t* const owobj) {
-    lwowr_t res;
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
 
@@ -217,15 +219,15 @@ lwow_reset(lwow_t* const owobj) {
  * \brief           Write byte over OW and read its response
  * \param[in,out]   owobj: 1-Wire handle
  * \param[in]       btw: Byte to write
- * \param[out]      br: Pointer to read value. Set to `NULL` if not used
+ * \param[out]      byr: Pointer to read value. Set to `NULL` if not used
  * \return          \ref lwowOK on success, member of \ref lwowr_t otherwise
  */
 lwowr_t
-lwow_write_byte_ex_raw(lwow_t* const owobj, const uint8_t btw, uint8_t* const br) {
-    uint8_t tr[8];
+lwow_write_byte_ex_raw(lwow_t* const owobj, const uint8_t btw, uint8_t* const byr) {
+    uint8_t trx[8];
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
-    SET_NOT_NULL(br, 0);
+    SET_NOT_NULL(byr, 0);
 
     /* Prepare output data */
     for (uint8_t i = 0; i < 8U; ++i) {
@@ -233,31 +235,31 @@ lwow_write_byte_ex_raw(lwow_t* const owobj, const uint8_t btw, uint8_t* const br
          * If we have to send high bit, set byte as 0xFF,
          * otherwise set it as low bit, 0x00
          */
-        tr[i] = (btw & (1U << i)) ? 0xFFU : 0x00U;
+        trx[i] = (btw & (1U << i)) ? 0xFFU : 0x00U;
     }
 
     /*
      * Exchange data on UART level,
      * send single byte for each bit = 8 bytes
      */
-    if (!owobj->ll_drv->tx_rx(tr, tr, 8U, owobj->arg)) {
+    if (!owobj->ll_drv->tx_rx(trx, trx, 8U, owobj->arg)) {
         return lwowERRTXRX;
     }
 
     /* Update output value */
-    if (br != NULL) {
-        uint8_t r = 0U;
+    if (byr != NULL) {
+        uint8_t tmp = 0U;
 
         /*
          * Check received data. If we read 0xFF,
          * our logical write 1 was successful, otherwise it was 0.
          */
-        for (uint8_t i = 0; i < 8U; ++i) {
-            if (tr[i] == 0xFFU) {
-                r |= 0x01U << i;
+        for (uint8_t idx = 0; idx < 8U; ++idx) {
+            if (trx[idx] == 0xFFU) {
+                tmp |= 0x01U << idx;
             }
         }
-        SET_NOT_NULL(br, r);
+        *byr = tmp;
     }
     return lwowOK;
 }
@@ -267,13 +269,13 @@ lwow_write_byte_ex_raw(lwow_t* const owobj, const uint8_t btw, uint8_t* const br
  * \note            This function is thread-safe
  */
 lwowr_t
-lwow_write_byte_ex(lwow_t* const owobj, const uint8_t btw, uint8_t* const br) {
-    lwowr_t res;
+lwow_write_byte_ex(lwow_t* const owobj, const uint8_t btw, uint8_t* const byr) {
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
 
     lwow_protect(owobj, 1U);
-    res = lwow_write_byte_ex_raw(owobj, btw, br);
+    res = lwow_write_byte_ex_raw(owobj, btw, byr);
     lwow_unprotect(owobj, 1U);
     return res;
 }
@@ -281,13 +283,13 @@ lwow_write_byte_ex(lwow_t* const owobj, const uint8_t btw, uint8_t* const br) {
 /**
  * \brief           Read byte from OW device
  * \param[in,out]   owobj: 1-Wire handle
- * \param[out]      br: Pointer to save read value
+ * \param[out]      byr: Pointer to save read value
  * \return          \ref lwowOK on success, member of \ref lwowr_t otherwise
  */
 lwowr_t
-lwow_read_byte_ex_raw(lwow_t* const owobj, uint8_t* const br) {
+lwow_read_byte_ex_raw(lwow_t* const owobj, uint8_t* const byr) {
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
-    LWOW_ASSERT("br != NULL", br != NULL);
+    LWOW_ASSERT("byr != NULL", byr != NULL);
 
     /*
      * When we want to read byte over 1-Wire,
@@ -295,7 +297,7 @@ lwow_read_byte_ex_raw(lwow_t* const owobj, uint8_t* const br) {
      *
      * According to slave reactions, we can later construct received bytes
      */
-    return lwow_write_byte_ex_raw(owobj, 0xFFU, br);
+    return lwow_write_byte_ex_raw(owobj, 0xFFU, byr);
 }
 
 /**
@@ -303,14 +305,14 @@ lwow_read_byte_ex_raw(lwow_t* const owobj, uint8_t* const br) {
  * \note            This function is thread-safe
  */
 lwowr_t
-lwow_read_byte_ex(lwow_t* const owobj, uint8_t* const br) {
-    lwowr_t res;
+lwow_read_byte_ex(lwow_t* const owobj, uint8_t* const byr) {
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
-    LWOW_ASSERT("br != NULL", br != NULL);
+    LWOW_ASSERT("byr != NULL", byr != NULL);
 
     lwow_protect(owobj, 1U);
-    res = lwow_read_byte_ex_raw(owobj, br);
+    res = lwow_read_byte_ex_raw(owobj, byr);
     lwow_unprotect(owobj, 1U);
     return res;
 }
@@ -322,11 +324,12 @@ lwow_read_byte_ex(lwow_t* const owobj, uint8_t* const br) {
  * \return          \ref lwowOK on success, member of \ref lwowr_t otherwise
  */
 lwowr_t
-lwow_read_bit_ex_raw(lwow_t* const owobj, uint8_t* const br) {
+lwow_read_bit_ex_raw(lwow_t* const owobj, uint8_t* const byr) {
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
-    LWOW_ASSERT("br != NULL", br != NULL);
+    LWOW_ASSERT("byr != NULL", byr != NULL);
 
-    return prv_send_bit(owobj, 1, br); /* Send bit as `1` and read the response */
+    /* Send bit as `1` and read the response */
+    return prv_send_bit(owobj, 1, byr);
 }
 
 /**
@@ -334,14 +337,14 @@ lwow_read_bit_ex_raw(lwow_t* const owobj, uint8_t* const br) {
  * \note            This function is thread-safe
  */
 lwowr_t
-lwow_read_bit_ex(lwow_t* const owobj, uint8_t* const br) {
-    lwowr_t res;
+lwow_read_bit_ex(lwow_t* const owobj, uint8_t* const byr) {
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
-    LWOW_ASSERT("br != NULL", br != NULL);
+    LWOW_ASSERT("byr != NULL", byr != NULL);
 
     lwow_protect(owobj, 1U);
-    res = lwow_read_bit_ex_raw(owobj, br);
+    res = lwow_read_bit_ex_raw(owobj, byr);
     lwow_unprotect(owobj, 1U);
     return res;
 }
@@ -365,7 +368,7 @@ lwow_search_reset_raw(lwow_t* const owobj) {
  */
 lwowr_t
 lwow_search_reset(lwow_t* const owobj) {
-    lwowr_t res;
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
 
@@ -394,7 +397,7 @@ lwow_search_raw(lwow_t* const owobj, lwow_rom_t* const rom_id) {
  */
 lwowr_t
 lwow_search(lwow_t* const owobj, lwow_rom_t* const rom_id) {
-    lwowr_t res;
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
 
@@ -414,13 +417,13 @@ lwow_search(lwow_t* const owobj, lwow_rom_t* const rom_id) {
  */
 lwowr_t
 lwow_search_with_command_raw(lwow_t* const owobj, const uint8_t cmd, lwow_rom_t* const rom_id) {
-    lwowr_t res;
-    uint8_t id_bit_number, next_disrepancy, *id;
+    lwowr_t res = lwowERR;
+    uint8_t id_bit_number = 0, next_disrepancy = 0, *idd = NULL;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
     LWOW_ASSERT("rom_id != NULL", rom_id != NULL);
 
-    id = owobj->rom.rom;
+    idd = owobj->rom.rom;
 
     /* Check for last device */
     if (owobj->disrepancy == 0) {
@@ -439,10 +442,11 @@ lwow_search_with_command_raw(lwow_t* const owobj, const uint8_t cmd, lwow_rom_t*
     next_disrepancy = OW_LAST_DEV;            /* This is currently last device */
 
     for (id_bit_number = 64U; id_bit_number > 0U;) {
-        uint8_t b, b_cpl;
-        for (uint8_t j = 8; j > 0; --j, --id_bit_number) {
+        uint8_t bit = 0, b_cpl = 0;
+
+        for (uint8_t jdx = 8; jdx > 0; --jdx, --id_bit_number) {
             /* Read first bit and its complimentary one */
-            if (prv_send_bit(owobj, 1, &b) != lwowOK || prv_send_bit(owobj, 1U, &b_cpl) != lwowOK) {
+            if (prv_send_bit(owobj, 1, &bit) != lwowOK || prv_send_bit(owobj, 1U, &b_cpl) != lwowOK) {
                 return lwowERRTXRX;
             }
 
@@ -462,9 +466,9 @@ lwow_search_with_command_raw(lwow_t* const owobj, const uint8_t cmd, lwow_rom_t*
              *  - All devices on 1-Wire have the same bit value at current position
              *      - In this case, we move to direction of b value
              */
-            if (b && b_cpl) {
+            if (bit && b_cpl) {
                 goto out; /* We do not have device connected */
-            } else if (!b && !b_cpl) {
+            } else if (!bit && !b_cpl) {
                 /*
                  * Decide which way to go for next scan
                  *
@@ -476,8 +480,8 @@ lwow_search_with_command_raw(lwow_t* const owobj, const uint8_t cmd, lwow_rom_t*
                  * Because we shift *id variable down by 1 bit every iteration,
                  * *id & 0x01 always returns 1 if bit on previous ROM is the same as current bit
                  */
-                if (id_bit_number < owobj->disrepancy || ((*id & 0x01U) && owobj->disrepancy != id_bit_number)) {
-                    b = 1;
+                if (id_bit_number < owobj->disrepancy || ((*idd & 0x01U) && owobj->disrepancy != id_bit_number)) {
+                    bit = 1;
                     next_disrepancy = id_bit_number;
                 }
             }
@@ -490,15 +494,15 @@ lwow_search_with_command_raw(lwow_t* const owobj, const uint8_t cmd, lwow_rom_t*
              * In case of "collision", we decide here which devices we will
              * continue to scan (binary tree)
              */
-            prv_send_bit(owobj, b, NULL);
+            prv_send_bit(owobj, bit, NULL);
 
             /*
              * Because we shift down *id each iteration, we have to position bit value to the MSB position
              * and it will be automatically positioned correct way.
              */
-            *id = (*id >> 0x01U) | (b << 0x07U); /* Shift ROM byte down and add next, protocol is LSB first */
+            *idd = (uint8_t)(*idd >> 0x01U) | (uint8_t)(bit << 0x07U);
         }
-        ++id; /* Go to next byte */
+        ++idd; /* Go to next byte */
     }
 out:
     owobj->disrepancy = next_disrepancy;                              /* Save disrepancy value */
@@ -512,7 +516,7 @@ out:
  */
 lwowr_t
 lwow_search_with_command(lwow_t* const owobj, const uint8_t cmd, lwow_rom_t* const rom_id) {
-    lwowr_t res;
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
     LWOW_ASSERT("rom_id != NULL", rom_id != NULL);
@@ -538,8 +542,8 @@ lwow_match_rom_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
     if (lwow_write_byte_ex_raw(owobj, LWOW_CMD_MATCHROM, NULL) != lwowOK) {
         return lwowERR;
     }
-    for (uint8_t i = 0; i < 8U; ++i) {                                       /* Send 8 bytes representing ROM address */
-        if (lwow_write_byte_ex_raw(owobj, rom_id->rom[i], NULL) != lwowOK) { /* Send ROM bytes */
+    for (uint8_t idx = 0; idx < 8U; ++idx) { /* Send 8 bytes representing ROM address */
+        if (lwow_write_byte_ex_raw(owobj, rom_id->rom[idx], NULL) != lwowOK) { /* Send ROM bytes */
             return lwowERR;
         }
     }
@@ -553,7 +557,7 @@ lwow_match_rom_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
  */
 lwowr_t
 lwow_match_rom(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
-    uint8_t res;
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
     LWOW_ASSERT("rom_id != NULL", rom_id != NULL);
@@ -582,7 +586,7 @@ lwow_skip_rom_raw(lwow_t* const owobj) {
  */
 lwowr_t
 lwow_skip_rom(lwow_t* const owobj) {
-    uint8_t res;
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
 
@@ -611,7 +615,7 @@ lwow_crc(const void* inp, const size_t len) {
     for (size_t i = 0; i < len; ++i, ++p_data) {
         uint8_t inbyte = *p_data;
         for (uint8_t j = 8U; j > 0; --j) {
-            uint8_t mix = (crc ^ inbyte) & 0x01U;
+            uint8_t mix = (uint8_t)(crc ^ inbyte) & 0x01U;
             crc >>= 1U;
             if (mix > 0) {
                 crc ^= 0x8CU;
@@ -638,26 +642,26 @@ lwow_crc(const void* inp, const size_t len) {
 lwowr_t
 lwow_search_with_command_callback(lwow_t* const owobj, const uint8_t cmd, size_t* const roms_found,
                                   const lwow_search_cb_fn func, void* arg) {
-    lwowr_t res;
-    lwow_rom_t rom_id;
-    size_t i;
+    lwowr_t res = lwowERR;
+    lwow_rom_t rom_id = {0};
+    size_t idx = 0;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
     LWOW_ASSERT("func != NULL", func != NULL);
 
     lwow_protect(owobj, 1U);
     /* Search device-by-device until all found */
-    for (i = 0, res = lwow_search_reset_raw(owobj);
-         res == lwowOK && (res = lwow_search_with_command_raw(owobj, cmd, &rom_id)) == lwowOK; ++i) {
-        res = func(owobj, &rom_id, i, arg);
+    for (idx = 0, res = lwow_search_reset_raw(owobj);
+         res == lwowOK && (res = lwow_search_with_command_raw(owobj, cmd, &rom_id)) == lwowOK; ++idx) {
+        res = func(owobj, &rom_id, idx, arg);
         if (res != lwowOK) {
             break;
         }
     }
-    func(owobj, NULL, i, arg); /* Call with NULL rom_id parameter */
+    func(owobj, NULL, idx, arg); /* Call with NULL rom_id parameter */
     lwow_unprotect(owobj, 1U);
-    SET_NOT_NULL(roms_found, i); /* Set number of roms found */
-    if (res == lwowERRNODEV) {   /* `No device` might not be an error, but simply no devices on bus */
+    SET_NOT_NULL(roms_found, idx); /* Set number of roms found */
+    if (res == lwowERRNODEV) {     /* `No device` might not be an error, but simply no devices on bus */
         res = lwowOK;
     }
     return res;
@@ -692,7 +696,7 @@ lwow_search_with_callback(lwow_t* const owobj, size_t* const roms_found, const l
 lwowr_t
 lwow_search_devices_with_command_raw(lwow_t* const owobj, const uint8_t cmd, lwow_rom_t* const rom_id_arr,
                                      const size_t rom_len, size_t* const roms_found) {
-    lwowr_t res;
+    lwowr_t res = lwowERR;
     size_t cnt = 0;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
@@ -719,7 +723,7 @@ lwow_search_devices_with_command_raw(lwow_t* const owobj, const uint8_t cmd, lwo
 lwowr_t
 lwow_search_devices_with_command(lwow_t* const owobj, const uint8_t cmd, lwow_rom_t* const rom_id_arr,
                                  const size_t rom_len, size_t* const roms_found) {
-    lwowr_t res;
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
     LWOW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
@@ -755,7 +759,7 @@ lwow_search_devices_raw(lwow_t* const owobj, lwow_rom_t* const rom_id_arr, const
  */
 lwowr_t
 lwow_search_devices(lwow_t* const owobj, lwow_rom_t* const rom_id_arr, const size_t rom_len, size_t* const roms_found) {
-    lwowr_t res;
+    lwowr_t res = lwowERR;
 
     LWOW_ASSERT("owobj != NULL", owobj != NULL);
     LWOW_ASSERT("rom_id_arr != NULL", rom_id_arr != NULL);
@@ -779,7 +783,7 @@ lwow_search_devices(lwow_t* const owobj, lwow_rom_t* const rom_id_arr, const siz
  */
 uint8_t
 lwow_write_byte_raw(lwow_t* const owobj, const uint8_t byt) {
-    uint8_t brt;
+    uint8_t brt = 0;
     return lwow_write_byte_ex_raw(owobj, byt, &brt) == lwowOK ? brt : 0x00;
 }
 
@@ -791,7 +795,7 @@ lwow_write_byte_raw(lwow_t* const owobj, const uint8_t byt) {
  */
 uint8_t
 lwow_write_byte(lwow_t* const owobj, const uint8_t byt) {
-    uint8_t brt;
+    uint8_t brt = 0;
     return lwow_write_byte_ex(owobj, byt, &brt) == lwowOK ? brt : 0x00;
 }
 
@@ -804,7 +808,7 @@ lwow_write_byte(lwow_t* const owobj, const uint8_t byt) {
  */
 uint8_t
 lwow_read_byte_raw(lwow_t* const owobj) {
-    uint8_t brt;
+    uint8_t brt = 0;
     return lwow_read_byte_ex_raw(owobj, &brt) == lwowOK ? brt : 0x00;
 }
 
@@ -816,7 +820,7 @@ lwow_read_byte_raw(lwow_t* const owobj) {
  */
 uint8_t
 lwow_read_byte(lwow_t* const owobj) {
-    uint8_t brt;
+    uint8_t brt = 0;
     return lwow_read_byte_ex(owobj, &brt) == lwowOK ? brt : 0x00;
 }
 
@@ -829,7 +833,7 @@ lwow_read_byte(lwow_t* const owobj) {
  */
 uint8_t
 lwow_read_bit_raw(lwow_t* const owobj) {
-    uint8_t brt;
+    uint8_t brt = 0;
     return lwow_read_bit_ex_raw(owobj, &brt) == lwowOK ? brt : 0x00;
 }
 
@@ -841,6 +845,6 @@ lwow_read_bit_raw(lwow_t* const owobj) {
  */
 uint8_t
 lwow_read_bit(lwow_t* const owobj) {
-    uint8_t brt;
+    uint8_t brt = 0;
     return lwow_read_bit_ex(owobj, &brt) == lwowOK ? brt : 0x00;
 }

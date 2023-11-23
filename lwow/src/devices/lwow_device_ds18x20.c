@@ -31,6 +31,9 @@
  * Author:          Tilen MAJERLE <tilen@majerle.eu>
  * Version:         v3.0.2
  */
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include "lwow/devices/lwow_device_ds18x20.h"
 #include "lwow/lwow.h"
 
@@ -42,21 +45,21 @@
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwow_ds18x20_start_raw(lwow_t* const ow, const lwow_rom_t* const rom_id) {
-    uint8_t ret = 0;
+lwow_ds18x20_start_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
+    uint8_t res = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
 
-    if (lwow_reset_raw(ow) == lwowOK) {
-        if (rom_id == NULL) {      /* Check for ROM id */
-            lwow_skip_rom_raw(ow); /* Skip ROM, send to all devices */
+    if (lwow_reset_raw(owobj) == lwowOK) {
+        if (rom_id == NULL) {         /* Check for ROM id */
+            lwow_skip_rom_raw(owobj); /* Skip ROM, send to all devices */
         } else {
-            lwow_match_rom_raw(ow, rom_id); /* Select exact device by ROM address */
+            lwow_match_rom_raw(owobj, rom_id); /* Select exact device by ROM address */
         }
-        lwow_write_byte_ex_raw(ow, 0x44, NULL); /* Start temperature conversion */
-        ret = 1;
+        lwow_write_byte_ex_raw(owobj, 0x44U, NULL); /* Start temperature conversion */
+        res = 1;
     }
-    return ret;
+    return res;
 }
 
 /**
@@ -64,14 +67,14 @@ lwow_ds18x20_start_raw(lwow_t* const ow, const lwow_rom_t* const rom_id) {
  * \note            This function is thread-safe
  */
 uint8_t
-lwow_ds18x20_start(lwow_t* const ow, const lwow_rom_t* const rom_id) {
-    uint8_t res;
+lwow_ds18x20_start(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
+    uint8_t res = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
 
-    lwow_protect(ow, 1);
-    res = lwow_ds18x20_start_raw(ow, rom_id);
-    lwow_unprotect(ow, 1);
+    lwow_protect(owobj, 1);
+    res = lwow_ds18x20_start_raw(owobj, rom_id);
+    lwow_unprotect(owobj, 1);
     return res;
 }
 
@@ -79,60 +82,60 @@ lwow_ds18x20_start(lwow_t* const ow, const lwow_rom_t* const rom_id) {
  * \brief           Read temperature previously started with \ref lwow_ds18x20_start
  * \param[in]       ow: 1-Wire handle
  * \param[in]       rom_id: 1-Wire device address to read data from
- * \param[out]      t: Pointer to output float variable to save temperature
+ * \param[out]      temp_out: Pointer to output float variable to save temperature
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwow_ds18x20_read_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, float* const t) {
-    float dec;
-    uint16_t temp;
-    uint8_t ret = 0, data[9], crc, resolution, m = 0, bit_val;
-    int8_t digit;
+lwow_ds18x20_read_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, float* const temp_out) {
+    float dec = 0.0f;
+    uint16_t temp = 0;
+    uint8_t ret = 0, data[9] = {0}, crc = 0, resolution = 0, m = 0, bit_val = 0;
+    int8_t digit = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
-    LWOW_ASSERT0("t != NULL", t != NULL);
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
+    LWOW_ASSERT0("temp_out != NULL", temp_out != NULL);
     if (rom_id != NULL) {
-        LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)",
-                     lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
+        LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id) || lwow_ds18x20_is_s(owobj, rom_id)",
+                     lwow_ds18x20_is_b(owobj, rom_id) || lwow_ds18x20_is_s(owobj, rom_id));
     }
 
     /*
      * First read bit and check if all devices completed with conversion.
      * If everything ready, try to reset the network and continue
      */
-    if (lwow_read_bit_ex_raw(ow, &bit_val) == lwowOK && bit_val != 0 && lwow_reset_raw(ow) == lwowOK) {
+    if (lwow_read_bit_ex_raw(owobj, &bit_val) == lwowOK && bit_val != 0 && lwow_reset_raw(owobj) == lwowOK) {
         if (rom_id == NULL) {
-            lwow_skip_rom_raw(ow);
+            lwow_skip_rom_raw(owobj);
         } else {
-            lwow_match_rom_raw(ow, rom_id);
+            lwow_match_rom_raw(owobj, rom_id);
         }
-        lwow_write_byte_ex_raw(ow, LWOW_CMD_RSCRATCHPAD, NULL);
+        lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read plain data from device */
-        for (uint8_t i = 0; i < LWOW_ARRAYSIZE(data); ++i) {
-            lwow_read_byte_ex_raw(ow, &data[i]);
+        for (uint8_t idx = 0; idx < LWOW_ARRAYSIZE(data); ++idx) {
+            lwow_read_byte_ex_raw(owobj, &data[idx]);
         }
-        crc = lwow_crc(data, LWOW_ARRAYSIZE(data));         /* Calculate CRC */
-        if (crc == 0) {                                     /* Result must be 0 to match the CRC */
-            temp = (data[1] << 0x08) | data[0];             /* Format data in integer format */
-            resolution = ((data[4] & 0x60) >> 0x05) + 0x09; /* Set resolution in units of bits */
-            if (temp & 0x8000) {                            /* Check for negative temperature */
-                temp = ~temp + 1;                           /* Perform two's complement */
+        crc = lwow_crc(data, LWOW_ARRAYSIZE(data));            /* Calculate CRC */
+        if (crc == 0) {                                        /* Result must be 0 to match the CRC */
+            temp = (data[1] << 0x08U) | data[0];               /* Format data in integer format */
+            resolution = ((data[4] & 0x60U) >> 0x05U) + 0x09U; /* Set resolution in units of bits */
+            if (temp & 0x8000U) {                              /* Check for negative temperature */
+                temp = ~temp + 1;                              /* Perform two's complement */
                 m = 1;
             }
-            digit = (temp >> 0x04) | (((temp >> 0x08) & 0x07) << 0x04);
+            digit = (temp >> 0x04U) | (((temp >> 0x08U) & 0x07U) << 0x04U);
             switch (resolution) { /* Check for resolution settings */
-                case 9: dec = ((temp >> 0x03) & 0x01) * 0.5f; break;
-                case 10: dec = ((temp >> 0x02) & 0x03) * 0.25f; break;
-                case 11: dec = ((temp >> 0x01) & 0x07) * 0.125f; break;
-                case 12: dec = (temp & 0x0F) * 0.0625f; break;
-                default: dec = 0xFF, digit = 0;
+                case 9U: dec = ((temp >> 0x03U) & 0x01U) * 0.5f; break;
+                case 10U: dec = ((temp >> 0x02U) & 0x03U) * 0.25f; break;
+                case 11U: dec = ((temp >> 0x01U) & 0x07U) * 0.125f; break;
+                case 12U: dec = (temp & 0x0FU) * 0.0625f; break;
+                default: dec = 0xFFU, digit = 0;
             }
             dec += digit;
             if (m) {
                 dec = -dec;
             }
-            *t = dec;
+            *temp_out = dec;
             ret = 1;
         }
     }
@@ -145,19 +148,19 @@ lwow_ds18x20_read_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, float* c
  * \note            This function is thread-safe
  */
 uint8_t
-lwow_ds18x20_read(lwow_t* const ow, const lwow_rom_t* const rom_id, float* const t) {
-    uint8_t res;
+lwow_ds18x20_read(lwow_t* const owobj, const lwow_rom_t* const rom_id, float* const t) {
+    uint8_t res = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
     LWOW_ASSERT0("t != NULL", t != NULL);
     if (rom_id != NULL) {
-        LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id)",
-                     lwow_ds18x20_is_b(ow, rom_id) || lwow_ds18x20_is_s(ow, rom_id));
+        LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id) || lwow_ds18x20_is_s(owobj, rom_id)",
+                     lwow_ds18x20_is_b(owobj, rom_id) || lwow_ds18x20_is_s(owobj, rom_id));
     }
 
-    lwow_protect(ow, 1);
-    res = lwow_ds18x20_read_raw(ow, rom_id, t);
-    lwow_unprotect(ow, 1);
+    lwow_protect(owobj, 1);
+    res = lwow_ds18x20_read_raw(owobj, rom_id, t);
+    lwow_unprotect(owobj, 1);
     return res;
 }
 
@@ -168,25 +171,25 @@ lwow_ds18x20_read(lwow_t* const ow, const lwow_rom_t* const rom_id, float* const
  * \return          Resolution in units of bits (`9 - 12`) on success, `0` otherwise
  */
 uint8_t
-lwow_ds18x20_get_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id) {
-    uint8_t res = 0, br;
+lwow_ds18x20_get_resolution_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
+    uint8_t res = 0, bresol = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
     LWOW_ASSERT0("rom_id != NULL", rom_id != NULL);
-    LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id));
+    LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
 
-    if (lwow_reset_raw(ow) == lwowOK) { /* Reset bus */
-        lwow_match_rom_raw(ow, rom_id); /* Select device */
-        lwow_write_byte_ex_raw(ow, LWOW_CMD_RSCRATCHPAD, NULL);
+    if (lwow_reset_raw(owobj) == lwowOK) { /* Reset bus */
+        lwow_match_rom_raw(owobj, rom_id); /* Select device */
+        lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore bytes */
-        lwow_read_byte_ex_raw(ow, &br);
-        lwow_read_byte_ex_raw(ow, &br);
-        lwow_read_byte_ex_raw(ow, &br);
-        lwow_read_byte_ex_raw(ow, &br);
+        lwow_read_byte_ex_raw(owobj, &bresol);
+        lwow_read_byte_ex_raw(owobj, &bresol);
+        lwow_read_byte_ex_raw(owobj, &bresol);
+        lwow_read_byte_ex_raw(owobj, &bresol);
 
-        lwow_read_byte_ex_raw(ow, &br);
-        res = ((br & 0x60) >> 0x05) + 9; /* Read configuration byte and calculate bits */
+        lwow_read_byte_ex_raw(owobj, &bresol);
+        res = ((bresol & 0x60U) >> 0x05U) + 9U; /* Read configuration byte and calculate bits */
     }
 
     return res;
@@ -197,16 +200,16 @@ lwow_ds18x20_get_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id
  * \note            This function is thread-safe
  */
 uint8_t
-lwow_ds18x20_get_resolution(lwow_t* const ow, const lwow_rom_t* const rom_id) {
-    uint8_t res;
+lwow_ds18x20_get_resolution(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
+    uint8_t res = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
     LWOW_ASSERT0("rom_id != NULL", rom_id != NULL);
-    LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id));
+    LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
 
-    lwow_protect(ow, 1);
-    res = lwow_ds18x20_get_resolution_raw(ow, rom_id);
-    lwow_unprotect(ow, 1);
+    lwow_protect(owobj, 1);
+    res = lwow_ds18x20_get_resolution_raw(owobj, rom_id);
+    lwow_unprotect(owobj, 1);
     return res;
 }
 
@@ -219,52 +222,52 @@ lwow_ds18x20_get_resolution(lwow_t* const ow, const lwow_rom_t* const rom_id) {
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwow_ds18x20_set_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, const uint8_t bits) {
-    uint8_t th, tl, conf, res = 0;
+lwow_ds18x20_set_resolution_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, const uint8_t bits) {
+    uint8_t thigh = 0, tlow = 0, conf = 0, res = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
-    LWOW_ASSERT0("bits >= 9 && bits <= 12", bits >= 9 && bits <= 12);
-    LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id));
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
+    LWOW_ASSERT0("bits >= 9U && bits <= 12U", bits >= 9U && bits <= 12U);
+    LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
 
-    if (lwow_reset_raw(ow) == lwowOK) {
+    if (lwow_reset_raw(owobj) == lwowOK) {
         if (rom_id == NULL) {
-            lwow_match_rom_raw(ow, rom_id);
+            lwow_match_rom_raw(owobj, rom_id);
         } else {
-            lwow_skip_rom_raw(ow);
+            lwow_skip_rom_raw(owobj);
         }
-        lwow_write_byte_ex_raw(ow, LWOW_CMD_RSCRATCHPAD, NULL);
+        lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore bytes */
-        lwow_read_byte_ex_raw(ow, &th);
-        lwow_read_byte_ex_raw(ow, &th);
+        lwow_read_byte_ex_raw(owobj, &thigh);
+        lwow_read_byte_ex_raw(owobj, &thigh);
 
         /* Read important data */
-        lwow_read_byte_ex_raw(ow, &th);
-        lwow_read_byte_ex_raw(ow, &tl);
-        lwow_read_byte_ex_raw(ow, &conf);
+        lwow_read_byte_ex_raw(owobj, &thigh);
+        lwow_read_byte_ex_raw(owobj, &tlow);
+        lwow_read_byte_ex_raw(owobj, &conf);
 
-        conf &= ~0x60; /* Remove configuration bits for temperature resolution */
+        conf &= ~0x60U; /* Remove configuration bits for temperature resolution */
         switch (bits) {
-            case 12: conf |= 0x60; break;
-            case 11: conf |= 0x40; break;
-            case 10: conf |= 0x20; break;
-            case 9:
+            case 12U: conf |= 0x60U; break;
+            case 11U: conf |= 0x40U; break;
+            case 10U: conf |= 0x20U; break;
+            case 9U:
             default: break;
         }
 
         /* Write data back to device */
-        if (lwow_reset_raw(ow) == lwowOK) {
-            lwow_match_rom_raw(ow, rom_id);
-            lwow_write_byte_ex_raw(ow, LWOW_CMD_WSCRATCHPAD, NULL);
+        if (lwow_reset_raw(owobj) == lwowOK) {
+            lwow_match_rom_raw(owobj, rom_id);
+            lwow_write_byte_ex_raw(owobj, LWOW_CMD_WSCRATCHPAD, NULL);
 
-            lwow_write_byte_ex_raw(ow, th, NULL);
-            lwow_write_byte_ex_raw(ow, tl, NULL);
-            lwow_write_byte_ex_raw(ow, conf, NULL);
+            lwow_write_byte_ex_raw(owobj, thigh, NULL);
+            lwow_write_byte_ex_raw(owobj, tlow, NULL);
+            lwow_write_byte_ex_raw(owobj, conf, NULL);
 
             /* Copy scratchpad to non-volatile memory */
-            if (lwow_reset_raw(ow) == lwowOK) {
-                lwow_match_rom_raw(ow, rom_id);
-                lwow_write_byte_ex_raw(ow, LWOW_CMD_CPYSCRATCHPAD, NULL);
+            if (lwow_reset_raw(owobj) == lwowOK) {
+                lwow_match_rom_raw(owobj, rom_id);
+                lwow_write_byte_ex_raw(owobj, LWOW_CMD_CPYSCRATCHPAD, NULL);
                 res = 1;
             }
         }
@@ -277,16 +280,16 @@ lwow_ds18x20_set_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id
  * \note            This function is thread-safe
  */
 uint8_t
-lwow_ds18x20_set_resolution(lwow_t* const ow, const lwow_rom_t* const rom_id, const uint8_t bits) {
-    uint8_t res;
+lwow_ds18x20_set_resolution(lwow_t* const owobj, const lwow_rom_t* const rom_id, const uint8_t bits) {
+    uint8_t res = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
-    LWOW_ASSERT0("bits >= 9 && bits <= 12", bits >= 9 && bits <= 12);
-    LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id));
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
+    LWOW_ASSERT0("bits >= 9U && bits <= 12U", bits >= 9U && bits <= 12U);
+    LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
 
-    lwow_protect(ow, 1);
-    res = lwow_ds18x20_set_resolution_raw(ow, rom_id, bits);
-    lwow_unprotect(ow, 1);
+    lwow_protect(owobj, 1);
+    res = lwow_ds18x20_set_resolution_raw(owobj, rom_id, bits);
+    lwow_unprotect(owobj, 1);
     return res;
 }
 
@@ -317,11 +320,11 @@ lwow_ds18x20_set_alarm_temp(&ow, dev_id, 10, 30);
  * \return          `1` on success, `0` otherwise
  */
 uint8_t
-lwow_ds18x20_set_alarm_temp_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h) {
-    uint8_t res = 0, conf, th, tl;
+lwow_ds18x20_set_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h) {
+    uint8_t res = 0, conf = 0, thigh = 0, tlow = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
-    LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id));
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
+    LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
 
     /* Check if there is need to do anything */
     if (temp_l == LWOW_DS18X20_ALARM_NOCHANGE && temp_h == LWOW_DS18X20_ALARM_NOCHANGE) {
@@ -344,41 +347,41 @@ lwow_ds18x20_set_alarm_temp_raw(lwow_t* const ow, const lwow_rom_t* const rom_id
         }
     }
 
-    if (lwow_reset_raw(ow) == lwowOK) {
+    if (lwow_reset_raw(owobj) == lwowOK) {
         if (rom_id == NULL) {
-            lwow_skip_rom_raw(ow);
+            lwow_skip_rom_raw(owobj);
         } else {
-            lwow_match_rom_raw(ow, rom_id);
+            lwow_match_rom_raw(owobj, rom_id);
         }
-        lwow_write_byte_ex_raw(ow, LWOW_CMD_RSCRATCHPAD, NULL);
+        lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore 2 bytes */
-        lwow_read_byte_ex_raw(ow, &th);
-        lwow_read_byte_ex_raw(ow, &th);
+        lwow_read_byte_ex_raw(owobj, &thigh);
+        lwow_read_byte_ex_raw(owobj, &thigh);
 
         /* Read important data */
-        lwow_read_byte_ex_raw(ow, &th);
-        lwow_read_byte_ex_raw(ow, &tl);
-        lwow_read_byte_ex_raw(ow, &conf);
+        lwow_read_byte_ex_raw(owobj, &thigh);
+        lwow_read_byte_ex_raw(owobj, &tlow);
+        lwow_read_byte_ex_raw(owobj, &conf);
 
         /* Fill new values */
-        th = temp_h == LWOW_DS18X20_ALARM_NOCHANGE ? (uint8_t)th : (uint8_t)temp_h;
-        tl = temp_l == LWOW_DS18X20_ALARM_NOCHANGE ? (uint8_t)tl : (uint8_t)temp_l;
+        thigh = temp_h == LWOW_DS18X20_ALARM_NOCHANGE ? (uint8_t)thigh : (uint8_t)temp_h;
+        tlow = temp_l == LWOW_DS18X20_ALARM_NOCHANGE ? (uint8_t)tlow : (uint8_t)temp_l;
 
         /* Write scratchpad */
-        if (lwow_reset_raw(ow) == lwowOK) {
-            lwow_match_rom_raw(ow, rom_id);
-            lwow_write_byte_ex_raw(ow, LWOW_CMD_WSCRATCHPAD, NULL);
+        if (lwow_reset_raw(owobj) == lwowOK) {
+            lwow_match_rom_raw(owobj, rom_id);
+            lwow_write_byte_ex_raw(owobj, LWOW_CMD_WSCRATCHPAD, NULL);
 
             /* Write configuration register */
-            lwow_write_byte_ex_raw(ow, th, NULL);
-            lwow_write_byte_ex_raw(ow, tl, NULL);
-            lwow_write_byte_ex_raw(ow, conf, NULL);
+            lwow_write_byte_ex_raw(owobj, thigh, NULL);
+            lwow_write_byte_ex_raw(owobj, tlow, NULL);
+            lwow_write_byte_ex_raw(owobj, conf, NULL);
 
             /* Copy scratchpad to memory */
-            if (lwow_reset_raw(ow) == lwowOK) {
-                lwow_match_rom_raw(ow, rom_id);
-                lwow_write_byte_ex_raw(ow, LWOW_CMD_CPYSCRATCHPAD, NULL);
+            if (lwow_reset_raw(owobj) == lwowOK) {
+                lwow_match_rom_raw(owobj, rom_id);
+                lwow_write_byte_ex_raw(owobj, LWOW_CMD_CPYSCRATCHPAD, NULL);
 
                 res = 1;
             }
@@ -392,15 +395,15 @@ lwow_ds18x20_set_alarm_temp_raw(lwow_t* const ow, const lwow_rom_t* const rom_id
  * \note            This function is thread-safe
  */
 uint8_t
-lwow_ds18x20_set_alarm_temp(lwow_t* const ow, const lwow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h) {
-    uint8_t res;
+lwow_ds18x20_set_alarm_temp(lwow_t* const owobj, const lwow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h) {
+    uint8_t res = 0;
 
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
-    LWOW_ASSERT0("lwow_ds18x20_is_b(ow, rom_id)", lwow_ds18x20_is_b(ow, rom_id));
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
+    LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
 
-    lwow_protect(ow, 1);
-    res = lwow_ds18x20_set_alarm_temp_raw(ow, rom_id, temp_l, temp_h);
-    lwow_unprotect(ow, 1);
+    lwow_protect(owobj, 1);
+    res = lwow_ds18x20_set_alarm_temp_raw(owobj, rom_id, temp_l, temp_h);
+    lwow_unprotect(owobj, 1);
     return res;
 }
 
@@ -412,8 +415,8 @@ lwow_ds18x20_set_alarm_temp(lwow_t* const ow, const lwow_rom_t* const rom_id, in
  * \return          \ref lwowOK on success, member of \ref lwowr_t otherwise
  */
 lwowr_t
-lwow_ds18x20_search_alarm_raw(lwow_t* const ow, lwow_rom_t* const rom_id) {
-    return lwow_search_with_command_raw(ow, 0xEC, rom_id);
+lwow_ds18x20_search_alarm_raw(lwow_t* const owobj, lwow_rom_t* const rom_id) {
+    return lwow_search_with_command_raw(owobj, 0xECU, rom_id);
 }
 
 /**
@@ -421,14 +424,14 @@ lwow_ds18x20_search_alarm_raw(lwow_t* const ow, lwow_rom_t* const rom_id) {
  * \note            This function is thread-safe
  */
 lwowr_t
-lwow_ds18x20_search_alarm(lwow_t* const ow, lwow_rom_t* const rom_id) {
-    lwowr_t res;
+lwow_ds18x20_search_alarm(lwow_t* const owobj, lwow_rom_t* const rom_id) {
+    lwowr_t res = lwowERR;
 
-    LWOW_ASSERT("ow != NULL", ow != NULL);
+    LWOW_ASSERT("owobj != NULL", owobj != NULL);
 
-    lwow_protect(ow, 1);
-    res = lwow_ds18x20_search_alarm_raw(ow, rom_id);
-    lwow_unprotect(ow, 1);
+    lwow_protect(owobj, 1);
+    res = lwow_ds18x20_search_alarm_raw(owobj, rom_id);
+    lwow_unprotect(owobj, 1);
     return res;
 }
 
@@ -440,12 +443,12 @@ lwow_ds18x20_search_alarm(lwow_t* const ow, lwow_rom_t* const rom_id) {
  * \note            This function is reentrant
  */
 uint8_t
-lwow_ds18x20_is_b(lwow_t* const ow, const lwow_rom_t* const rom_id) {
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
+lwow_ds18x20_is_b(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
     LWOW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
-    LWOW_UNUSED(ow);
-    return rom_id->rom[0] == 0x28;
+    LWOW_UNUSED(owobj);
+    return rom_id->rom[0] == 0x28U;
 }
 
 /**
@@ -456,10 +459,10 @@ lwow_ds18x20_is_b(lwow_t* const ow, const lwow_rom_t* const rom_id) {
  * \note            This function is reentrant
  */
 uint8_t
-lwow_ds18x20_is_s(lwow_t* const ow, const lwow_rom_t* const rom_id) {
-    LWOW_ASSERT0("ow != NULL", ow != NULL);
+lwow_ds18x20_is_s(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
     LWOW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
-    LWOW_UNUSED(ow);
-    return rom_id->rom[0] == 0x10;
+    LWOW_UNUSED(owobj);
+    return rom_id->rom[0] == 0x10U;
 }

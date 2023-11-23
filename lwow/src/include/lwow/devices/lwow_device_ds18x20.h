@@ -55,26 +55,27 @@ extern "C" {
 #define LWOW_DS18X20_TEMP_MIN       ((int8_t)-55)  /*!< Minimum temperature */
 #define LWOW_DS18X20_TEMP_MAX       ((int8_t)125)  /*!< Maximal temperature */
 
-uint8_t lwow_ds18x20_start_raw(lwow_t* const ow, const lwow_rom_t* const rom_id);
-uint8_t lwow_ds18x20_start(lwow_t* const ow, const lwow_rom_t* const rom_id);
+uint8_t lwow_ds18x20_start_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id);
+uint8_t lwow_ds18x20_start(lwow_t* const owobj, const lwow_rom_t* const rom_id);
 
-uint8_t lwow_ds18x20_read_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, float* const t);
-uint8_t lwow_ds18x20_read(lwow_t* const ow, const lwow_rom_t* const rom_id, float* const t);
+uint8_t lwow_ds18x20_read_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, float* const temp_out);
+uint8_t lwow_ds18x20_read(lwow_t* const owobj, const lwow_rom_t* const rom_id, float* const temp_out);
 
-uint8_t lwow_ds18x20_set_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, const uint8_t bits);
-uint8_t lwow_ds18x20_set_resolution(lwow_t* const ow, const lwow_rom_t* const rom_id, const uint8_t bits);
+uint8_t lwow_ds18x20_set_resolution_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, const uint8_t bits);
+uint8_t lwow_ds18x20_set_resolution(lwow_t* const owobj, const lwow_rom_t* const rom_id, const uint8_t bits);
 
-uint8_t lwow_ds18x20_get_resolution_raw(lwow_t* const ow, const lwow_rom_t* const rom_id);
-uint8_t lwow_ds18x20_get_resolution(lwow_t* const ow, const lwow_rom_t* const rom_id);
+uint8_t lwow_ds18x20_get_resolution_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id);
+uint8_t lwow_ds18x20_get_resolution(lwow_t* const owobj, const lwow_rom_t* const rom_id);
 
-uint8_t lwow_ds18x20_set_alarm_temp_raw(lwow_t* const ow, const lwow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h);
-uint8_t lwow_ds18x20_set_alarm_temp(lwow_t* const ow, const lwow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h);
+uint8_t lwow_ds18x20_set_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, int8_t temp_l,
+                                        int8_t temp_h);
+uint8_t lwow_ds18x20_set_alarm_temp(lwow_t* const owobj, const lwow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h);
 
-lwowr_t lwow_ds18x20_search_alarm_raw(lwow_t* const ow, lwow_rom_t* const rom_id);
-lwowr_t lwow_ds18x20_search_alarm(lwow_t* const ow, lwow_rom_t* const rom_id);
+lwowr_t lwow_ds18x20_search_alarm_raw(lwow_t* const owobj, lwow_rom_t* const rom_id);
+lwowr_t lwow_ds18x20_search_alarm(lwow_t* const owobj, lwow_rom_t* const rom_id);
 
-uint8_t lwow_ds18x20_is_b(lwow_t* const ow, const lwow_rom_t* const rom_id);
-uint8_t lwow_ds18x20_is_s(lwow_t* const ow, const lwow_rom_t* const rom_id);
+uint8_t lwow_ds18x20_is_b(lwow_t* const owobj, const lwow_rom_t* const rom_id);
+uint8_t lwow_ds18x20_is_s(lwow_t* const owobj, const lwow_rom_t* const rom_id);
 
 /**
  * \}
