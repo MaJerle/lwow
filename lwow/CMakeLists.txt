@@ -4,10 +4,11 @@ cmake_minimum_required(VERSION 3.22)
 set(lwow_core_SRCS
     ${CMAKE_CURRENT_LIST_DIR}/src/lwow/lwow.c)
 
-if (DEFINED LWOW_SYS_PORT)
-set(lwow_core_SRCS
-    ${lwow_core_SRCS}
-    ${CMAKE_CURRENT_LIST_DIR}/src/system/lwow_sys_${LWOW_SYS_PORT}.c)
+# Add system port
+if(DEFINED LWOW_SYS_PORT)
+    set(lwow_core_SRCS
+        ${lwow_core_SRCS}
+        ${CMAKE_CURRENT_LIST_DIR}/src/system/lwow_sys_${LWOW_SYS_PORT}.c)
 endif()
 
 # Devices
@@ -27,3 +28,8 @@ target_include_directories(lwow INTERFACE ${lwow_include_DIRS})
 add_library(lwow_devices INTERFACE)
 target_sources(lwow_devices PUBLIC ${lwow_devices_SRCS})
 target_include_directories(lwow_devices INTERFACE ${lwow_include_DIRS})
+
+# Create config file
+if(DEFINED LWOW_OPTS_DIR AND NOT EXISTS ${LWOW_OPTS_DIR}/lwow_opts.h)
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/src/include/lwow/lwow_opts_template.h ${LWOW_OPTS_DIR}/lwow_opts.h COPYONLY)
+endif()
