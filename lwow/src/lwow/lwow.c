@@ -547,7 +547,6 @@ lwow_match_rom_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
             return lwowERR;
         }
     }
-
     return lwowOK;
 }
 
