@@ -59,7 +59,7 @@ lwow_ds18x20_start_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
         } else {
             lwow_match_rom_raw(owobj, rom_id); /* Select exact device by ROM address */
         }
-        lwow_write_byte_ex_raw(owobj, 0x44U, NULL); /* Start temperature conversion */
+        lwow_write_byte_ex_raw(owobj, LWOW_DS18X20_CMD_CONVERT_T, NULL); /* Start temperature conversion */
         res = 1;
     }
     return res;
@@ -482,7 +482,7 @@ lwow_ds18x20_get_alarm_temp(lwow_t* const owobj, const lwow_rom_t* const rom_id,
  */
 lwowr_t
 lwow_ds18x20_search_alarm_raw(lwow_t* const owobj, lwow_rom_t* const rom_id) {
-    return lwow_search_with_command_raw(owobj, 0xECU, rom_id);
+    return lwow_search_with_command_raw(owobj, LWOW_DS18X20_CMD_ALARM_SEARCH, rom_id);
 }
 
 /**
