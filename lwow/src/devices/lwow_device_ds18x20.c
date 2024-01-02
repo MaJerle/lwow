@@ -442,7 +442,6 @@ lwow_ds18x20_get_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom
         /* Read important data */
         lwow_read_byte_ex_raw(owobj, &thigh);
         lwow_read_byte_ex_raw(owobj, &tlow);
-        lwow_read_byte_ex_raw(owobj, &conf);
 
         if (temp_l != NULL) {
             *temp_l = (int8_t)tlow;
