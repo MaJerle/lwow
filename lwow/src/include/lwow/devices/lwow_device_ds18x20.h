@@ -73,11 +73,18 @@ uint8_t lwow_ds18x20_set_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* c
                                         int8_t temp_h);
 uint8_t lwow_ds18x20_set_alarm_temp(lwow_t* const owobj, const lwow_rom_t* const rom_id, int8_t temp_l, int8_t temp_h);
 
+uint8_t lwow_ds18x20_get_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, int8_t* temp_l,
+                                        int8_t* temp_h);
+uint8_t lwow_ds18x20_get_alarm_temp(lwow_t* const owobj, const lwow_rom_t* const rom_id, int8_t* temp_l,
+                                    int8_t* temp_h);
+
 lwowr_t lwow_ds18x20_search_alarm_raw(lwow_t* const owobj, lwow_rom_t* const rom_id);
 lwowr_t lwow_ds18x20_search_alarm(lwow_t* const owobj, lwow_rom_t* const rom_id);
 
 uint8_t lwow_ds18x20_is_b(lwow_t* const owobj, const lwow_rom_t* const rom_id);
 uint8_t lwow_ds18x20_is_s(lwow_t* const owobj, const lwow_rom_t* const rom_id);
+
+uint16_t lwow_ds18x20_get_temp_conversion_time(uint8_t resolution, uint8_t is_b);
 
 /**
  * \}

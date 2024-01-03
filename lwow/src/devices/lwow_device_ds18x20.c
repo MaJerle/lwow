@@ -37,6 +37,9 @@
 #include "lwow/devices/lwow_device_ds18x20.h"
 #include "lwow/lwow.h"
 
+#define LWOW_DS18B20_FAMILY_CODE 0x28U
+#define LWOW_DS18S20_FAMILY_CODE 0x10U
+
 /**
  * \brief           Start temperature conversion on specific (or all) devices
  * \param[in]       ow: 1-Wire handle
@@ -50,12 +53,7 @@ lwow_ds18x20_start_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
 
     LWOW_ASSERT0("owobj != NULL", owobj != NULL);
 
-    if (lwow_reset_raw(owobj) == lwowOK) {
-        if (rom_id == NULL) {         /* Check for ROM id */
-            lwow_skip_rom_raw(owobj); /* Skip ROM, send to all devices */
-        } else {
-            lwow_match_rom_raw(owobj, rom_id); /* Select exact device by ROM address */
-        }
+    if (lwow_reset_raw(owobj) == lwowOK && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
         lwow_write_byte_ex_raw(owobj, LWOW_DS18X20_CMD_CONVERT_T, NULL); /* Start temperature conversion */
         res = 1;
     }
@@ -103,12 +101,8 @@ lwow_ds18x20_read_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, float
      * First read bit and check if all devices completed with conversion.
      * If everything ready, try to reset the network and continue
      */
-    if (lwow_read_bit_ex_raw(owobj, &bit_val) == lwowOK && bit_val != 0 && lwow_reset_raw(owobj) == lwowOK) {
-        if (rom_id == NULL) {
-            lwow_skip_rom_raw(owobj);
-        } else {
-            lwow_match_rom_raw(owobj, rom_id);
-        }
+    if (lwow_read_bit_ex_raw(owobj, &bit_val) == lwowOK && bit_val != 0 && lwow_reset_raw(owobj) == lwowOK
+        && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
         lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read plain data from device */
@@ -178,8 +172,7 @@ lwow_ds18x20_get_resolution_raw(lwow_t* const owobj, const lwow_rom_t* const rom
     LWOW_ASSERT0("rom_id != NULL", rom_id != NULL);
     LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
 
-    if (lwow_reset_raw(owobj) == lwowOK) { /* Reset bus */
-        lwow_match_rom_raw(owobj, rom_id); /* Select device */
+    if (lwow_reset_raw(owobj) == lwowOK && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
         lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore bytes */
@@ -229,12 +222,7 @@ lwow_ds18x20_set_resolution_raw(lwow_t* const owobj, const lwow_rom_t* const rom
     LWOW_ASSERT0("bits >= 9U && bits <= 12U", bits >= 9U && bits <= 12U);
     LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
 
-    if (lwow_reset_raw(owobj) == lwowOK) {
-        if (rom_id == NULL) {
-            lwow_match_rom_raw(owobj, rom_id);
-        } else {
-            lwow_skip_rom_raw(owobj);
-        }
+    if (lwow_reset_raw(owobj) == lwowOK && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
         lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore bytes */
@@ -256,8 +244,7 @@ lwow_ds18x20_set_resolution_raw(lwow_t* const owobj, const lwow_rom_t* const rom
         }
 
         /* Write data back to device */
-        if (lwow_reset_raw(owobj) == lwowOK) {
-            lwow_match_rom_raw(owobj, rom_id);
+        if (lwow_reset_raw(owobj) == lwowOK && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
             lwow_write_byte_ex_raw(owobj, LWOW_CMD_WSCRATCHPAD, NULL);
 
             lwow_write_byte_ex_raw(owobj, thigh, NULL);
@@ -265,8 +252,7 @@ lwow_ds18x20_set_resolution_raw(lwow_t* const owobj, const lwow_rom_t* const rom
             lwow_write_byte_ex_raw(owobj, conf, NULL);
 
             /* Copy scratchpad to non-volatile memory */
-            if (lwow_reset_raw(owobj) == lwowOK) {
-                lwow_match_rom_raw(owobj, rom_id);
+            if (lwow_reset_raw(owobj) == lwowOK && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
                 lwow_write_byte_ex_raw(owobj, LWOW_CMD_CPYSCRATCHPAD, NULL);
                 res = 1;
             }
@@ -347,12 +333,7 @@ lwow_ds18x20_set_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom
         }
     }
 
-    if (lwow_reset_raw(owobj) == lwowOK) {
-        if (rom_id == NULL) {
-            lwow_skip_rom_raw(owobj);
-        } else {
-            lwow_match_rom_raw(owobj, rom_id);
-        }
+    if (lwow_reset_raw(owobj) == lwowOK && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
         lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore 2 bytes */
@@ -369,8 +350,7 @@ lwow_ds18x20_set_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom
         tlow = temp_l == LWOW_DS18X20_ALARM_NOCHANGE ? (uint8_t)tlow : (uint8_t)temp_l;
 
         /* Write scratchpad */
-        if (lwow_reset_raw(owobj) == lwowOK) {
-            lwow_match_rom_raw(owobj, rom_id);
+        if (lwow_reset_raw(owobj) == lwowOK && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
             lwow_write_byte_ex_raw(owobj, LWOW_CMD_WSCRATCHPAD, NULL);
 
             /* Write configuration register */
@@ -379,8 +359,7 @@ lwow_ds18x20_set_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom
             lwow_write_byte_ex_raw(owobj, conf, NULL);
 
             /* Copy scratchpad to memory */
-            if (lwow_reset_raw(owobj) == lwowOK) {
-                lwow_match_rom_raw(owobj, rom_id);
+            if (lwow_reset_raw(owobj) == lwowOK && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
                 lwow_write_byte_ex_raw(owobj, LWOW_CMD_CPYSCRATCHPAD, NULL);
 
                 res = 1;
@@ -403,6 +382,63 @@ lwow_ds18x20_set_alarm_temp(lwow_t* const owobj, const lwow_rom_t* const rom_id,
 
     lwow_protect(owobj, 1);
     res = lwow_ds18x20_set_alarm_temp_raw(owobj, rom_id, temp_l, temp_h);
+    lwow_unprotect(owobj, 1);
+    return res;
+}
+
+/**
+ * \brief           Get the low and high temperature triggers for the alarm configuration
+ * 
+ * \param[in]       ow: 1-Wire handle
+ * \param[in]       rom_id: 1-Wire device address
+ * \param[out]      temp_l: Pointer to output variable to write low temperature alarm trigger
+ * \param[out]      temp_h: Pointer to output variable to write high temperature alarm trigger
+ * \return          `1` on success, `0` otherwise
+ */
+uint8_t
+lwow_ds18x20_get_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, int8_t* temp_l, int8_t* temp_h) {
+    uint8_t res = 0, thigh = 0, tlow = 0;
+
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
+    LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
+    LWOW_ASSERT0("temp_l != NULL || temp_h != NULL", temp_l != NULL || temp_h != NULL);
+
+    if (lwow_reset_raw(owobj) == lwowOK && lwow_match_or_skip_rom_raw(owobj, rom_id) == lwowOK) {
+        lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
+
+        /* Read and ignore 2 bytes */
+        lwow_read_byte_ex_raw(owobj, &thigh);
+        lwow_read_byte_ex_raw(owobj, &thigh);
+
+        /* Read important data */
+        lwow_read_byte_ex_raw(owobj, &thigh);
+        lwow_read_byte_ex_raw(owobj, &tlow);
+
+        if (temp_l != NULL) {
+            *temp_l = (int8_t)tlow;
+        }
+        if (temp_h != NULL) {
+            *temp_h = (int8_t)thigh;
+        }
+        res = 1;
+    }
+    return res;
+}
+
+/**
+ * \copydoc         lwow_ds18x20_get_alarm_temp_raw
+ * \note            This function is thread-safe
+ */
+uint8_t
+lwow_ds18x20_get_alarm_temp(lwow_t* const owobj, const lwow_rom_t* const rom_id, int8_t* temp_l, int8_t* temp_h) {
+    uint8_t res = 0;
+
+    LWOW_ASSERT0("owobj != NULL", owobj != NULL);
+    LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
+    LWOW_ASSERT0("temp_l != NULL || temp_h != NULL", temp_l != NULL || temp_h != NULL);
+
+    lwow_protect(owobj, 1);
+    res = lwow_ds18x20_get_alarm_temp_raw(owobj, rom_id, temp_l, temp_h);
     lwow_unprotect(owobj, 1);
     return res;
 }
@@ -448,7 +484,7 @@ lwow_ds18x20_is_b(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
     LWOW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     LWOW_UNUSED(owobj);
-    return rom_id->rom[0] == 0x28U;
+    return rom_id->rom[0] == LWOW_DS18B20_FAMILY_CODE;
 }
 
 /**
@@ -464,5 +500,28 @@ lwow_ds18x20_is_s(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
     LWOW_ASSERT0("rom_id != NULL", rom_id != NULL);
 
     LWOW_UNUSED(owobj);
-    return rom_id->rom[0] == 0x10U;
+    return rom_id->rom[0] == LWOW_DS18S20_FAMILY_CODE;
+}
+
+/**
+ * \brief           Get temperature conversion time in units of milliseconds for a specific resolution
+ * 
+ * \param           resolution: Resolution in bits
+ * \param[in]       is_b: Set to `1` for DS18B20, `0` otherwise
+ * \return          uint16_t 
+ */
+uint16_t
+lwow_ds18x20_get_temp_conversion_time(uint8_t resolution, uint8_t is_b) {
+    if (is_b) {
+
+        switch (resolution) {
+            case 9U: return 94U;
+            case 10U: return 188U;
+            case 11U: return 375U;
+            case 12U: return 750U;
+            default: return 0U;
+        }
+    } else {
+        return 750U;
+    }
 }

@@ -547,7 +547,6 @@ lwow_match_rom_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
             return lwowERR;
         }
     }
-
     return lwowOK;
 }
 
@@ -564,6 +563,37 @@ lwow_match_rom(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
 
     lwow_protect(owobj, 1U);
     res = lwow_match_rom_raw(owobj, rom_id);
+    lwow_unprotect(owobj, 1U);
+    return res;
+}
+
+/**
+ * \brief           Select specific device or send skip ROM command,
+ *                      depending on the `rom_id` parameter
+ * \param[in]       owobj: 1-Wire handle
+ * \param[in]       rom_id: 1-Wire device address to match device or `NULL` to skip the match
+ * \return          \ref lwowOK on success, member of \ref lwowr_t otherwise
+ */
+lwowr_t
+lwow_match_or_skip_rom_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
+    LWOW_ASSERT("owobj != NULL", owobj != NULL);
+
+    /* Decide what to do */
+    return rom_id != NULL ? lwow_match_rom_raw(owobj, rom_id) : lwow_skip_rom_raw(owobj);
+}
+
+/**
+ * \copydoc         lwow_match_or_skip_rom_raw
+ * \note            This function is thread-safe
+ */
+lwowr_t
+lwow_match_or_skip_rom(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
+    lwowr_t res = lwowERR;
+
+    LWOW_ASSERT("owobj != NULL", owobj != NULL);
+
+    lwow_protect(owobj, 1U);
+    res = lwow_match_or_skip_rom_raw(owobj, rom_id);
     lwow_unprotect(owobj, 1U);
     return res;
 }
