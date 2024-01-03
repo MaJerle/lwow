@@ -9,6 +9,8 @@
 - Update code style with astyle
 - Add demo driver for manual GPIO toggle
 - Add `.clang-format` draft
+- Add `lwow_match_or_skip_rom`
+- Add `lwow_ds18x20_get_alarm_temp` and `lwow_ds18x20_get_temp_conversion_time`
 
 ## v3.0.2
 
