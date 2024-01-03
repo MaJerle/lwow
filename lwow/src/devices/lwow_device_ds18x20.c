@@ -54,11 +54,7 @@ lwow_ds18x20_start_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id) {
     LWOW_ASSERT0("owobj != NULL", owobj != NULL);
 
     if (lwow_reset_raw(owobj) == lwowOK) {
-        if (rom_id == NULL) {         /* Check for ROM id */
-            lwow_skip_rom_raw(owobj); /* Skip ROM, send to all devices */
-        } else {
-            lwow_match_rom_raw(owobj, rom_id); /* Select exact device by ROM address */
-        }
+        lwow_match_or_skip_rom_raw(owobj, rom_id);
         lwow_write_byte_ex_raw(owobj, LWOW_DS18X20_CMD_CONVERT_T, NULL); /* Start temperature conversion */
         res = 1;
     }
@@ -107,11 +103,7 @@ lwow_ds18x20_read_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id, float
      * If everything ready, try to reset the network and continue
      */
     if (lwow_read_bit_ex_raw(owobj, &bit_val) == lwowOK && bit_val != 0 && lwow_reset_raw(owobj) == lwowOK) {
-        if (rom_id == NULL) {
-            lwow_skip_rom_raw(owobj);
-        } else {
-            lwow_match_rom_raw(owobj, rom_id);
-        }
+        lwow_match_or_skip_rom_raw(owobj, rom_id);
         lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read plain data from device */
@@ -233,11 +225,7 @@ lwow_ds18x20_set_resolution_raw(lwow_t* const owobj, const lwow_rom_t* const rom
     LWOW_ASSERT0("lwow_ds18x20_is_b(owobj, rom_id)", lwow_ds18x20_is_b(owobj, rom_id));
 
     if (lwow_reset_raw(owobj) == lwowOK) {
-        if (rom_id == NULL) {
-            lwow_match_rom_raw(owobj, rom_id);
-        } else {
-            lwow_skip_rom_raw(owobj);
-        }
+        lwow_match_or_skip_rom_raw(owobj, rom_id);
         lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore bytes */
@@ -351,11 +339,7 @@ lwow_ds18x20_set_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom
     }
 
     if (lwow_reset_raw(owobj) == lwowOK) {
-        if (rom_id == NULL) {
-            lwow_skip_rom_raw(owobj);
-        } else {
-            lwow_match_rom_raw(owobj, rom_id);
-        }
+        lwow_match_or_skip_rom_raw(owobj, rom_id);
         lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore 2 bytes */
@@ -373,7 +357,7 @@ lwow_ds18x20_set_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom
 
         /* Write scratchpad */
         if (lwow_reset_raw(owobj) == lwowOK) {
-            lwow_match_rom_raw(owobj, rom_id);
+            lwow_match_or_skip_rom_raw(owobj, rom_id);
             lwow_write_byte_ex_raw(owobj, LWOW_CMD_WSCRATCHPAD, NULL);
 
             /* Write configuration register */
@@ -428,11 +412,7 @@ lwow_ds18x20_get_alarm_temp_raw(lwow_t* const owobj, const lwow_rom_t* const rom
     LWOW_ASSERT0("temp_l != NULL || temp_h != NULL", temp_l != NULL || temp_h != NULL);
 
     if (lwow_reset_raw(owobj) == lwowOK) {
-        if (rom_id == NULL) {
-            lwow_skip_rom_raw(owobj);
-        } else {
-            lwow_match_rom_raw(owobj, rom_id);
-        }
+        lwow_match_or_skip_rom_raw(owobj, rom_id);
         lwow_write_byte_ex_raw(owobj, LWOW_CMD_RSCRATCHPAD, NULL);
 
         /* Read and ignore 2 bytes */

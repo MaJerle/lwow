@@ -250,6 +250,9 @@ lwowr_t lwow_search_devices(lwow_t* const owobj, lwow_rom_t* const rom_id_arr, c
 lwowr_t lwow_match_rom_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id);
 lwowr_t lwow_match_rom(lwow_t* const owobj, const lwow_rom_t* const rom_id);
 
+lwowr_t lwow_match_or_skip_rom_raw(lwow_t* const owobj, const lwow_rom_t* const rom_id);
+lwowr_t lwow_match_or_skip_rom(lwow_t* const owobj, const lwow_rom_t* const rom_id);
+
 lwowr_t lwow_skip_rom_raw(lwow_t* const owobj);
 lwowr_t lwow_skip_rom(lwow_t* const owobj);
 
