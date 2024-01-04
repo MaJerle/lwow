@@ -148,10 +148,11 @@ lwow_protect(lwow_t* const owobj, const uint8_t protect) {
 }
 
 /**
- * \brief           Unprotect 1-wire from concurrent access
+ * \brief           Unprotect 1-wire from concurrent access,
+ *                  previously protected with \ref lwow_protect
  * \note            Used only for OS systems
  * \param[in,out]   owobj: 1-Wire handle
- * \param[in]       protect: Set to `1` to protect core, `0` otherwise
+ * \param[in]       protect: Set to `1` to unprotect core, `0` otherwise
  * \return          \ref lwowOK on success, member of \ref lwowr_t otherwise
  */
 lwowr_t
