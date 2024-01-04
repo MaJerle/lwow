@@ -258,14 +258,6 @@ lwowr_t lwow_skip_rom(lwow_t* const owobj);
 
 uint8_t lwow_crc(const void* const in, const size_t len);
 
-/* Legacy functions, deprecated, to be removed in next major release */
-uint8_t lwow_write_byte_raw(lwow_t* const owobj, const uint8_t b);
-uint8_t lwow_write_byte(lwow_t* const owobj, const uint8_t b);
-uint8_t lwow_read_byte_raw(lwow_t* const owobj);
-uint8_t lwow_read_byte(lwow_t* const owobj);
-uint8_t lwow_read_bit_raw(lwow_t* const owobj);
-uint8_t lwow_read_bit(lwow_t* const owobj);
-
 /**
  * \}
  */
