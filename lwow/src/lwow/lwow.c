@@ -141,7 +141,7 @@ lwow_protect(lwow_t* const owobj, const uint8_t protect) {
         return lwowERR;
     }
 #else
-    (void)ow;
+    (void)owobj;
     (void)protect;
 #endif /* LWOW_CFG_OS */
     return lwowOK;
@@ -164,7 +164,7 @@ lwow_unprotect(lwow_t* const owobj, const uint8_t protect) {
         return lwowERR;
     }
 #else
-    (void)ow;
+    (void)owobj;
     (void)protect;
 #endif /* LWOW_CFG_OS */
     return lwowOK;
