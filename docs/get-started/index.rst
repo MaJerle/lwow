@@ -84,8 +84,8 @@ Library comes with template config file, which can be modified according to the 
 and it should be copied (or simply renamed in-place) and named ``lwow_opts.h``
 
 .. tip::
-    If you are using *CMake* build system, define the variable ``LWOW_OPTS_DIR`` before adding library's directory to the *CMake* project.
-    Variable must set the output directory path. CMake will copy the template file there, and name it as required.
+    If you are using *CMake* build system, define the variable ``LWOW_OPTS_FILE`` before adding library's directory to the *CMake* project.
+    Variable must contain the path to the user options file. If not provided, one will be generated in the build directory.
 
 .. note::
     Default configuration template file location: ``lwow/src/include/lwow/lwow_opts_template.h``.

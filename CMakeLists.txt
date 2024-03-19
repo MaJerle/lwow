@@ -40,7 +40,7 @@ else()
     )
 
     # Add subdir with lwow and link to the project
-    set(LWOW_OPTS_DIR ${CMAKE_CURRENT_LIST_DIR}/dev)
+    set(LWOW_OPTS_FILE ${CMAKE_CURRENT_LIST_DIR}/dev/lwow_opts.h)
     add_subdirectory(lwow)
     target_link_libraries(${PROJECT_NAME} lwow)
     target_link_libraries(${PROJECT_NAME} lwow_devices)
