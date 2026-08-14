@@ -82,6 +82,17 @@ Example: System functions for CMSIS-OS
     :linenos:
     :caption: Actual implementation of system functions for CMSIS-OS
 
+Example: System functions for POSIX (Linux, macOS)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Example code for system function porting on native GCC toolchains, using ``pthread``.
+Application must define :c:macro:`LWOW_CFG_OS_MUTEX_HANDLE` as ``pthread_mutex_t*`` in ``lwow_opts.h``.
+
+.. literalinclude:: ../../lwow/src/system/lwow_sys_pthread.c
+    :language: c
+    :linenos:
+    :caption: Actual implementation of system functions for POSIX (Linux, macOS) with pthread
+
 Low-Level driver for STM32 with STM32CubeMX
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
