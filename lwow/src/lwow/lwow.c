@@ -439,8 +439,11 @@ lwow_search_with_command_raw(lwow_t* const owobj, const uint8_t cmd, lwow_rom_t*
     }
 
     /* Step 2: Send search rom command for all devices on 1-Wire */
-    lwow_write_byte_ex_raw(owobj, cmd, NULL); /* Start with search ROM command */
-    next_disrepancy = OW_LAST_DEV;            /* This is currently last device */
+    res = lwow_write_byte_ex_raw(owobj, cmd, NULL); /* Start with search ROM command */
+    if (res != lwowOK) {
+        return res;
+    }
+    next_disrepancy = OW_LAST_DEV; /* This is currently last device */
 
     for (id_bit_number = 64U; id_bit_number > 0U;) {
         uint8_t bit = 0, b_cpl = 0;
