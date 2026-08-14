@@ -156,7 +156,7 @@ prv_transmit_receive(const uint8_t* tx, uint8_t* rx, size_t len, void* arg) {
      * For baudrate set at 9600 - by UART definition
      * this fits timing only for reset sequence at onewire level
      * 
-     * Length must always be zero, or error is returned
+     * Length must always be 1, or error is returned
      */
     if (baudrate == 9600) {
         if (len == 1) {
