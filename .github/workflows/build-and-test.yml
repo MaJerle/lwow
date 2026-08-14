@@ -1,0 +1,46 @@
+name: CMake Build & Test
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install MinGW
+        run: |
+          choco install mingw --version=12.2.0 -y
+          echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $GITHUB_PATH
+          gcc --version
+
+      - name: Run Tests
+        working-directory: tests
+        run: |
+          python test.py
+
+  build-gcc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build build-essential
+          gcc --version
+
+      - name: Run Tests
+        working-directory: tests
+        run: |
+          python3 test.py
