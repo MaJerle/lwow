@@ -82,7 +82,7 @@ deinit(void* arg) {
 
     LWOW_ASSERT0("arg != NULL", arg != NULL);
 
-    return HAL_UART_DeInit(huart);
+    return HAL_UART_DeInit(huart) == HAL_OK;
 }
 
 static uint8_t

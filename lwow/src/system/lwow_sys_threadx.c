@@ -1,6 +1,6 @@
 /**
- * \file            lwow_sys_cmsis_os.c
- * \brief           System functions for CMSIS-OS based operating system
+ * \file            lwow_sys_threadx.c
+ * \brief           System functions for ThreadX based operating system
  */
 
 /*
@@ -55,7 +55,7 @@ lwow_sys_mutex_create(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
 uint8_t
 lwow_sys_mutex_delete(LWOW_CFG_OS_MUTEX_HANDLE* m, void* arg) {
     LWOW_UNUSED(arg);
-    return m->tx_mutex_id == TX_MUTEX_ID;
+    return tx_mutex_delete(m) == TX_SUCCESS;
 }
 
 uint8_t
