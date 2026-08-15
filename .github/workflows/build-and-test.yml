@@ -25,7 +25,7 @@ jobs:
       - name: Run Tests
         working-directory: tests
         run: |
-          python test.py
+          python3 test.py --github
 
   build-gcc:
     runs-on: ubuntu-latest
@@ -43,4 +43,4 @@ jobs:
       - name: Run Tests
         working-directory: tests
         run: |
-          python3 test.py
+          python3 test.py --github
